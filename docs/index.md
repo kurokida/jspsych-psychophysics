@@ -32,6 +32,7 @@ This code means that a white rectangle is presented at coordinates (50, 60) in a
 
 ## a trial object has to be specified as follows:
 
+```
 var trial = {
     type: 'psychophysics',
     stimuli: [rect_object1, rect_object2, rect_object3],
@@ -39,10 +40,11 @@ var trial = {
     canvas_height: 800,
     background_color: '#008000', // of the canvas
 }
+```
 
 The **stimuli** property must include all the objects to be presented in the trial. In this example, three rectangles are presented with the SOAs in a canvas of which width and height are 1000 and 800 pixels respectively, and of which color is green (HEX: #008000). This trial object must be included as a **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
-Note that if you use image and audio files in a trial, please preload them at the 
+Note that if you use image and audio files in a trial, please preload them using the preload_imageg and preload_audio methods in the jsPsych.init.
 
 
 # What kinds of stimuli you can present with the jspsych-psychophysics plugin
@@ -51,6 +53,8 @@ Note that if you use image and audio files in a trial, please preload them at th
 - line
 - text
 - sound
+
+The 
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
