@@ -15,7 +15,7 @@ This is the brief explanation how to use the plugin. Please refer to the individ
 
 ## At first, all the stimuli used in the program must be specified as a JavaScript object
 
-```javascript
+```javascript:Example
 var rect_object1 = {
     type: 'rect', // means a rectangle
     startX: 50, // location in the canvas
