@@ -3,55 +3,74 @@ This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
-- You can present visual stimuli at intended coordinates.
-- You can present moving objects.
-
-## The advantage of the jspsych-psychophysics plugin
+- You can present visual stimuli at intended coordinates, sounds, and moving objects.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate.
 - The SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am submitting the paper (under review).
 
 ## How to use the jspsych-psychophysics plugin
 This is the brief explanation how to use the plugin. Please refer to the individual object pages described below. 
 
-### At first, all the stimuli used in the program must be specified as a JavaScript object
+This figure illustrates a trial flow to be made by this tutorial.
+![tutorial](./images/tutorial.png)
+
+1. Include the plugin file using the <script> tag
+```javascript
+<script src="jspsych-psychophysics.js"></script>
+```
+This procedure is the same when other plugins are used for jsPsych. Be sure to the location of the plugin file.
+
+2. Specify all the stimuli used in the program as a JavaScript object
 
 ```javascript
-var rect_object1 = {
+var rect_object = {
     type: 'rect', // means a rectangle
-    startX: 50, // location in the canvas
-    startY: 60,
+    startX: 200, // location in the canvas
+    startY: 150,
     width: 300, // of the rectangle
     height: 200,
     line_color: '#ffffff',
     fill_color: '#ffffff',
-    show_start_time: 1500 // milliseconds
+    show_start_time: 500 // from the trial start (ms)
+}
+
+var circle_object = {
+    type: 'circle',
+    startX: 500, // location in the canvas
+    startY: 300,
+    radius: 100,
+    line_color: 'red', // You can use the HTML color name instead of the HEX color.
+    fill_color: 'red',
+    show_start_time: 1000 // from the trial start (ms)
 }
 ```
 
-This code means that a white rectangle is presented at coordinates (50, 60) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. The width and height of the rectangle are 300 and 200 pixels respectively. The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. 
+The origin of the coordinate is the top left of the canvas, and the unit is the pixel. The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. 
 
-The **show_start_time** property is the most notable in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 1500 ms after beginning this trial. 
-
-The experimenter can present circles, lines, and texts as same as rectangles by specifying all of the stimuli to be presented in this trial.
+The **show_start_time** property is the most notable in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
 ### The trial object has to be specified
 
 ```javascript
 var trial = {
     type: 'psychophysics',
-    stimuli: [rect_object1, rect_object2, rect_object3],
+    stimuli: [rect_object, circle_object],
+    choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
     canvas_width: 1000,
     canvas_height: 800,
-    background_color: '#008000', // of the canvas
+    background_color: '#008000', // The HEX color means green. This is the background color of the canvas.
 }
+
+jsPsych.init({
+    timeline: [trial],
+    on_finish: function(){jsPsych.data.displayData();}
+});
 ```
 
-The **stimuli** property must include all the objects to be presented in the trial. In this example, three rectangles are presented with the SOAs in a canvas of which width and height are 1000 and 800 pixels respectively, and of which color is green (HEX: #008000). 
+The **stimuli** property must include all the objects to be presented in the trial.
 
 This trial object must be included as a **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
-Note that if you use image and audio files in a trial, please preload them using the preload_imageg and preload_audio methods in the jsPsych.init.
-
+Note that if you use image and audio files in a trial, please preload them using the preload_imageg and preload_audio methods in the jsPsych.init. You can also make the participants respond using a mouse instead of a keyboard using the **response_type** property.
 
 ## What kinds of stimuli you can present with the jspsych-psychophysics plugin
 - rectangle
