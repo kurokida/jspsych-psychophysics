@@ -3,9 +3,9 @@ This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
-- You can present visual stimuli at intended coordinates, sounds, and moving objects.
+- You can present visual stimuli at intended coordinates as well as sounds and moving objects.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate.
-- The SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am submitting the paper (under review).
+- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am submitting the paper (under review).
 
 ## How to use the jspsych-psychophysics plugin
 This is the brief explanation how to use the plugin. Please refer to the individual object pages described below. 
@@ -13,7 +13,7 @@ This is the brief explanation how to use the plugin. Please refer to the individ
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
 
-1. Include the plugin file using the <script> tag
+1. Include the plugin file using the `<script>` tag
 ```javascript
 <script src="jspsych-psychophysics.js"></script>
 ```
@@ -57,7 +57,7 @@ var trial = {
     choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
     canvas_width: 1000,
     canvas_height: 800,
-    background_color: '#008000', // The HEX color means green. This is the background color of the canvas.
+    background_color: '#008000', // The HEX color means green.
 }
 
 jsPsych.init({
@@ -68,7 +68,7 @@ jsPsych.init({
 
 The **stimuli** property must include all the objects to be presented in the trial.
 
-This trial object must be included as a **timeline** property of the jsPsych.init which is a core function of the jsPsych.
+This trial object must be included as the **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
 Note that if you use image and audio files in a trial, please preload them using the preload_imageg and preload_audio methods in the jsPsych.init. You can also make the participants respond using a mouse instead of a keyboard using the **response_type** property.
 
