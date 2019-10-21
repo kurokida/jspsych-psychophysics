@@ -5,7 +5,7 @@ This plugin can be used free of charge under the MIT license.
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
 - You can present visual stimuli at intended coordinates as well as sounds and moving objects.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate.
-- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am submitting the paper (under review).
+- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing the paper.
 
 ## How to use the jspsych-psychophysics plugin
 This is the brief explanation how to use the plugin. Please refer to the individual object pages described below. 
@@ -20,7 +20,6 @@ This figure illustrates a trial flow to be made by this tutorial.
 This procedure is the same when other plugins are used for jsPsych. Be sure to the location of the plugin file.
 
 2. Specify all the stimuli used in the program as a JavaScript object
-
 ```javascript
 var rect_object = {
     type: 'rect', // means a rectangle
