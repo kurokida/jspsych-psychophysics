@@ -18,7 +18,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     description: '',
     parameters: {
       stimuli: {
-        type: jsPsych.plugins.parameterType.COMPLEX,
+        type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
         array: true,
         pretty_name: 'Stimuli',
         default: 'customize',
@@ -101,7 +101,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     const elm_jspsych_content = document.getElementById('jspsych-content');
     const style_jspsych_content = window.getComputedStyle(elm_jspsych_content); // stock
     default_maxWidth = style_jspsych_content.maxWidth;
-    elm_jspsych_content.style.maxWidth = 'none'; // The default value is '95%'.
+    elm_jspsych_content.style.maxWidth = 'none'; // The default value is '95%'. To fit the window.
 
     let new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
 

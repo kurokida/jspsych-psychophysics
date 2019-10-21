@@ -8,7 +8,7 @@ This plugin can be used free of charge under the MIT license.
 - According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing the paper.
 
 ## How to use the jspsych-psychophysics plugin
-This is the brief explanation how to use the plugin. Please refer to the individual object pages described below. 
+This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [properties of the object](objectProperties.md) in detail.
 
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
@@ -20,6 +20,7 @@ This figure illustrates a trial flow to be made by this tutorial.
 This procedure is the same when other plugins are used for jsPsych. Be sure to the location of the plugin file.
 
 2. Specify all the stimuli used in the program as a JavaScript object
+
 ```javascript
 var rect_object = {
     type: 'rect', // means a rectangle
