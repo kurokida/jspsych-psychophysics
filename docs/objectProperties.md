@@ -12,6 +12,7 @@ var rect_object = {
 }
 ```
 # Common properties
+
 |Property name|Brief explanation|
 |---|---|
 |type|The type of the object (e.g., rect, image, or sound)|

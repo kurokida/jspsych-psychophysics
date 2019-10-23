@@ -14,6 +14,7 @@ This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
 
 1. Include the plugin file using the `<script>` tag
+
 ```javascript
 <script src="jspsych-psychophysics.js"></script>
 ```
