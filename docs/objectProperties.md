@@ -43,6 +43,10 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 
 # sound
 
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|file|string|undefined|The file name of the sound|
+
 # line
 
 |Property name|Type|Default Value|Description|
