@@ -1,4 +1,4 @@
-All the stimuli used in the program with jspsych-psychophysics plugin must be specified as a JavaScript object as follows:
+All the stimuli used in the program with the jspsych-psychophysics plugin must be specified as a JavaScript object as follows:
 ```javascript
 var rect_object = {
     type: 'rect', // means a rectangle
@@ -11,23 +11,119 @@ var rect_object = {
     show_start_time: 500 // from the trial start (ms)
 }
 ```
-# Common properties
+
+This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
+
+# Common properties among objects
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |type|string|undefined|The type of the object (e.g., rect, image, or sound)|
-|startX|numeric|'center'|Horizontal position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startX is specified as 'center', the object is presented at the horizontal center of the canvas. The startX is also used as the starting position in motion|
-|startY|numeric|'center'|Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startY is specified as 'center', the object is presented at the vertical center of the canvas. The startY is also used as the starting position in motion|
+|startX|numeric|'center'|Horizontal position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startX is specified as 'center', the object is presented at the horizontal center of the canvas. The startX is also used as the starting position in motion.|
+|startY|numeric|'center'|Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startY is specified as 'center', the object is presented at the vertical center of the canvas. The startY is also used as the starting position in motion.|
 |endX|numeric|null|Horizontal end position of the moving object|
 |endY|numeric|null|Vertical end position of the moving object|
-|horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame|
+|horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display|
 |horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second|
-|vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame|
+|vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame of the display|
 |vert_pix_sec|numeric|undefined|Vertical pixels by which the object moves per second|
-|show_start_time|Time to start presenting the object from when the trial begins|
-|show_end_time|Time to end presenting the object from when the trial begins|
-|motion_start_time|Time to start moving the object from when the trial begins|
-|motion_end_time|Time to end moving the object from when the trial begins|
-|scale|Image scaling|
+|show_start_time|numeric|0|Time to start presenting the object from when the trial begins|
+|show_end_time|numeric|null|Time to end presenting the object from when the trial begins|
+|motion_start_time|numeric|show_start_time|Time to start moving the object from when the trial begins|
+|motion_end_time|numeric|null|Time to end moving the object from when the trial begins|
 
 Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
+
+# image
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|file|string|undefined|The file name of the image|
+|scale|numeric|1 (original size)|Image scaling|
+
+# sound
+
+# line
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|line_width|numeric|1| The width of the line|
+|line_length|numeric|undefined| The length of the line|
+|line_color|string|#000000 (black)|The color of the line|
+|angle|numeric|undefined| The angle of the line. Zero means a horizontal line|
+|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
+|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+
+# rect
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|width|numeric|undefined| The width of the rectangle|
+|height|numeric|undefined| The height of the rectangle|
+|line_color|string|undefined|The color of the contour|
+|fill_color|string|undefined|The filled color of the rectangle|
+|line_width|numeric|1| The width of the line|
+|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
+|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+
+# circle
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|radius|numeric|undefined|The radius of the circle|
+|line_color|string|undefined|The color of the contour|
+|fill_color|string|undefined|The filled color of the rectangle|
+|line_width|numeric|1| The width of the line|
+|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
+|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+
+
+# text
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element](https://www.w3schools.com/tags/canvas_font.asp)|
+|text_color|string|#000000 (black)|The color of the text|
+|text_space|numeric|20|The space between lines|
+|content|string|undefined|The content of the text. It can include '\n' to start a new line|,
+
+
+# cross
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|line_width|numeric|1| The width of the line|
+|line_length|numeric|undefined| The length of the line|
+|line_color|string|#000000 (black)|The color of the line|
+|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
+|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+
+# manual (Advanced)
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|drawFunc|function|undefined|You can draw whatever the `<canvas>` supports| 
+
+If you want to draw something that the jspsych-psychophysics does not provide the method to draw it, you can draw it using the drawFunc function. 
+
+The first argument is `stimulus` which provides the properties of the object. `stimulus.currentX/Y` might be used frequently because which  means the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
+
+The second argument is `canvas`, and the third argument is `context` of the canvas.
+
+The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black.
+
+```javascript
+drawFunc: function(stimulus, canvas, context){
+    context.beginPath();
+
+    const gradLength = 200;
+    const grad  = context.createLinearGradient(0, 0, 0, gradLength);
+
+    grad.addColorStop(0,'rgb(0, 0, 0)'); // black
+    grad.addColorStop(1,'rgb(255, 255, 255)'); // white
+
+    context.fillStyle = grad;
+    context.rect(stimulus.currentX, stimulus.currentY, gradLength, gradLength);
+    context.fill();
+}
+```

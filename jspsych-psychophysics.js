@@ -166,6 +166,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
         if (stim.type === 'sound') {
+          if (typeof stim.file === 'undefined') alert('You have to specify the file property.');
           // setup stimulus
           stim.context = jsPsych.pluginAPI.audioContext();
           if(stim.context !== null){
@@ -222,10 +223,11 @@ jsPsych.plugins["psychophysics"] = (function() {
           stim.currentY = stim.startY;
 
           if (stim.type === 'image') {
+            if (typeof stim.file === 'undefined') alert('You have to specify the file property.');
             stim.img = new Image();
             stim.img.src = stim.file;
           } else { // for drawing lines, rects, circles, and texts.
-            if (typeof stim.lineWidth === 'undefined') stim.lineWidth = 1;
+            if (typeof stim.line_width === 'undefined') stim.line_width = 1;
             if (typeof stim.lineJoin === 'undefined') stim.lineJoin = 'miter';
             if (typeof stim.miterLimit === 'undefined') stim.miterLimit = 10;
 
@@ -248,7 +250,7 @@ jsPsych.plugins["psychophysics"] = (function() {
               //ctx.font = "22px 'Arial'";
             } else if (stim.type === 'manual'){
               //
-            } else if (stim.type === 'fixation'){
+            } else if (stim.type === 'cross'){
               if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
               if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
             } else {
@@ -351,7 +353,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
             if (elapsedTime >= stim.motion_start_time && (stim.motion_end_time === null | elapsedTime <= stim.motion_end_time)) {
               if (stim.endX === null || stim.currentX <= stim.endX){
-                if (typeof stim.horiz_pix_frame === 'undefined'){
+                if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
                   stim.currentX = stim.startX + Math.round(stim.horiz_pix_sec * (elapsedTime-stim.motion_start_time)/1000);
                 } else {
                   stim.currentX += stim.horiz_pix_frame;
@@ -384,7 +386,7 @@ jsPsych.plugins["psychophysics"] = (function() {
             } else { // for line, rect, circle etc.
               ctx.beginPath();
               
-              ctx.lineWidth = stim.lineWidth;
+              ctx.line_width = stim.line_width;
               ctx.lineJoin = stim.lineJoin;
               ctx.miterLimit = stim.miterLimit;
               
@@ -399,7 +401,7 @@ jsPsych.plugins["psychophysics"] = (function() {
                 ctx.lineTo(x2, y2);
                 ctx.closePath();
                 ctx.stroke();
-              } else if (stim.type === 'fixation') {
+              } else if (stim.type === 'cross') {
                 ctx.strokeStyle = stim.line_color;
                 const x1 = stim.currentX;
                 const y1 = stim.currentY - stim.line_length/2;
@@ -527,8 +529,10 @@ jsPsych.plugins["psychophysics"] = (function() {
           //"stimulus": trial.stimuli,
           "key_press": response.key,
           "avg_frame_time": elapsedTime/sumOfStep,
-          "click_x": response.clickX - centerX,
-          "click_y": response.clickY- centerY
+          "click_x": response.clickX,
+          "click_y": response.clickY
+          // "click_x": response.clickX - centerX,
+          // "click_y": response.clickY- centerY
         };
       } else {
         var trial_data = {

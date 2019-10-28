@@ -24,9 +24,9 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 
 |Name|Type|Value|
 |---|---|---|
-|rt|numeric|The response time in milliseconds for the participant to make a response. The star time of the measurement depends on the 'response_start_time'.|
+|rt|numeric|The response time in milliseconds for the participant to make a response. The start time of the measurement depends on the 'response_start_time'.|
 |response_type|string|'key' or 'mouse'|
 |key_press|numeric|Indicates which key the participant pressed. The value is the [numeric key code](https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes) corresponding to the participant's response. '-1' means thant the participant respond using a mouse.|
-|avg_frame_time|numeric|Averaged interframe interval|
-|click_x|Horizontal clicked position. '0' means the center of the canvas; Positive number means the right side from the center.|
-|click_y|Vertical clicked position. '0' means the center of the canvas; Positive number means the down side from the center.|
+|avg_frame_time|numeric|Averaged interframe interval.|
+|click_x|numeric|Horizontal clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
+|click_y|numeric|Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
