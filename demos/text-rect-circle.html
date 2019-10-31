@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    var text_object = {
+      obj_type: 'text',
+      startX: 'center',
+      startY: 'center',
+      content: 'The white rectangle will be appeared 2 sec later.\nThe red circle will be appeared 4 sec later.',
+      font: "22px 'Arial'",
+      text_color: 'white',
+      text_space: 100,
+      show_end_time: 2000 // disappear this text
+    }
+
+    var rect_object = {
+        obj_type: 'rect', // means a rectangle
+        startX: 200, // location in the canvas
+        startY: 150,
+        width: 300, // of the rectangle
+        height: 200,
+        line_color: '#ffffff',
+        fill_color: '#ffffff',
+        show_start_time: 2000 // ms after the start of the trial
+    }
+
+    var circle_object = {
+        obj_type: 'circle',
+        startX: 500, // location in the canvas
+        startY: 300,
+        radius: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        show_start_time: 4000 // ms after the start of the trial
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [text_object, rect_object, circle_object],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        canvas_width: 1000,
+        canvas_height: 800,
+        background_color: '#008000', // The HEX color means green.
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

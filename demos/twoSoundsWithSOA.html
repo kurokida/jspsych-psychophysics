@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <script src="../jspsych-html-button-response.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present sounds with 1000-ms SOA.
+    // This demo must be uploaded in a web-server to run.
+
+    sounds = [ // All the images used in this demo
+        './sound/tone100ms.wav'
+    ];
+
+    var sound_object1 = {
+        obj_type: 'sound',
+        file: sounds[0],
+        show_start_time: 500 // from the trial start (ms)
+    }
+
+    var sound_object2 = {
+        obj_type: 'sound',
+        file: sounds[0],
+        show_start_time: 1500 // from the trial start (ms)
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [sound_object1, sound_object2],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        prompt: 'Press the Y or N key to respond.',
+        canvas_height: 500
+    }
+
+    // See also jspsych-audio-keyboard-response.html
+    var pre_audio = {
+        type: 'html-button-response',
+        stimulus: 'Recent versions of Chrome require the user to interact with a page before it can play audio. '+
+        'Clicking the button below counts as an interaction. Be aware of this when planning audio experiments if '+
+        'you want the first trial to include audio.',
+        choices: ['Continue']
+    }
+
+    jsPsych.init({
+        timeline: [pre_audio, trial],
+        preload_audio: sounds, // The image data should be preloaded.
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

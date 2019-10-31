@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present rectangles.
+
+    var text_object1 = {
+        obj_type: 'text',
+        startX: 200,
+        startY: 400,
+        content: 'Hello, world!',
+        font: "22px 'Arial'",
+        text_color: 'white',
+        endX: 'center',
+        endY: 'center',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    var text_object2 = {
+        obj_type: 'text',
+        startX: 'center',
+        startY: 'center',
+        content: 'If the sentence is very long,\nyou can start a new line in this way.',
+        font: "22px 'Arial'",
+        text_color: 'red',
+        text_space: 50,
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+        vert_pix_frame: -2,
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [text_object1, text_object2],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

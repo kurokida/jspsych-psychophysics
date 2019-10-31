@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present (fixation) cross.
+
+    var cross_object1 = {
+        obj_type: 'cross',        
+        startX: 200, // location of the cross's center in the canvas
+        startY: 400,
+        line_length: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        show_start_time: 500, // ms after the start of the trial
+        endX: 400,
+        endY: 400,
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    var cross_object2 = {
+        obj_type: 'cross',        
+        startX: 400, // location of the cross's center in the canvas
+        startY: 400,
+        line_length: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'white',
+        show_start_time: 1000, // ms after the start of the trial
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+        vert_pix_frame: -2,
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [cross_object1, cross_object2],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // The detailed tutorial is written at http://jspsychophysics.hes.kyushu-u.ac.jp/
+    
+    var rect_object = {
+        obj_type: 'rect', // means a rectangle
+        startX: 200, // location in the canvas
+        startY: 150,
+        width: 300, // of the rectangle
+        height: 200,
+        line_color: '#ffffff',
+        fill_color: '#ffffff',
+        show_start_time: 500 // from the trial start (ms)
+    }
+
+    var circle_object = {
+        obj_type: 'circle',
+        startX: 500, // location in the canvas
+        startY: 300,
+        radius: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        show_start_time: 1000 // from the trial start (ms)
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [rect_object, circle_object],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        canvas_width: 1000,
+        canvas_height: 800,
+        background_color: '#008000', // The HEX color means green.
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

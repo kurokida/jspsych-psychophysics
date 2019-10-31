@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present images in a randomized order.
+    // The image will be presented one by one at a time.
+
+    images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png'
+    ];
+
+    var trial = {
+        timeline: [
+            {
+                type: 'psychophysics',
+                stimuli: [
+                    {
+                        obj_type: 'cross', // fixation
+                        line_length: 20, // pixels
+                    },
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('fileName'),
+                        show_start_time: 500 // ms after the start of the trial
+                    }
+                ],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                data: {'file_name': jsPsych.timelineVariable('fileName')} // for identification
+            }
+        ],
+        timeline_variables: [
+            {fileName: images[0]},
+            {fileName: images[1]},
+            {fileName: images[2]}
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        preload_images: images, // The image data should be preloaded.
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

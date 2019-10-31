@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use the stepFunc which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
+
+    var rotation = {
+        type: 'psychophysics',
+        // Note: The properties which depend on objects like show_start_time can not be written here.
+        stepFunc: function(trial, canvas, context, elapsedTime){
+            const velocity = 45/180 * Math.PI; // radians per sec
+            const theta = velocity * elapsedTime/1000;
+            const radius = 100;
+
+            context.beginPath();
+            context.arc(
+                canvas.width/2 + radius * Math.cos(theta), 
+                canvas.height/2 + radius * Math.sin(theta), 
+                radius, 0, Math.PI*2, false);
+            context.fill();
+        }
+    }
+    
+    jsPsych.init({
+        timeline: [rotation],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

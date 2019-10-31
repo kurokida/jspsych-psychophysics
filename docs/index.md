@@ -3,7 +3,7 @@ This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
-- You can present visual stimuli at intended coordinates as well as sounds and moving objects.
+- You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates as well as sounds and moving objects.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate.
 - According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing the paper.
 
@@ -13,18 +13,18 @@ This is the brief explanation how to use the plugin. Please refer to [the parame
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
 
-1. Include the plugin file using the `<script>` tag
+### 1. Include the plugin file using the `<script>` tag
 
 ```javascript
 <script src="jspsych-psychophysics.js"></script>
 ```
 This procedure is the same when other plugins are used for jsPsych. Be sure to the location of the plugin file.
 
-2. Specify all the stimuli used in the program as a JavaScript object
+### 2. Specify all the stimuli used in the program as a JavaScript object
 
 ```javascript
 var rect_object = {
-    type: 'rect', // means a rectangle
+    obj_type: 'rect', // means a rectangle
     startX: 200, // location in the canvas
     startY: 150,
     width: 300, // of the rectangle
@@ -35,7 +35,7 @@ var rect_object = {
 }
 
 var circle_object = {
-    type: 'circle',
+    obj_type: 'circle',
     startX: 500, // location in the canvas
     startY: 300,
     radius: 100,
@@ -49,7 +49,7 @@ The origin of the coordinate is the top left of the canvas, and the unit is the 
 
 The **show_start_time** property is the most notable in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
-### The trial object has to be specified
+### 3. Specify a trial object in the jsPsych's timeline
 
 ```javascript
 var trial = {
@@ -72,13 +72,6 @@ The **stimuli** property must include all the objects to be presented in the tri
 This trial object must be included as the **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
 Note that if you use image and audio files in a trial, please preload them using the preload_imageg and preload_audio methods in the jsPsych.init. You can also make the participants respond using a mouse instead of a keyboard using the **response_type** property.
-
-## What kinds of stimuli you can present with the jspsych-psychophysics plugin
-- rectangle
-- circle
-- line
-- text
-- sound
 
 ## These are links to the programs used in my research to evaluate SOAs
 - [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)

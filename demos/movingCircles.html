@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present moving circles.
+    // There are three ways to define motion.
+    // Note: You can not specify the speed, location, and time at the same time.
+    
+    // The circle_object1 defines motion using the location and time.
+    var circle_object1 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        endX: 600,
+        endY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+        motion_end_time: 4000,
+    }
+
+    // The circle_object2 defines motion using the location and speed.
+    var circle_object2 = {
+        obj_type: 'circle',
+        startX: 600, // location in the canvas
+        startY: 400,
+        endX: 200,
+        endY: 400,
+        radius: 50,
+        line_color: 'blue', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'blue',
+        horiz_pix_frame: -3, // The circle moves from right to left.
+        vert_pix_frame: 0,
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+    }
+
+    // The circle_object3 defines motion using the time and speed.
+    var circle_object3 = {
+        obj_type: 'circle',
+        startX: 600, // location in the canvas
+        startY: 400,
+        radius: 50,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        horiz_pix_frame: -3, // The circle moves from right to left.
+        vert_pix_frame: 2,
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+        motion_end_time: 4000,
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [circle_object1, circle_object2, circle_object3],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

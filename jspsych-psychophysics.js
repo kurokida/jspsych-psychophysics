@@ -18,7 +18,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     description: '',
     parameters: {
       stimuli: {
-        type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
+        //type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
+        type: jsPsych.plugins.parameterType.STRING,
         array: true,
         pretty_name: 'Stimuli',
         default: 'customize',
@@ -165,7 +166,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     if (hasStimuli) {
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
-        if (stim.type === 'sound') {
+        if (stim.obj_type === 'sound') {
           if (typeof stim.file === 'undefined') alert('You have to specify the file property.');
           // setup stimulus
           stim.context = jsPsych.pluginAPI.audioContext();
@@ -218,11 +219,16 @@ jsPsych.plugins["psychophysics"] = (function() {
           stim.horiz_pix_sec = checkVelocity('horiz', stim);
           stim.vert_pix_sec = checkVelocity('vert', stim);
 
+          // console.log(stim.horiz_pix_sec);
+          // console.log(stim.vert_pix_sec);
+          // console.log(stim.horiz_pix_frame);
+          // console.log(stim.vert_pix_frame);
+
           // currentX/Y is changed per frame.
           stim.currentX = stim.startX;
           stim.currentY = stim.startY;
 
-          if (stim.type === 'image') {
+          if (stim.obj_type === 'image') {
             if (typeof stim.file === 'undefined') alert('You have to specify the file property.');
             stim.img = new Image();
             stim.img.src = stim.file;
@@ -231,30 +237,47 @@ jsPsych.plugins["psychophysics"] = (function() {
             if (typeof stim.lineJoin === 'undefined') stim.lineJoin = 'miter';
             if (typeof stim.miterLimit === 'undefined') stim.miterLimit = 10;
 
-            if (stim.type === 'line') {
-              if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length property.');
-              if (typeof stim.angle === 'undefined') alert('You have to specify the angle of lines.');
+            if (stim.obj_type === 'line') {              
+              if (typeof stim.angle === 'undefined') {
+                if ((typeof stim.x1 === 'undefined') || (typeof stim.x2 === 'undefined') || (typeof stim.y1 === 'undefined') || (typeof stim.y2 === 'undefined'))
+                  alert('You have to specify the angle of lines, or the start (x1, y1) and end (x2, y2) coordinates.');
+                else {
+                  // The start (x1, y1) and end (x2, y2) coordinates are defined.
+                  // For motion, startX/Y must be calculated.
+                  stim.startX = (stim.x1 + stim.x2)/2;
+                  stim.startY = (stim.y1 + stim.y2)/2;
+                  stim.currentX = stim.startX;
+                  stim.currentY = stim.startY;
+                  stim.angle = Math.atan((stim.y2 - stim.y1)/(stim.x2 - stim.x1)) * (180 / Math.PI);
+                  stim.line_length = Math.sqrt((stim.x2 - stim.x1) ** 2 + (stim.y2 - stim.y1) ** 2);
+                }
+              } else {
+                if ((typeof stim.x1 !== 'undefined') || (typeof stim.x2 !== 'undefined') || (typeof stim.y1 !== 'undefined') || (typeof stim.y2 !== 'undefined'))
+                  alert('You can not specify the angle and positions of the line at the same time.')
+                if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length property.');
+                
+              }
               if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
-            } else if (stim.type === 'rect') {
+            } else if (stim.obj_type === 'rect') {
               if (typeof stim.width === 'undefined') alert('You have to specify the width of rectangles.');
               if (typeof stim.height === 'undefined') alert('You have to specify the height of rectangles.');
               if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');
-            } else if (stim.type === 'circle') {
+            } else if (stim.obj_type === 'circle') {
               // console.log('circle')
               if (typeof stim.radius === 'undefined') alert('You have to specify the radius of circles.');
               if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');
-            } else if (stim.type === 'text'){
+            } else if (stim.obj_type === 'text'){
               if (typeof stim.content === 'undefined') alert('You have to specify the content of texts.');
               if (typeof stim.text_color === 'undefined') stim.text_color = '#000000';
               if (typeof stim.text_space === 'undefined') stim.text_space = 20;
               //ctx.font = "22px 'Arial'";
-            } else if (stim.type === 'manual'){
+            } else if (stim.obj_type === 'manual'){
               //
-            } else if (stim.type === 'cross'){
+            } else if (stim.obj_type === 'cross'){
               if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
               if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
             } else {
-              alert('You have missed to specify the type property in the ' + (i+1) + 'th object.')
+              alert('You have missed to specify the obj_type property in the ' + (i+1) + 'th object.')
             }
 
           }
@@ -278,7 +301,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       const motion_start_time = stim.motion_start_time;
       const motion_end_time = stim.motion_end_time;
       if ((typeof pix_sec !== 'undefined' || typeof pix_frame !== 'undefined') && endPos !== null && motion_end_time !== null) {
-        alert('You can not specify all of the speed, location, and velocity at the same time.');
+        alert('You can not specify the speed, location, and time at the same time.');
         pix_sec = 0; // stop the motion
       }
       
@@ -352,7 +375,17 @@ jsPsych.plugins["psychophysics"] = (function() {
           if (elapsedTime >= stim.show_start_time && (stim.show_end_time === null || elapsedTime <= stim.show_end_time)) {
 
             if (elapsedTime >= stim.motion_start_time && (stim.motion_end_time === null | elapsedTime <= stim.motion_end_time)) {
-              if (stim.endX === null || stim.currentX <= stim.endX){
+              // Note that: You can not specify the speed, location, and time at the same time.
+
+              let LtoR = true; // true = The object moves from left to right
+
+              if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
+                if (stim.horiz_pix_sec < 0) LtoR = false;
+              } else {
+                if (stim.horiz_pix_frame < 0) LtoR = false;
+              }
+
+              if (stim.endX === null || (LtoR && stim.currentX <= stim.endX) || (!LtoR && stim.currentX >= stim.endX)) {
                 if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
                   stim.currentX = stim.startX + Math.round(stim.horiz_pix_sec * (elapsedTime-stim.motion_start_time)/1000);
                 } else {
@@ -360,7 +393,16 @@ jsPsych.plugins["psychophysics"] = (function() {
                   
                 }
               }
-              if (stim.endY === null || stim.currentY <= stim.endY){
+
+              let UtoD = true; // true = The object moves from up to down
+
+              if (typeof stim.vert_pix_frame === 'undefined'){ // In this case, vert_pix_sec is defined.
+                if (stim.vert_pix_sec < 0) UtoD = false;
+              } else {
+                if (stim.vert_pix_frame < 0) UtoD = false;
+              }
+
+              if (stim.endY === null || (UtoD && stim.currentY <= stim.endY) || (!UtoD && stim.currentY >= stim.endY)) {
                 if (typeof stim.vert_pix_frame === 'undefined'){
                   stim.currentY = stim.startY + Math.round(stim.vert_pix_sec * (elapsedTime-stim.motion_start_time)/1000);
                 } else {
@@ -370,13 +412,13 @@ jsPsych.plugins["psychophysics"] = (function() {
               }
             }
 
-            if (stim.type === 'manual') {
+            if (stim.obj_type === 'manual') {
               if (trial.drawFunc === null) {
-                alert('You have to specify the drawFunc() when you set the type parameter to manual.');
+                alert('You have to specify the drawFunc() when you set the obj_type parameter to manual.');
               } else {                
                 stim.drawFunc(stim, canvas, ctx);
               }
-            } else if (stim.type === 'image') {
+            } else if (stim.obj_type === 'image') {
 
               const scale = typeof stim.scale === 'undefined' ? 1:stim.scale;
               const tmpW = stim.img.width * scale;
@@ -390,7 +432,7 @@ jsPsych.plugins["psychophysics"] = (function() {
               ctx.lineJoin = stim.lineJoin;
               ctx.miterLimit = stim.miterLimit;
               
-              if (stim.type === 'line') {
+              if (stim.obj_type === 'line') {
                 const theta = deg2rad(stim.angle);
                 const x1 = stim.currentX - stim.line_length/2 * Math.cos(theta);
                 const y1 = stim.currentY - stim.line_length/2 * Math.sin(theta);
@@ -401,7 +443,7 @@ jsPsych.plugins["psychophysics"] = (function() {
                 ctx.lineTo(x2, y2);
                 ctx.closePath();
                 ctx.stroke();
-              } else if (stim.type === 'cross') {
+              } else if (stim.obj_type === 'cross') {
                 ctx.strokeStyle = stim.line_color;
                 const x1 = stim.currentX;
                 const y1 = stim.currentY - stim.line_length/2;
@@ -417,7 +459,7 @@ jsPsych.plugins["psychophysics"] = (function() {
                 ctx.lineTo(x4, y4);
                 ctx.closePath();
                 ctx.stroke();
-              } else if (stim.type === 'rect') {
+              } else if (stim.obj_type === 'rect') {
                 // First, draw a filled rectangle, then an edge.
                 if (typeof stim.fill_color !== 'undefined') {
                   ctx.fillStyle = stim.fill_color;
@@ -427,7 +469,7 @@ jsPsych.plugins["psychophysics"] = (function() {
                   ctx.strokeStyle = stim.line_color;
                   ctx.strokeRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height);
                 }
-              } else if (stim.type === 'circle') {
+              } else if (stim.obj_type === 'circle') {
                 if (typeof stim.fill_color !== 'undefined') {
                   ctx.fillStyle = stim.fill_color;
                   ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
@@ -438,7 +480,7 @@ jsPsych.plugins["psychophysics"] = (function() {
                   ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
                   ctx.stroke();
                 }
-              } else if (stim.type === 'text') {
+              } else if (stim.obj_type === 'text') {
                 if (typeof stim.font !== 'undefined') ctx.font = stim.font;
 
                 ctx.fillStyle = stim.text_color;

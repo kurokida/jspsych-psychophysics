@@ -1,7 +1,7 @@
 All the stimuli used in the program with the jspsych-psychophysics plugin must be specified as a JavaScript object as follows:
 ```javascript
 var rect_object = {
-    type: 'rect', // means a rectangle
+    obj_type: 'rect', // means a rectangle
     startX: 200, // location in the canvas
     startY: 150,
     width: 300, // of the rectangle
@@ -34,23 +34,28 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 
 Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
-# image
+# obj_type: 'image'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the image|
 |scale|numeric|1 (original size)|Image scaling|
 
-# sound
+# obj_type: 'sound'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the sound|
 
-# line
+# obj_type: 'line'
+
+For this line object, the startX/Y property means the center position of the line.
+There are two ways to define a line. See, demos/lines.html
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
+|x1, y1|numeric|undefined| The start position of line drawing.|
+|x2, y2|numeric|undefined| The end position of line drawing.|
 |line_width|numeric|1| The width of the line|
 |line_length|numeric|undefined| The length of the line|
 |line_color|string|#000000 (black)|The color of the line|
@@ -58,7 +63,7 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-# rect
+# obj_type: 'rect'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
@@ -70,7 +75,7 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-# circle
+# obj_type: 'circle'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
@@ -81,18 +86,18 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-
-# text
+# obj_type: 'text'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
+|content|string|undefined|The content of the text. It can include '\n' to start a new line|
 |font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element](https://www.w3schools.com/tags/canvas_font.asp)|
 |text_color|string|#000000 (black)|The color of the text|
 |text_space|numeric|20|The space between lines|
-|content|string|undefined|The content of the text. It can include '\n' to start a new line|,
 
+# obj_type: 'cross' 
 
-# cross
+This object would be used as the fixation point.
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
@@ -102,19 +107,19 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-# manual (Advanced)
+# obj_type: 'manual' 
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |drawFunc|function|undefined|You can draw whatever the `<canvas>` supports| 
 
-If you want to draw something that the jspsych-psychophysics does not provide the method to draw it, you can draw it using the drawFunc function. 
+If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 
-The first argument is `stimulus` which provides the properties of the object. `stimulus.currentX/Y` might be used frequently because which  means the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
+The first argument is `stimulus` by which you can access the properties of the object. `stimulus.currentX/Y` might be used frequently because which  means the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
 
 The second argument is `canvas`, and the third argument is `context` of the canvas.
 
-The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black.
+The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, manual-drawFunc.html.
 
 ```javascript
 drawFunc: function(stimulus, canvas, context){
