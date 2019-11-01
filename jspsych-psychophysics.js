@@ -18,8 +18,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     description: '',
     parameters: {
       stimuli: {
-        //type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
-        type: jsPsych.plugins.parameterType.STRING,
+        type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
+        //type: jsPsych.plugins.parameterType.STRING,
         array: true,
         pretty_name: 'Stimuli',
         default: 'customize',
