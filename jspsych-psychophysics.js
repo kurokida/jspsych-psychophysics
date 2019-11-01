@@ -1,10 +1,11 @@
 /**
- * jspsych-mulit-objects
- * Daiichiro Kuroki
+ * jspsych-psychophysics
+ * Copyright (c) 2013 Daiichiro Kuroki
+ * Released under the MIT license
+ * 
+ * jspsych-psychophysics is a plugin for conducting Web-based psychophysical experiments using jsPsych (de Leeuw, 2015). 
  *
- * plugin for displaying images, sounds, texts, and moving geometric figures and getting a keyboard/mouse response
- *
- * documentation: 
+ * http://jspsychophysics.hes.kyushu-u.ac.jp/
  *
  **/
 
@@ -19,11 +20,71 @@ jsPsych.plugins["psychophysics"] = (function() {
     parameters: {
       stimuli: {
         type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
-        //type: jsPsych.plugins.parameterType.STRING,
         array: true,
         pretty_name: 'Stimuli',
-        default: 'customize',
         description: 'The objects will be presented in the canvas.',
+        nested: {
+          startX: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'startX',
+            default: 'center',
+            description: 'The horizontal start position.'
+          },
+          startY: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'startY',
+            default: 'center',
+            description: 'The vertical start position.'
+          },
+          endX: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'endX',
+            default: null,
+            description: 'The horizontal end position.'
+          },
+          endY: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'endY',
+            default: null,
+            description: 'The vertical end position.'
+          },
+          show_start_time: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'Show start time',
+            default: 0,
+            description: 'Time to start presenting the stimuli'
+          },
+          show_end_time: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'Show end time',
+            default: null,
+            description: 'Time to end presenting the stimuli'
+          },
+          line_width: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'Line width',
+            default: 1,
+            description: 'The line width'
+          },
+          lineJoin: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'lineJoin',
+            default: 'miter',
+            description: 'The type of the corner when two lines meet.'
+          },
+          miterLimit: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'miterLimit',
+            default: 10,
+            description: 'The maximum miter length.'
+          },
+          drawFunc: {
+            type: jsPsych.plugins.parameterType.FUNCTION,
+            pretty_name: 'Draw function',
+            default: null,
+            description: 'This function enables to move objects horizontally and vertically.'
+          },
+        }
       },
       choices: {
         type: jsPsych.plugins.parameterType.KEYCODE,
@@ -86,13 +147,6 @@ jsPsych.plugins["psychophysics"] = (function() {
         default: null,
         description: 'This function enables to move objects as you wish.'        
       },
-      // drawFunctはプラグインの関数ではなく、stimuliに渡されるオブジェクトの関数
-      // drawFunc: {
-      //   type: jsPsych.plugins.parameterType.FUNCTION,
-      //   pretty_name: 'Draw function',
-      //   default: null,
-      //   description: 'This function enables to move objects horizontally and vertically.'
-      // },
     }
   }
 
@@ -152,18 +206,10 @@ jsPsych.plugins["psychophysics"] = (function() {
     const centerX = canvas.width/2;
     const centerY = canvas.height/2;
     
-    // initialize
-    let hasStimuli = true;
-    if (trial.stimuli === 'customize') {
-      if (trial.stepFunc !== 'undefined') {
-        hasStimuli = false;
-      } else {
-        alert('You have to specify the stimuli/stepFunc parameter in the psychophysics plugin.')
-        return;
-      }
-    }
+    if ((typeof trial.stimuli === 'undefined') && (trial.stepFunc === null))
+      alert('You have to specify the stimuli/stepFunc parameter in the psychophysics plugin.')
 
-    if (hasStimuli) {
+    if (typeof trial.stimuli !== 'undefined') {
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
         if (stim.obj_type === 'sound') {
@@ -196,23 +242,11 @@ jsPsych.plugins["psychophysics"] = (function() {
 
         } else { // other than sound
 
-          if (typeof stim.startX === 'undefined' || stim.startX === 'center') stim.startX = centerX;
-          if (typeof stim.startY === 'undefined' || stim.startY === 'center') stim.startY = centerY;
+          if (stim.startX === 'center') stim.startX = centerX;
+          if (stim.startY === 'center') stim.startY = centerY;
+          if (stim.endX === 'center') stim.endX = centerX;
+          if (stim.endY === 'center') stim.endY = centerY;
 
-          if (typeof stim.endX === 'undefined') {
-            stim.endX = null;
-          } else if (stim.endX === 'center') {
-            stim.endX = centerX;
-          };
-
-          if (typeof stim.endY === 'undefined') {
-            stim.endY = null;
-          } else if (stim.endY === 'center') {
-            stim.endY = centerY;
-          };
-
-          if (typeof stim.show_start_time === 'undefined') stim.show_start_time = 0;
-          if (typeof stim.show_end_time === 'undefined') stim.show_end_time = null;
           if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
           if (typeof stim.motion_end_time === 'undefined') stim.motion_end_time = null;
           
@@ -233,9 +267,6 @@ jsPsych.plugins["psychophysics"] = (function() {
             stim.img = new Image();
             stim.img.src = stim.file;
           } else { // for drawing lines, rects, circles, and texts.
-            if (typeof stim.line_width === 'undefined') stim.line_width = 1;
-            if (typeof stim.lineJoin === 'undefined') stim.lineJoin = 'miter';
-            if (typeof stim.miterLimit === 'undefined') stim.miterLimit = 10;
 
             if (stim.obj_type === 'line') {              
               if (typeof stim.angle === 'undefined') {
@@ -413,7 +444,8 @@ jsPsych.plugins["psychophysics"] = (function() {
             }
 
             if (stim.obj_type === 'manual') {
-              if (trial.drawFunc === null) {
+              //if (trial.drawFunc === null) {
+              if (stim.drawFunc === null) {
                 alert('You have to specify the drawFunc() when you set the obj_type parameter to manual.');
               } else {                
                 stim.drawFunc(stim, canvas, ctx);

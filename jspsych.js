@@ -4,6 +4,10 @@
  *
  * documentation: docs.jspsych.org
  *
+ * The MIT License (MIT)
+ * Copyright (c) 2019 Joshua R. de Leeuw
+ * https://www.jspsych.org/about/license/
+ * 
  **/
 window.jsPsych = (function() {
 
@@ -928,6 +932,7 @@ window.jsPsych = (function() {
               if(typeof trial[param][i][p] == 'undefined' || trial[param][i][p] === null){
                 if(typeof jsPsych.plugins[trial.type].info.parameters[param].nested[p].default == 'undefined'){
                   console.error('You must specify a value for the '+p+' parameter (nested in the '+param+' parameter) in the '+trial.type+' plugin.');
+                  alert('You must specify a value for the '+p+' parameter (nested in the '+param+' parameter) in the '+trial.type+' plugin.');
                 } else {
                   trial[param][i][p] = jsPsych.plugins[trial.type].info.parameters[param].nested[p].default;
                 }
@@ -940,6 +945,7 @@ window.jsPsych = (function() {
       else if(typeof trial[param] == 'undefined' || trial[param] === null){
         if(typeof jsPsych.plugins[trial.type].info.parameters[param].default == 'undefined'){
           console.error('You must specify a value for the '+param+' parameter in the '+trial.type+' plugin.');
+          alert('You must specify a value for the '+param+' parameter in the '+trial.type+' plugin.');
         } else {
           trial[param] = jsPsych.plugins[trial.type].info.parameters[param].default;
         }
