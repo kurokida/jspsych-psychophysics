@@ -18,19 +18,22 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|type|string|undefined|The type of the object (e.g., rect, image, or sound)|
-|startX|numeric|'center'|Horizontal position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startX is specified as 'center', the object is presented at the horizontal center of the canvas. The startX is also used as the starting position in motion.|
-|startY|numeric|'center'|Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startY is specified as 'center', the object is presented at the vertical center of the canvas. The startY is also used as the starting position in motion.|
-|endX|numeric|null|Horizontal end position of the moving object|
-|endY|numeric|null|Vertical end position of the moving object|
-|horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display|
-|horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second|
-|vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame of the display|
-|vert_pix_sec|numeric|undefined|Vertical pixels by which the object moves per second|
-|show_start_time|numeric|0|Time to start presenting the object from when the trial begins|
-|show_end_time|numeric|null|Time to end presenting the object from when the trial begins|
-|motion_start_time|numeric|show_start_time|Time to start moving the object from when the trial begins|
+|obj_type|string|undefined|The type of the object (e.g., rect, image, or sound). Refer to the individual explanation below in detail.|
+|startX|numeric|'center'|Horizontal position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startX is specified as `'center'`, the object is presented at the horizontal center of the canvas. The startX is also used as the starting position in motion.|
+|startY|numeric|'center'|Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startY is specified as `'center'`, the object is presented at the vertical center of the canvas. The startY is also used as the starting position in motion.|
+|endX|numeric|null|Horizontal end position of the moving object.|
+|endY|numeric|null|Vertical end position of the moving object.|
+|horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display.|
+|horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second.|
+|vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame of the display.|
+|vert_pix_sec|numeric|undefined|Vertical pixels by which the object moves per second.|
+|show_start_time|numeric|0|Time to start presenting the object from when the trial begins.|
+|show_end_time|numeric|null|Time to end presenting the object from when the trial begins.|
+|motion_start_time|numeric|show_start_time|Time to start moving the object from when the trial begins.|
 |motion_end_time|numeric|null|Time to end moving the object from when the trial begins|
+|line_width|numeric|1| The width of the line.|
+|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
+|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
 Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
@@ -38,14 +41,14 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|file|string|undefined|The file name of the image|
-|scale|numeric|1 (original size)|Image scaling|
+|file|string|undefined|The file name of the image.|
+|scale|numeric|1 (original size)|Image scaling.|
 
 # obj_type: 'sound'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|file|string|undefined|The file name of the sound|
+|file|string|undefined|The file name of the sound.|
 
 # obj_type: 'line'
 
@@ -56,44 +59,35 @@ There are two ways to define a line. See, demos/lines.html
 |---|---|---|---|
 |x1, y1|numeric|undefined| The start position of line drawing.|
 |x2, y2|numeric|undefined| The end position of line drawing.|
-|line_width|numeric|1| The width of the line|
-|line_length|numeric|undefined| The length of the line|
-|line_color|string|#000000 (black)|The color of the line|
-|angle|numeric|undefined| The angle of the line. Zero means a horizontal line|
-|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
-|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+|line_length|numeric|undefined| The length of the line.|
+|line_color|string|#000000 (black)|The color of the line.|
+|angle|numeric|undefined| The angle of the line. Zero means a horizontal line.|
 
 # obj_type: 'rect'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|width|numeric|undefined| The width of the rectangle|
-|height|numeric|undefined| The height of the rectangle|
-|line_color|string|undefined|The color of the contour|
-|fill_color|string|undefined|The filled color of the rectangle|
-|line_width|numeric|1| The width of the line|
-|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
-|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+|width|numeric|undefined| The width of the rectangle.|
+|height|numeric|undefined| The height of the rectangle.|
+|line_color|string|undefined|The color of the contour.|
+|fill_color|string|undefined|The filled color of the rectangle.|
 
 # obj_type: 'circle'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|radius|numeric|undefined|The radius of the circle|
-|line_color|string|undefined|The color of the contour|
-|fill_color|string|undefined|The filled color of the rectangle|
-|line_width|numeric|1| The width of the line|
-|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
-|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+|radius|numeric|undefined|The radius of the circle.|
+|line_color|string|undefined|The color of the contour.|
+|fill_color|string|undefined|The filled color of the rectangle.|
 
 # obj_type: 'text'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|content|string|undefined|The content of the text. It can include '\n' to start a new line|
-|font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element](https://www.w3schools.com/tags/canvas_font.asp)|
-|text_color|string|#000000 (black)|The color of the text|
-|text_space|numeric|20|The space between lines|
+|content|string|undefined|The content of the text. It can include '\n' to start a new line.|
+|font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element.](https://www.w3schools.com/tags/canvas_font.asp)|
+|text_color|string|#000000 (black)|The color of the text.|
+|text_space|numeric|20|The space between lines.|
 
 # obj_type: 'cross' 
 
@@ -101,17 +95,14 @@ This object would be used as the fixation point.
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|line_width|numeric|1| The width of the line|
-|line_length|numeric|undefined| The length of the line|
-|line_color|string|#000000 (black)|The color of the line|
-|lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
-|miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+|line_length|numeric|undefined| The length of the line.|
+|line_color|string|#000000 (black)|The color of the line.|
 
 # obj_type: 'manual' 
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|drawFunc|function|undefined|You can draw whatever the `<canvas>` supports| 
+|drawFunc|function|undefined|You can draw whatever the `<canvas>` supports.| 
 
 If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 

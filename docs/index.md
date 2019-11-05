@@ -14,7 +14,7 @@ This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
 
 ### 1. Download the plugin file
-[Please download the files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
+[Please download the latest files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
 The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015), and released under [the MIT license](https://opensource.org/licenses/MIT).
 
 
