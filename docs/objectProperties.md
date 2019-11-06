@@ -30,7 +30,7 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |show_start_time|numeric|0|Time to start presenting the object from when the trial begins.|
 |show_end_time|numeric|null|Time to end presenting the object from when the trial begins.|
 |motion_start_time|numeric|show_start_time|Time to start moving the object from when the trial begins.|
-|motion_end_time|numeric|null|Time to end moving the object from when the trial begins|
+|motion_end_time|numeric|null|Time to end moving the object from when the trial begins.|
 |line_width|numeric|1| The width of the line.|
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
@@ -53,7 +53,7 @@ Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 # obj_type: 'line'
 
 For this line object, the startX/Y property means the center position of the line.
-There are two ways to define a line. See, demos/lines.html
+There are two ways to define a line. See, `demos/lines.html`.
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
@@ -78,13 +78,13 @@ There are two ways to define a line. See, demos/lines.html
 |---|---|---|---|
 |radius|numeric|undefined|The radius of the circle.|
 |line_color|string|undefined|The color of the contour.|
-|fill_color|string|undefined|The filled color of the rectangle.|
+|fill_color|string|undefined|The filled color of the circle.|
 
 # obj_type: 'text'
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|content|string|undefined|The content of the text. It can include '\n' to start a new line.|
+|content|string|undefined|The content of the text. It can include `\n` to start a new line.|
 |font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element.](https://www.w3schools.com/tags/canvas_font.asp)|
 |text_color|string|#000000 (black)|The color of the text.|
 |text_space|numeric|20|The space between lines.|
@@ -106,11 +106,11 @@ This object would be used as the fixation point.
 
 If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 
-The first argument is `stimulus` by which you can access the properties of the object. `stimulus.currentX/Y` might be used frequently because which  means the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
+The first argument is `stimulus` by which you can access the properties of the object. For example, `stimulus.currentX/Y` can be used to refer the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
 
 The second argument is `canvas`, and the third argument is `context` of the canvas.
 
-The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, manual-drawFunc.html.
+The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, `demos/manual-drawFunc.html`.
 
 ```javascript
 drawFunc: function(stimulus, canvas, context){
@@ -125,5 +125,6 @@ drawFunc: function(stimulus, canvas, context){
     context.fillStyle = grad;
     context.rect(stimulus.currentX, stimulus.currentY, gradLength, gradLength);
     context.fill();
+    context.closePath();
 }
 ```
