@@ -460,7 +460,7 @@ jsPsych.plugins["psychophysics"] = (function() {
             } else { // for line, rect, circle etc.
               ctx.beginPath();
               
-              ctx.line_width = stim.line_width;
+              ctx.lineWidth = stim.line_width;
               ctx.lineJoin = stim.lineJoin;
               ctx.miterLimit = stim.miterLimit;
               
