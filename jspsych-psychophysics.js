@@ -443,13 +443,8 @@ jsPsych.plugins["psychophysics"] = (function() {
               }
             }
 
-            if (stim.obj_type === 'manual') {
-              //if (trial.drawFunc === null) {
-              if (stim.drawFunc === null) {
-                alert('You have to specify the drawFunc() when you set the obj_type parameter to manual.');
-              } else {                
-                stim.drawFunc(stim, canvas, ctx);
-              }
+            if (stim.drawFunc !== null) {
+              stim.drawFunc(stim, canvas, ctx);
             } else if (stim.obj_type === 'image') {
 
               const scale = typeof stim.scale === 'undefined' ? 1:stim.scale;

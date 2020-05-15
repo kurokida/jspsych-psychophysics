@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use the drawFunc.
+
+    var part_of_image = {
+        obj_type: 'image',
+        file: './img/tape.png',
+        horiz_pix_sec: 30,
+        show_start_time: 500,
+        motion_start_time: 1000,
+        startX: 100,
+        startY: 100,
+        drawFunc: function(stimulus, canvas, context){
+            context.drawImage(stimulus.img, 0, 0, stimulus.img.width/2, stimulus.img.height/2, stimulus.currentX, stimulus.currentY, stimulus.img.width/2, stimulus.img.height/2); 
+        }
+    }
+    
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [part_of_image],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

@@ -128,3 +128,5 @@ drawFunc: function(stimulus, canvas, context){
     context.closePath();
 }
 ```
+
+You can also use the `drawFunc` with other than 'manual', for example, with 'image'. See, `demos/draw_part_of_image.html`.
