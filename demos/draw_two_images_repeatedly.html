@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present two images repeatedly until a participant responds to them.
+    // This demonstration can be applied to the study on like change blindness.
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+        './img/pin.png',
+        './img/tape.png',
+        './img/clip.png'
+    ];
+
+    
+    const trial = {
+        timeline: [
+            {
+                type: 'psychophysics',
+                stimuli: [
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('firstImage'),
+                    },
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('secondImage'),
+                    }
+                ],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                stepFunc: function(trial, canvas, context, elapsedTime){
+                    const first_image_onset = 0; // ms
+                    const second_image_onset = 1000; // ms
+                    const display_duration = 500; // ms
+                    const isi = 500; // ms
+                    const period = (display_duration + isi) * 2; // 2 images
+
+                    const time_from_first_image_onset = elapsedTime % period;
+
+                    if (time_from_first_image_onset > first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
+                        const stim = trial.stimuli[0];
+                        context.drawImage(stim.img, 0, 0); 
+                    }
+
+                    if (time_from_first_image_onset > second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
+                        const stim = trial.stimuli[1];
+                        context.drawImage(stim.img, 0, 0); 
+                    }
+                }
+            },
+        ],
+        timeline_variables: [
+            {firstImage: images[0], secondImage: images[1]},
+            {firstImage: images[2], secondImage: images[3]},
+            {firstImage: images[4], secondImage: images[5]}
+        ],
+        randomize_order: true
+    }
+    
+    jsPsych.init({
+        timeline: [trial],
+        preload_images: images, // The image data should be preloaded.
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>
