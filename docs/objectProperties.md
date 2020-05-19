@@ -35,7 +35,20 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
+NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
+
+CAUTION: [The image and sound files must be preloaded in the jsPsych.init function manually](https://www.jspsych.org/overview/media-preloading/).
+
+```javascript
+var images = ['img/file1.png'];
+var audio = ['audio/foo.mp3'];
+
+jsPsych.init({
+    timeline: [trial],
+    preload_audio: audio,
+    preload_images: images,
+});
+```
 
 # obj_type: 'image'
 
