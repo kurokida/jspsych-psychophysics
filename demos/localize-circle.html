@@ -23,22 +23,32 @@
         choices: ['space'],
     }
     
-    var circle_object = {
-        obj_type: 'circle',
-        startX: 500, // location in the canvas
-        startY: 300,
-        radius: 10,
-        line_color: 'black', // You can use the HTML color name instead of the HEX color.
-        fill_color: 'black',
-        show_start_time: 500, // ms after the start of the trial
-        show_end_time: 550
-    }
-
     var trial = {
-        type: 'psychophysics',
-        stimuli: [circle_object],
-        response_type: 'mouse', // The default of the response_type is 'key'.
-        response_start_time: 550, // When the response_start_time is the same as the show_end_time of the circle_object, the RT is the time from disappearing of the circle until the participant’s response.
+        timeline: [
+            {
+                type: 'psychophysics',
+                stimuli: [
+                    {
+                        obj_type: 'circle',
+                        startX: jsPsych.timelineVariable('posX'), // location in the canvas
+                        startY: jsPsych.timelineVariable('posY'),
+                        radius: 10,
+                        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+                        fill_color: 'black',
+                        show_start_time: 500, // ms after the start of the trial
+                        show_end_time: 550
+                    }
+                ],
+                response_type: 'mouse', // The default of the response_type is 'key'.
+                response_start_time: 550, // When the response_start_time is the same as the show_end_time of the circle_object, the RT is the time from disappearing of the circle until the participant’s response.
+            }
+        ],
+        timeline_variables: [
+            {posX: 100, posY: 300},
+            {posX: 300, posY: 200},
+            {posX: 500, posY: 400},
+        ],
+        repetitions: 3
     }
 
     jsPsych.init({

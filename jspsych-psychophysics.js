@@ -1,6 +1,6 @@
 /**
  * jspsych-psychophysics
- * Copyright (c) 2013 Daiichiro Kuroki
+ * Copyright (c) 2019 Daiichiro Kuroki
  * Released under the MIT license
  * 
  * jspsych-psychophysics is a plugin for conducting Web-based psychophysical experiments using jsPsych (de Leeuw, 2015). 
@@ -229,8 +229,29 @@ jsPsych.plugins["psychophysics"] = (function() {
       return
     }
 
-    function start_audio(stim) {
-      console.log('start_audio');
+    // function start_audio(stim) {
+      
+    // }
+
+    const set_functions = {
+      sound: set_sound,
+      image: set_image,
+      line: set_line,
+      rect: set_rect,
+      circle: set_circle,
+      text: set_text,
+      cross: set_cross,
+      manual: set_manual
+    }
+
+    function set_sound(stim){
+      if (typeof stim.file === 'undefined') {
+        alert('You have to specify the file property.')
+        return;
+      }
+
+      console.log('start_sound2');
+
       // setup stimulus
       stim.context = jsPsych.pluginAPI.audioContext();
       if(stim.context !== null){
@@ -257,92 +278,27 @@ jsPsych.plugins["psychophysics"] = (function() {
       }, stim.show_start_time);
     }
 
-    for (let i = 0; i < trial.stimuli.length; i++){
-      const stim = trial.stimuli[i];
-      if (stim.obj_type === 'sound') {
-        if (typeof stim.file === 'undefined') {
-          alert('You have to specify the file property.')
-          return;
-        }
-        start_audio(stim);
-      } else { // other than sound
+    function common_set(stim){
+      if (stim.startX === 'center') stim.startX = centerX;
+      if (stim.startY === 'center') stim.startY = centerY;
+      if (stim.endX === 'center') stim.endX = centerX;
+      if (stim.endY === 'center') stim.endY = centerY;
 
-        if (stim.startX === 'center') stim.startX = centerX;
-        if (stim.startY === 'center') stim.startY = centerY;
-        if (stim.endX === 'center') stim.endX = centerX;
-        if (stim.endY === 'center') stim.endY = centerY;
+      if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
+      if (typeof stim.motion_end_time === 'undefined') stim.motion_end_time = null;
+      if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
+      if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
+      
+      // If the pix_frame is specified, the calc_velocity returns an undefined.
+      stim.horiz_pix_sec = calc_velocity('horiz', stim);
+      stim.vert_pix_sec = calc_velocity('vert', stim);
 
-        if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
-        if (typeof stim.motion_end_time === 'undefined') stim.motion_end_time = null;
-        if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
-        if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
-        
-        stim.horiz_pix_sec = checkVelocity('horiz', stim);
-        stim.vert_pix_sec = checkVelocity('vert', stim);
-
-        // console.log(stim.horiz_pix_sec);
-        // console.log(stim.vert_pix_sec);
-        // console.log(stim.horiz_pix_frame);
-        // console.log(stim.vert_pix_frame);
-
-        // currentX/Y is changed per frame.
-        stim.currentX = stim.startX;
-        stim.currentY = stim.startY;
-
-        if (stim.obj_type === 'image') {
-          if (typeof stim.file === 'undefined') alert('You have to specify the file property.');
-          stim.img = new Image();
-          stim.img.src = stim.file;
-        } else { // for drawing lines, rects, circles, and texts.
-
-          if (stim.obj_type === 'line') {              
-            if (typeof stim.angle === 'undefined') {
-              if ((typeof stim.x1 === 'undefined') || (typeof stim.x2 === 'undefined') || (typeof stim.y1 === 'undefined') || (typeof stim.y2 === 'undefined')){
-                alert('You have to specify the angle of lines, or the start (x1, y1) and end (x2, y2) coordinates.');
-                return;
-              }
-              // The start (x1, y1) and end (x2, y2) coordinates are defined.
-              // For motion, startX/Y must be calculated.
-              stim.startX = (stim.x1 + stim.x2)/2;
-              stim.startY = (stim.y1 + stim.y2)/2;
-              stim.currentX = stim.startX;
-              stim.currentY = stim.startY;
-              stim.angle = Math.atan((stim.y2 - stim.y1)/(stim.x2 - stim.x1)) * (180 / Math.PI);
-              stim.line_length = Math.sqrt((stim.x2 - stim.x1) ** 2 + (stim.y2 - stim.y1) ** 2);
-            } else {
-              if ((typeof stim.x1 !== 'undefined') || (typeof stim.x2 !== 'undefined') || (typeof stim.y1 !== 'undefined') || (typeof stim.y2 !== 'undefined'))
-                alert('You can not specify the angle and positions of the line at the same time.')
-              if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length property.');
-              
-            }
-            if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
-          } else if (stim.obj_type === 'rect') {
-            if (typeof stim.width === 'undefined') alert('You have to specify the width of rectangles.');
-            if (typeof stim.height === 'undefined') alert('You have to specify the height of rectangles.');
-            if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');
-          } else if (stim.obj_type === 'circle') {
-            // console.log('circle')
-            if (typeof stim.radius === 'undefined') alert('You have to specify the radius of circles.');
-            if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');
-          } else if (stim.obj_type === 'text'){
-            if (typeof stim.content === 'undefined') alert('You have to specify the content of texts.');
-            if (typeof stim.text_color === 'undefined') stim.text_color = '#000000';
-            if (typeof stim.text_space === 'undefined') stim.text_space = 20;
-            //ctx.font = "22px 'Arial'";
-          } else if (stim.obj_type === 'manual'){
-            //
-          } else if (stim.obj_type === 'cross'){
-            if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
-            if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
-          } else {
-            alert('You have missed to specify the obj_type property in the ' + (i+1) + 'th object.')
-          }
-
-        }
-      }
+      // currentX/Y is changed per frame.
+      stim.currentX = stim.startX;
+      stim.currentY = stim.startY;
     }
-    
-    function checkVelocity (direction, stim){
+
+    function calc_velocity (direction, stim){
       let pix_sec , pix_frame, startPos, endPos;
       if (direction === 'horiz'){
         pix_sec = stim.horiz_pix_sec;
@@ -380,7 +336,82 @@ jsPsych.plugins["psychophysics"] = (function() {
       return pix_sec; // This is 'undefined' when you specify the pix_frame.
     }
 
-    //console.log(trial)
+    function set_image(stim){
+      common_set(stim);
+      if (typeof stim.file === 'undefined') {
+        alert('You have to specify the file property.');
+        return;
+      }
+      stim.img = new Image();
+      stim.img.src = stim.file;
+    }
+
+    function set_line(stim){
+      common_set(stim);
+      if (typeof stim.angle === 'undefined') {
+        if ((typeof stim.x1 === 'undefined') || (typeof stim.x2 === 'undefined') || (typeof stim.y1 === 'undefined') || (typeof stim.y2 === 'undefined')){
+          alert('You have to specify the angle of lines, or the start (x1, y1) and end (x2, y2) coordinates.');
+          return;
+        }
+        // The start (x1, y1) and end (x2, y2) coordinates are defined.
+        // For motion, startX/Y must be calculated.
+        stim.startX = (stim.x1 + stim.x2)/2;
+        stim.startY = (stim.y1 + stim.y2)/2;
+        stim.currentX = stim.startX;
+        stim.currentY = stim.startY;
+        stim.angle = Math.atan((stim.y2 - stim.y1)/(stim.x2 - stim.x1)) * (180 / Math.PI);
+        stim.line_length = Math.sqrt((stim.x2 - stim.x1) ** 2 + (stim.y2 - stim.y1) ** 2);
+      } else {
+        if ((typeof stim.x1 !== 'undefined') || (typeof stim.x2 !== 'undefined') || (typeof stim.y1 !== 'undefined') || (typeof stim.y2 !== 'undefined'))
+          alert('You can not specify the angle and positions of the line at the same time.')
+        if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length property.');
+        
+      }
+      if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
+    }
+
+    function set_rect(stim){
+      common_set(stim);
+      if (typeof stim.width === 'undefined') alert('You have to specify the width of the rectangle.');
+      if (typeof stim.height === 'undefined') alert('You have to specify the height of the rectangle.');
+      if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of the line_color or fill_color property.');      
+    }
+
+    function set_circle(stim){
+      common_set(stim);
+      if (typeof stim.radius === 'undefined') alert('You have to specify the radius of circles.');
+      if (typeof stim.line_color === 'undefined' && typeof stim.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');      
+    }
+
+    function set_text(stim){
+      common_set(stim);
+      if (typeof stim.content === 'undefined') alert('You have to specify the content of texts.');
+      if (typeof stim.text_color === 'undefined') stim.text_color = '#000000';
+      if (typeof stim.text_space === 'undefined') stim.text_space = 20;
+    }
+
+    function set_cross(stim){
+      common_set(stim);
+      if (typeof stim.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
+      if (typeof stim.line_color === 'undefined') stim.line_color = '#000000';
+    }
+
+    function set_manual(stim){
+      common_set(stim);
+    }
+    
+    /////////////////////////////////////////////////////////
+    // check and set the property for all stimuli
+    if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the stepFunc is specified.
+      for (let i = 0; i < trial.stimuli.length; i++){
+        const stim = trial.stimuli[i];
+        if (typeof stim.obj_type === 'undefined'){
+          alert('You have missed to specify the obj_type property in the ' + (i+1) + 'th object.');
+          return
+        }
+        set_functions[stim.obj_type](stim);
+      }
+    }
 
     function mouseDownFunc(e){
       
@@ -406,7 +437,178 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     //console.log(canvas.style.left);
 
+    // When the 'stim' is in motion, update the position after the elapsed time.
+    function update_position(stim, elapsed){
+      const motion_start = stim.is_frame ? stim.motion_start_frame : stim.motion_start_time;
+      const motion_end = stim.is_frame ? stim.motion_end_frame : stim.motion_end_time;
+
+      if (elapsed < motion_start) return;
+      if (motion_end !== null && elapsed >= motion_end) return;
+
+      // Note that: You can not specify the speed, location, and time at the same time.
+
+      let LtoR = true; // true = The object moves from left to right
+
+      if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
+        if (stim.horiz_pix_sec < 0) LtoR = false;
+      } else {
+        if (stim.horiz_pix_frame < 0) LtoR = false;
+      }
+
+      if (stim.endX === null || (LtoR && stim.currentX <= stim.endX) || (!LtoR && stim.currentX >= stim.endX)) {
+        if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
+          stim.currentX = stim.startX + Math.round(stim.horiz_pix_sec * (elapsed-motion_start)/1000); // This should be calculated in seconds.
+        } else {
+          stim.currentX += stim.horiz_pix_frame; 
+        }
+      }
+
+      let UtoD = true; // true = The object moves from up to down
+
+      if (typeof stim.vert_pix_frame === 'undefined'){ // In this case, vert_pix_sec is defined.
+        if (stim.vert_pix_sec < 0) UtoD = false;
+      } else {
+        if (stim.vert_pix_frame < 0) UtoD = false;
+      }
+
+      if (stim.endY === null || (UtoD && stim.currentY <= stim.endY) || (!UtoD && stim.currentY >= stim.endY)) {
+        if (typeof stim.vert_pix_frame === 'undefined'){
+          stim.currentY = stim.startY + Math.round(stim.vert_pix_sec * (elapsed-motion_start)/1000); // This should be calculated in seconds.
+        } else {
+          stim.currentY += stim.vert_pix_frame;
+        }
+      }
+    }
+
+    const present_functions = {
+      image: present_image,
+      line: present_line,
+      rect: present_rect,
+      circle: present_circle,
+      text: present_text,
+      cross: present_cross,
+      sound: present_sound
+    }
     
+    function present_image(stim){
+      const scale = typeof stim.scale === 'undefined' ? 1:stim.scale;
+      const tmpW = stim.img.width * scale;
+      const tmpH = stim.img.height * scale;              
+      ctx.drawImage(stim.img, 0, 0, stim.img.width, stim.img.height, stim.currentX - tmpW / 2, stim.currentY - tmpH / 2, tmpW, tmpH); 
+    }
+
+    function present_line(stim){
+      // common
+      ctx.beginPath();            
+      ctx.lineWidth = stim.line_width;
+      ctx.lineJoin = stim.lineJoin;
+      ctx.miterLimit = stim.miterLimit;
+      //
+      const theta = deg2rad(stim.angle);
+      const x1 = stim.currentX - stim.line_length/2 * Math.cos(theta);
+      const y1 = stim.currentY - stim.line_length/2 * Math.sin(theta);
+      const x2 = stim.currentX + stim.line_length/2 * Math.cos(theta);
+      const y2 = stim.currentY + stim.line_length/2 * Math.sin(theta);
+      ctx.strokeStyle = stim.line_color;
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    function present_rect(stim){
+      // common
+      // ctx.beginPath();            
+      ctx.lineWidth = stim.line_width;
+      ctx.lineJoin = stim.lineJoin;
+      ctx.miterLimit = stim.miterLimit;
+      //
+      // First, draw a filled rectangle, then an edge.
+      if (typeof stim.fill_color !== 'undefined') {
+        ctx.fillStyle = stim.fill_color;
+        ctx.fillRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height); 
+      } 
+      if (typeof stim.line_color !== 'undefined') {
+        ctx.strokeStyle = stim.line_color;
+        ctx.strokeRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height);
+      }      
+    }
+
+    function present_cross(stim){
+      // common
+      ctx.beginPath();            
+      ctx.lineWidth = stim.line_width;
+      ctx.lineJoin = stim.lineJoin;
+      ctx.miterLimit = stim.miterLimit;
+      //
+      ctx.strokeStyle = stim.line_color;
+      const x1 = stim.currentX;
+      const y1 = stim.currentY - stim.line_length/2;
+      const x2 = stim.currentX;
+      const y2 = stim.currentY + stim.line_length/2;                
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      const x3 = stim.currentX - stim.line_length/2;
+      const y3 = stim.currentY;
+      const x4 = stim.currentX + stim.line_length/2;
+      const y4 = stim.currentY;                
+      ctx.moveTo(x3, y3);
+      ctx.lineTo(x4, y4);
+      // ctx.closePath();
+      ctx.stroke();
+    }
+
+    function present_circle(stim){
+      // common
+      ctx.beginPath();            
+      ctx.lineWidth = stim.line_width;
+      ctx.lineJoin = stim.lineJoin;
+      ctx.miterLimit = stim.miterLimit;
+      //
+      if (typeof stim.fill_color !== 'undefined') {
+        ctx.fillStyle = stim.fill_color;
+        ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
+        ctx.fill();
+      } 
+      if (typeof stim.line_color !== 'undefined') {
+        ctx.strokeStyle = stim.line_color;
+        ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
+        ctx.stroke();
+      }
+    }
+
+    function present_text(stim){
+      // common
+      // ctx.beginPath();            
+      ctx.lineWidth = stim.line_width;
+      ctx.lineJoin = stim.lineJoin;
+      ctx.miterLimit = stim.miterLimit;
+      //
+      if (typeof stim.font !== 'undefined') ctx.font = stim.font;
+
+      ctx.fillStyle = stim.text_color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle"
+
+      let column = [''];
+      let line = 0;
+      for (let i = 0; i < stim.content.length; i++) {
+          let char = stim.content.charAt(i);
+
+          if (char == "\n") {    
+              line++;
+              column[line] = '';
+          }
+          column[line] += char;
+      }
+
+      for (let i = 0; i < column.length; i++) {
+          ctx.fillText(column[i], stim.currentX, stim.currentY - stim.text_space * (column.length-1) / 2 + stim.text_space * i);
+      }
+    }
+
+    function present_sound(stim){
+      // This is not needed actually.
+    }
 
     let startStep = null;
     let sumOfStep;
@@ -415,163 +617,40 @@ jsPsych.plugins["psychophysics"] = (function() {
     function step(timestamp){
       if (!startStep) {
         startStep = timestamp;
-        // sumOfFrameTime = 0;
         sumOfStep = 0;
       } else {
-        // sumOfFrameTime += elapsedTime;
         sumOfStep += 1;
       }
       elapsedTime = timestamp - startStep; // unit is ms. This can be used within the stepFunc().
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (trial.stepFunc === null) {
+      if (trial.stepFunc !== null) {
+        trial.stepFunc(trial, canvas, ctx, elapsedTime, sumOfStep); // customize
+        frameRequestID = window.requestAnimationFrame(step);
+        return
+      }
 
-        for (let i = 0; i < trial.stimuli.length; i++){
-          const stim = trial.stimuli[i];
-          const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
-          const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
-          const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
-          const motion_start = stim.is_frame ? stim.motion_start_frame : stim.motion_start_time;
-          const motion_end = stim.is_frame ? stim.motion_end_frame : stim.motion_end_time;
+      for (let i = 0; i < trial.stimuli.length; i++){
+        const stim = trial.stimuli[i];
+        const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
+        const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
+        const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
 
-          if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
+        if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
+          update_position(stim, elapsed);
 
-            if (elapsed >= motion_start && (motion_end === null | elapsed < motion_end)) {
-              // Note that: You can not specify the speed, location, and time at the same time.
-
-              let LtoR = true; // true = The object moves from left to right
-
-              if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
-                if (stim.horiz_pix_sec < 0) LtoR = false;
-              } else {
-                if (stim.horiz_pix_frame < 0) LtoR = false;
-              }
-
-              if (stim.endX === null || (LtoR && stim.currentX <= stim.endX) || (!LtoR && stim.currentX >= stim.endX)) {
-                if (typeof stim.horiz_pix_frame === 'undefined'){ // In this case, horiz_pix_sec is defined.
-                  stim.currentX = stim.startX + Math.round(stim.horiz_pix_sec * (elapsedTime-stim.motion_start_time)/1000);
-                } else {
-                  stim.currentX += stim.horiz_pix_frame;
-                  
-                }
-              }
-
-              let UtoD = true; // true = The object moves from up to down
-
-              if (typeof stim.vert_pix_frame === 'undefined'){ // In this case, vert_pix_sec is defined.
-                if (stim.vert_pix_sec < 0) UtoD = false;
-              } else {
-                if (stim.vert_pix_frame < 0) UtoD = false;
-              }
-
-              if (stim.endY === null || (UtoD && stim.currentY <= stim.endY) || (!UtoD && stim.currentY >= stim.endY)) {
-                if (typeof stim.vert_pix_frame === 'undefined'){
-                  stim.currentY = stim.startY + Math.round(stim.vert_pix_sec * (elapsedTime-stim.motion_start_time)/1000);
-                } else {
-                  stim.currentY += stim.vert_pix_frame;
-                  
-                }
-              }
-            }
-
-            if (stim.drawFunc !== null) {
-              stim.drawFunc(stim, canvas, ctx);
-            } else if (stim.obj_type === 'image') {
-
-              const scale = typeof stim.scale === 'undefined' ? 1:stim.scale;
-              const tmpW = stim.img.width * scale;
-              const tmpH = stim.img.height * scale;              
-              ctx.drawImage(stim.img, 0, 0, stim.img.width, stim.img.height, stim.currentX - tmpW / 2, stim.currentY - tmpH / 2, tmpW, tmpH); 
-
-            } else { // for line, rect, circle etc.
-              ctx.beginPath();
-              
-              ctx.lineWidth = stim.line_width;
-              ctx.lineJoin = stim.lineJoin;
-              ctx.miterLimit = stim.miterLimit;
-              
-              if (stim.obj_type === 'line') {
-                const theta = deg2rad(stim.angle);
-                const x1 = stim.currentX - stim.line_length/2 * Math.cos(theta);
-                const y1 = stim.currentY - stim.line_length/2 * Math.sin(theta);
-                const x2 = stim.currentX + stim.line_length/2 * Math.cos(theta);
-                const y2 = stim.currentY + stim.line_length/2 * Math.sin(theta);
-                ctx.strokeStyle = stim.line_color;
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.closePath();
-                ctx.stroke();
-              } else if (stim.obj_type === 'cross') {
-                ctx.strokeStyle = stim.line_color;
-                const x1 = stim.currentX;
-                const y1 = stim.currentY - stim.line_length/2;
-                const x2 = stim.currentX;
-                const y2 = stim.currentY + stim.line_length/2;                
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                const x3 = stim.currentX - stim.line_length/2;
-                const y3 = stim.currentY;
-                const x4 = stim.currentX + stim.line_length/2;
-                const y4 = stim.currentY;                
-                ctx.moveTo(x3, y3);
-                ctx.lineTo(x4, y4);
-                ctx.closePath();
-                ctx.stroke();
-              } else if (stim.obj_type === 'rect') {
-                // First, draw a filled rectangle, then an edge.
-                if (typeof stim.fill_color !== 'undefined') {
-                  ctx.fillStyle = stim.fill_color;
-                  ctx.fillRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height); 
-                } 
-                if (typeof stim.line_color !== 'undefined') {
-                  ctx.strokeStyle = stim.line_color;
-                  ctx.strokeRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height);
-                }
-              } else if (stim.obj_type === 'circle') {
-                if (typeof stim.fill_color !== 'undefined') {
-                  ctx.fillStyle = stim.fill_color;
-                  ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
-                  ctx.fill();
-                } 
-                if (typeof stim.line_color !== 'undefined') {
-                  ctx.strokeStyle = stim.line_color;
-                  ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
-                  ctx.stroke();
-                }
-              } else if (stim.obj_type === 'text') {
-                if (typeof stim.font !== 'undefined') ctx.font = stim.font;
-
-                ctx.fillStyle = stim.text_color;
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle"
-
-                let column = [''];
-                let line = 0;
-                for (let i = 0; i < stim.content.length; i++) {
-                    let char = stim.content.charAt(i);
-
-                    if (char == "\n") {    
-                        line++;
-                        column[line] = '';
-                    }
-                    column[line] += char;
-                }
-
-                for (let i = 0; i < column.length; i++) {
-                    ctx.fillText(column[i], stim.currentX, stim.currentY - stim.text_space * (column.length-1) / 2 + stim.text_space * i);
-                }
-              }
-            }
+          if (stim.drawFunc !== null) {
+            stim.drawFunc(stim, canvas, ctx);
+          } else {
+            present_functions[stim.obj_type](stim);
           }
         }
-      } else {
-        trial.stepFunc(trial, canvas, ctx, elapsed); // customize
       }
-    
       frameRequestID = window.requestAnimationFrame(step);
     }
     
+    // Start the step function.
     let frameRequestID = window.requestAnimationFrame(step);
 
     
