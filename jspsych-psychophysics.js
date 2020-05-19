@@ -60,6 +60,18 @@ jsPsych.plugins["psychophysics"] = (function() {
             default: null,
             description: 'Time to end presenting the stimuli'
           },
+          show_start_frame: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'Show start frame',
+            default: 0,
+            description: 'Time to start presenting the stimuli in frames'
+          },
+          show_end_frame: {
+            type: jsPsych.plugins.parameterType.INT,
+            pretty_name: 'Show end frame',
+            default: null,
+            description: 'Time to end presenting the stimuli in frames'
+          },
           line_width: {
             type: jsPsych.plugins.parameterType.INT,
             pretty_name: 'Line width',
@@ -83,6 +95,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             pretty_name: 'Draw function',
             default: null,
             description: 'This function enables to move objects horizontally and vertically.'
+          },
+          is_frame: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'time is in frames',
+            default: false,
+            description: 'If true, time is treated in frames.'
           },
         }
       },
@@ -212,6 +230,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     }
 
     function start_audio(stim) {
+      console.log('start_audio');
       // setup stimulus
       stim.context = jsPsych.pluginAPI.audioContext();
       if(stim.context !== null){
@@ -255,6 +274,8 @@ jsPsych.plugins["psychophysics"] = (function() {
 
         if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
         if (typeof stim.motion_end_time === 'undefined') stim.motion_end_time = null;
+        if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
+        if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
         
         stim.horiz_pix_sec = checkVelocity('horiz', stim);
         stim.vert_pix_sec = checkVelocity('vert', stim);
@@ -408,9 +429,15 @@ jsPsych.plugins["psychophysics"] = (function() {
 
         for (let i = 0; i < trial.stimuli.length; i++){
           const stim = trial.stimuli[i];
-          if (elapsedTime >= stim.show_start_time && (stim.show_end_time === null || elapsedTime <= stim.show_end_time)) {
+          const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
+          const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
+          const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
+          const motion_start = stim.is_frame ? stim.motion_start_frame : stim.motion_start_time;
+          const motion_end = stim.is_frame ? stim.motion_end_frame : stim.motion_end_time;
 
-            if (elapsedTime >= stim.motion_start_time && (stim.motion_end_time === null | elapsedTime <= stim.motion_end_time)) {
+          if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
+
+            if (elapsed >= motion_start && (motion_end === null | elapsed < motion_end)) {
               // Note that: You can not specify the speed, location, and time at the same time.
 
               let LtoR = true; // true = The object moves from left to right
@@ -539,7 +566,7 @@ jsPsych.plugins["psychophysics"] = (function() {
           }
         }
       } else {
-        trial.stepFunc(trial, canvas, ctx, elapsedTime); // customize
+        trial.stepFunc(trial, canvas, ctx, elapsed); // customize
       }
     
       frameRequestID = window.requestAnimationFrame(step);
