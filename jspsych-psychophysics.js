@@ -229,10 +229,6 @@ jsPsych.plugins["psychophysics"] = (function() {
       return
     }
 
-    // function start_audio(stim) {
-      
-    // }
-
     const set_functions = {
       sound: set_sound,
       image: set_image,
@@ -249,8 +245,6 @@ jsPsych.plugins["psychophysics"] = (function() {
         alert('You have to specify the file property.')
         return;
       }
-
-      console.log('start_sound2');
 
       // setup stimulus
       stim.context = jsPsych.pluginAPI.audioContext();
@@ -270,10 +264,8 @@ jsPsych.plugins["psychophysics"] = (function() {
         if(stim.context !== null){
           //startTime = stim.context.currentTime;
           stim.source.start(stim.context.currentTime);
-          //console.log('sound start 1')
         } else {
           stim.audio.play();
-          //console.log('sound start 2')
         }  
       }, stim.show_start_time);
     }
@@ -289,6 +281,8 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
       if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
       
+      // calculate the velocity using the distance and the time.
+      // If the pix_sec is specified, the calc_velocity returns the intact pix_sec.
       // If the pix_frame is specified, the calc_velocity returns an undefined.
       stim.horiz_pix_sec = calc_velocity('horiz', stim);
       stim.vert_pix_sec = calc_velocity('vert', stim);
@@ -318,22 +312,20 @@ jsPsych.plugins["psychophysics"] = (function() {
         pix_sec = 0; // stop the motion
       }
       
-      if (typeof pix_sec === 'undefined') {
-        if (typeof pix_frame === 'undefined') {
-          if (endPos === null){
-            pix_sec = 0;
-          } else {
-            if (motion_end_time === null) { // 止まる場所だけ決めて、運動速度も運動時間も決めていない
-              alert('When you use the endX/Y property you have to specify the motion_end_time or the velocity.')
-              pix_sec = 0; // stop the motion
-            } else {
-              pix_sec = (endPos - startPos)/(motion_end_time/1000 - motion_start_time/1000);
-            }
-          }
-        }
+      if (typeof pix_sec !== 'undefined' || typeof pix_frame !== 'undefined') return pix_sec; // returns an 'undefined' when you specify the pix_frame.
+
+      // Velocity is not specified
+          
+      if (endPos === null) return 0; // This is not motion.
+
+      // Distance is specified
+
+      if (motion_end_time === null) { // Only the distance is known
+        alert('When you use the endX/Y property you have to specify the motion_end_time or the velocity.')
+        return 0; // stop the motion
       }
 
-      return pix_sec; // This is 'undefined' when you specify the pix_frame.
+      return (endPos - startPos)/(motion_end_time/1000 - motion_start_time/1000);
     }
 
     function set_image(stim){
@@ -637,14 +629,16 @@ jsPsych.plugins["psychophysics"] = (function() {
         const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
         const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
 
-        if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
-          update_position(stim, elapsed);
+        // if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
+        if (elapsed < show_start) continue;
+        if (show_end !== null && elapsed >= show_end) continue;
 
-          if (stim.drawFunc !== null) {
-            stim.drawFunc(stim, canvas, ctx);
-          } else {
-            present_functions[stim.obj_type](stim);
-          }
+        update_position(stim, elapsed);
+
+        if (stim.drawFunc !== null) {
+          stim.drawFunc(stim, canvas, ctx);
+        } else {
+          present_functions[stim.obj_type](stim);
         }
       }
       frameRequestID = window.requestAnimationFrame(step);
