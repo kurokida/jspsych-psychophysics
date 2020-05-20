@@ -5,6 +5,7 @@ This plugin can be used free of charge under the MIT license.
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates. You can also present moving objects and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate. [See the description of the stepFunc in detail](pluginParams.md).
+- The position of the mouse click can be recorded as a response.
 - According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing a paper.
 
 ## How to use the jspsych-psychophysics plugin
@@ -76,9 +77,7 @@ The **stimuli** property must include all the objects to be presented in the tri
 
 This trial object must be included as the **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
-Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, demos/randomizedImages.html and demos/towSoundsWithSOA.html.
-
-You can also make the participants respond using a mouse instead of a keyboard using the **response_type** property. See, demos/localize-circle.html.
+Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html).
 
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
