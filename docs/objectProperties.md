@@ -27,15 +27,33 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second.|
 |vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame of the display.|
 |vert_pix_sec|numeric|undefined|Vertical pixels by which the object moves per second.|
-|show_start_time|numeric|0|Time to start presenting the object from when the trial begins.|
-|show_end_time|numeric|null|Time to end presenting the object from when the trial begins.|
-|motion_start_time|numeric|show_start_time|Time to start moving the object from when the trial begins.|
-|motion_end_time|numeric|null|Time to end moving the object from when the trial begins.|
+|show_start_time|numeric|0|Time in millisconds to start presenting the object from when the trial begins.|
+|show_end_time|numeric|null|Time in millisconds to end presenting the object from when the trial begins.|
+|motion_start_time|numeric|show_start_time|Time in millisconds to start moving the object from when the trial begins.|
+|motion_end_time|numeric|null|Time in millisconds to end moving the object from when the trial begins.|
+|show_start_frame|numeric|0|Time in frames to start presenting the object from when the trial begins.|
+|show_end_frame|numeric|null|Time in frames to end presenting the object from when the trial begins. If the `show_start_frame` is 0 and the `show_end_frame` is 10, the duration is 10 frames.|
+|motion_start_frame|numeric|show_start_frame|Time in frames to start moving the object from when the trial begins.|
+|motion_end_frame|numeric|null|Time in frames to end moving the object from when the trial begins.|
+|is_frame|boolean|false|If you specify the show/motion time in frames, the `is_frame` property must be true.|
 |line_width|numeric|1| The width of the line.|
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
 
-Note: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
+NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
+
+CAUTION: [The image and sound files must be preloaded in the jsPsych.init function manually](https://www.jspsych.org/overview/media-preloading/).
+
+```javascript
+var images = ['img/file1.png'];
+var audio = ['audio/foo.mp3'];
+
+jsPsych.init({
+    timeline: [trial],
+    preload_audio: audio,
+    preload_images: images,
+});
+```
 
 # obj_type: 'image'
 

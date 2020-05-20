@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present moving circles.
+    // Note: You can not specify the speed, location, and time at the same time.
+    
+    // The circle_object1 defines motion using the location and time.
+    // In this case, you have to define the time in ms not in frames.
+    var circle_object1 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        endX: 600,
+        endY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+        motion_end_time: 4000,
+    }
+
+    // The circle_object2 defines motion using the location and speed.
+    // In this case, you can define the time both in ms and frames.
+    // But, if you defined the time in frames, you have to also define the speed in frames.
+    var circle_object2 = {
+        obj_type: 'circle',
+        startX: 'center', // location in the canvas
+        startY: 'center',
+        radius: 50,
+        line_color: 'blue', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'blue',
+        show_start_frame: 60, // frames after the start of the trial
+        motion_start_frame: 100,
+        motion_end_frame: 200,
+        show_end_frame: 250,
+        is_frame: true, // required
+        horiz_pix_frame: 3, // speed in frames
+        vert_pix_frame: 0, // The circle does not move vertically.
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [circle_object1, circle_object2],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use the drawFunc.
+
+    var gradation = {
+        obj_type: 'manual',
+        horiz_pix_sec: 30,
+        show_start_time: 1000,
+        motion_start_time: 2000,
+        startX: 0,
+        startY: 0,
+        drawFunc: function(stimulus, canvas, context){
+            context.beginPath();
+
+            const gradLength = 200;
+            const grad  = context.createLinearGradient(0, 0, 0, gradLength);
+
+            grad.addColorStop(0,'rgb(0, 0, 0)'); // black
+            grad.addColorStop(1,'rgb(255, 255, 255)'); // white
+
+            context.fillStyle = grad;
+            context.rect(stimulus.currentX, stimulus.currentY, gradLength, gradLength);
+            context.fill();
+            context.closePath();
+        }
+    }
+    
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [gradation],
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>
