@@ -4,7 +4,7 @@ This plugin can be used free of charge under the MIT license.
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates. You can also present moving objects and play sound files.
-- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate.
+- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate. [See the description of the stepFunc in detail](pluginParams.md).
 - According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing a paper.
 
 ## How to use the jspsych-psychophysics plugin
@@ -79,6 +79,9 @@ This trial object must be included as the **timeline** property of the jsPsych.i
 Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, demos/randomizedImages.html and demos/towSoundsWithSOA.html.
 
 You can also make the participants respond using a mouse instead of a keyboard using the **response_type** property. See, demos/localize-circle.html.
+
+## Demonstration
+[The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
 ## These are links to the programs used in my research to evaluate SOAs
 - [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)

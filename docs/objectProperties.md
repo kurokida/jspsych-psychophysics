@@ -32,7 +32,7 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |motion_start_time|numeric|show_start_time|Time in millisconds to start moving the object from when the trial begins.|
 |motion_end_time|numeric|null|Time in millisconds to end moving the object from when the trial begins.|
 |show_start_frame|numeric|0|Time in frames to start presenting the object from when the trial begins.|
-|show_end_frame|numeric|null|Time in frames to end presenting the object from when the trial begins.|
+|show_end_frame|numeric|null|Time in frames to end presenting the object from when the trial begins. If the `show_start_frame` is 0 and the `show_end_frame` is 10, the duration is 10 frames.|
 |motion_start_frame|numeric|show_start_frame|Time in frames to start moving the object from when the trial begins.|
 |motion_end_frame|numeric|null|Time in frames to end moving the object from when the trial begins.|
 |is_frame|boolean|false|If you specify the show/motion time in frames, the `is_frame` property must be true.|
