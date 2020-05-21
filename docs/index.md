@@ -85,8 +85,10 @@ Note that if you use image and audio files in a trial, please preload them using
 ## These are links to the programs used in my research to evaluate SOAs
 - [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)
 - [Two white squares are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_two_rectangles.html)
-- [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound.html)
+- [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=500ms)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound.html)
 - [A white square and a sin-wave sound are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_rect_sound.html)
+- [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=0)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html)
+
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
