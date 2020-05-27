@@ -14,6 +14,8 @@ This is the brief explanation how to use the plugin. Please refer to [the parame
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
 
+You can see [the sample of this tutorial.](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
+
 ### 1. Download the plugin file
 [Please download the latest files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
 The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015), and released under [the MIT license](https://opensource.org/licenses/MIT).
@@ -86,8 +88,8 @@ Note that if you use image and audio files in a trial, please preload them using
 - [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)
 - [Two white squares are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_two_rectangles.html)
 - [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=500ms)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound.html)
+- [A sophisticated program proposed by a reviewer in the 0ms-SOA no-plugin condition.](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html)A white square and a sin-wave sound are presented at the same time (SOA=0) without the jspsych-psychophysics plugin. In this program, a white rectangle image is presented using the the `prompt` parameter of the audio-keyboard-response plugin, and the `use_webaudio` is specified as true.
 - [A white square and a sin-wave sound are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_rect_sound.html)
-- [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=0)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html)
 
 
 Copyright (c) 2019 Daiichiro Kuroki  

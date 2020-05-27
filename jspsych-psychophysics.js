@@ -281,7 +281,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
       if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
       
-      // calculate the velocity using the distance and the time.
+      // calculate the velocity (pix/sec) using the distance and the time.
       // If the pix_sec is specified, the calc_velocity returns the intact pix_sec.
       // If the pix_frame is specified, the calc_velocity returns an undefined.
       stim.horiz_pix_sec = calc_velocity('horiz', stim);
