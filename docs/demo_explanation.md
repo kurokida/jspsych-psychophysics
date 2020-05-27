@@ -20,7 +20,7 @@ This file demonstrates how to use the `stepFunc` which is called by the requestA
 
 ## [lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)
 
-This file demonstrates how to present lines. There are two ways to define a line; one is to specify the angle and line_length, the other is to specify the start and end positions of the line. Note: You can not specify both the angle and positions for the same object.
+This file demonstrates how to present lines. There are two ways to define a line; one is to specify the angle and line_length, the other is to specify the start and end positions of the line. Note that you can not specify both the angle and positions for the same object.
 
 ## [localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html)
 
@@ -30,7 +30,7 @@ This file demonstrates how to respond using a mouse, and how to use the `respons
 
 Using the `drawFunc`, gradation from white to black is presented.
 
-## movingCircles.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles.html)
+## [movingCircles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles.html)
 
 This file demonstrates how to present moving circles. There are three ways to define motion. 
 
@@ -40,50 +40,50 @@ This file demonstrates how to present moving circles. There are three ways to de
     
 Note: You can not specify the speed, distance, and time at the same time.
     
-## movingCircles_frame.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles_frame.html)
+## [movingCircles_frame.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles_frame.html)
 
-The show_start(end)_frame is used instead of the show_start(end)_time.
-Also, the motion_start(end)_frame is used instead of the motion_start(end)_time.
+The `show_start(end)_frame` is used instead of the `show_start(end)_time`.
+Also, `the motion_start(end)_frame` is used instead of the `motion_start(end)_time`.
 
-CAUTION: If you define motion using the distance and time, you have to specify the time in milliseconds not in frames.
+Note that if you define motion using the distance and time, you have to specify the time in milliseconds not in frames.
 
-## randomizedImages.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
+## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 
 This file demonstrates how to present a fixation point and an image in the center of the display in a randomized order. 
 
-## rectangles.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rectangles.html)
+## [rectangles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rectangles.html)
 
 This file demonstrates how to present (moving) rectangles.
 
-## stepFunc.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/stepFunc.html)
+## [stepFunc.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/stepFunc.html)
 
 This file demonstrates how to use the stepFunc which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
 
 You can directly access the canvas (of which the context) using the stepFunc. You can draw complex visual stimuli.
 
-## text-rect-circle.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/text-rect-circle.html)
+## [text-rect-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/text-rect-circle.html)
 
-This file demonstrates how to present a message(text), a rect, and a circle with SOAs
+This file demonstrates how to present a message (text), a rect, and a circle with SOAs
 
-## texts.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/texts.html)
+## [texts.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/texts.html)
 
 The 'Hello world!' demonstration. You can start a new line using the '\n'. Texts can be moved as the same as rectangles.
 
-## tutorial.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
+## [tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
 
 The detailed tutorial is written at [the top page](http://jspsychophysics.hes.kyushu-u.ac.jp/)
 
-## twoImagesWithSOA.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
+## [twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
 
 This file demonstrates how to present two images with the 500-ms SOA
 
-## twoImagesWithSOAinFrames(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
+## [twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
 
 This file is nearly same as the twoImagesWithSOA.html except for that the display durations are specified in frames not in ms.
 
 The first image is presented for 5 frames (about 83 ms in a 60 Hz monitor), and the second image is presented for 20 frames (about 333 ms in a 60 Hz monitor) with a 60-frame SOA.
 
-## twoSoundsWithSOA.html(https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html)
+## [twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html)
 
 This file demonstrates how to present two sounds with a 1000-ms SOA.
 

@@ -84,13 +84,13 @@ Note that if you use image and audio files in a trial, please preload them using
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
-## These are links to the programs used in my research to evaluate SOAs
+## These are links to the programs and data of my research to evaluate SOAs
 - [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)
 - [Two white squares are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_two_rectangles.html)
 - [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=500ms)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound.html)
-- [A sophisticated program proposed by a reviewer in the 0ms-SOA no-plugin condition.](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html)A white square and a sin-wave sound are presented at the same time (SOA=0) without the jspsych-psychophysics plugin. In this program, a white rectangle image is presented using the the `prompt` parameter of the audio-keyboard-response plugin, and the `use_webaudio` is specified as true.
+- [A sophisticated program proposed by a reviewer in the 0ms-SOA no-plugin condition.](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html) A white square and a sin-wave sound are presented at the same time (SOA=0) without the jspsych-psychophysics plugin. In this program, a white rectangle image is presented using the the `prompt` parameter of the audio-keyboard-response plugin, and the `use_webaudio` is specified as true.
 - [A white square and a sin-wave sound are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_rect_sound.html)
-
+- [The data and materials for all experiments are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
