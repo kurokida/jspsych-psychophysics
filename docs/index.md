@@ -2,9 +2,9 @@ jspsych-psychophysics is a plugin for conducting Web-based psychophysical experi
 This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
-- You can present a set of stimuli asynchronously. In other words, the plugin can set the stimulus onset asynchrony (SOA).
+- You can present a set of stimuli asynchronously. In other words, the plugin can specify stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates. You can also present moving objects and play sound files.
-- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration would be more accurate. [See the description of the stepFunc in detail](pluginParams.md).
+- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate.
 - The position of the mouse click can be recorded as a response.
 - According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing a paper.
 
@@ -16,7 +16,7 @@ This figure illustrates a trial flow to be made by this tutorial.
 
 You can see [the sample of this tutorial.](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
 
-### 1. Download the plugin file
+### 1. Download the plugin package.
 [Please download the latest files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
 The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015), and released under [the MIT license](https://opensource.org/licenses/MIT).
 
@@ -26,7 +26,7 @@ The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw
 ```javascript
 <script src="jspsych-psychophysics.js"></script>
 ```
-This procedure is the same when other plugins are used with the jsPsych. Be sure to the location of the plugin file.
+This procedure is the same as other plugins are used with the jsPsych. Note the location of the plugin file.
 
 ### 3. Specify all the stimuli used in the program as a JavaScript object
 
@@ -57,7 +57,7 @@ The origin of the coordinate is the top left of the canvas, and the unit is the 
 
 The **show_start_time** is the most notable property in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
-### 4. Specify a trial object in the jsPsych's timeline
+### 4. Specify a trial object including the stimuli in the jsPsych's timeline
 
 ```javascript
 var trial = {
