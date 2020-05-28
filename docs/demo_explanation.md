@@ -12,7 +12,7 @@ This file demonstrates how to use the `drawFunc` with the image object. You need
 
 ## [draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
 
-This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like change blindness.
+This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like the change blindness.
 
 ## [elapsed_time_frame.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame.html)
 
@@ -20,15 +20,15 @@ This file demonstrates how to use the `stepFunc` which is called by the requestA
 
 ## [lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)
 
-This file demonstrates how to present lines. There are two ways to define a line; one is to specify the angle and line_length, the other is to specify the start and end positions of the line. Note that you can not specify both the angle and positions for the same object.
+This file demonstrates how to present lines. There are two ways to define a line; one is to specify the `angle` and `line_length`, the other is to specify the start (x1, y1) and end (x2, y2) positions of the line. Note that you can not specify both the angle and positions for the same object.
 
 ## [localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html)
 
-This file demonstrates how to respond using a mouse, and how to use the `response_type` and `response_start_time` property.
+This file demonstrates how to respond using a mouse. This can be made by specifying the `response_type` and `response_start_time` property.
     
 ## [manual_drawFunc_gradation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/manual_drawFunc_gradation.html)
 
-Using the `drawFunc`, gradation from white to black is presented.
+A visuals timulus graduated from white to black moves from left to right. This program uses the `drawFunc` function.
 
 ## [movingCircles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles.html)
 
@@ -40,16 +40,18 @@ This file demonstrates how to present moving circles. There are three ways to de
     
 Note: You can not specify the speed, distance, and time at the same time.
     
-## [movingCircles_frame.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles_frame.html)
+## [movingCircles_frames.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles_frames.html)
 
-The `show_start(end)_frame` is used instead of the `show_start(end)_time`.
-Also, `the motion_start(end)_frame` is used instead of the `motion_start(end)_time`.
+This demonstration is the same as the movingCircles.html except for specifying the timing information in terms of frames.
+
+The `show_start(end)_frame` property is used instead of the `show_start(end)_time`.
+Also, `the motion_start(end)_frame` property is used instead of the `motion_start(end)_time`.
 
 Note that if you define motion using the distance and time, you have to specify the time in milliseconds not in frames.
 
 ## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 
-This file demonstrates how to present a fixation point and an image in the center of the display in a randomized order. 
+This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
 
 ## [rectangles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rectangles.html)
 
@@ -57,13 +59,15 @@ This file demonstrates how to present (moving) rectangles.
 
 ## [stepFunc.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/stepFunc.html)
 
+A circle moves on a virtual circumference.
+
 This file demonstrates how to use the stepFunc which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
 
 You can directly access the canvas (of which the context) using the stepFunc. You can draw complex visual stimuli.
 
 ## [text-rect-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/text-rect-circle.html)
 
-This file demonstrates how to present a message (text), a rect, and a circle with SOAs
+This file demonstrates how to present a text message, a rect, and a circle with SOAs
 
 ## [texts.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/texts.html)
 
@@ -75,7 +79,7 @@ The detailed tutorial is written at [the top page](http://jspsychophysics.hes.ky
 
 ## [twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
 
-This file demonstrates how to present two images with the 500-ms SOA
+This file demonstrates how to present two images with the 500-ms SOA.
 
 ## [twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
 
