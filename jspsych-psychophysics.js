@@ -168,12 +168,11 @@ jsPsych.plugins["psychophysics"] = (function() {
     }
   }
 
-  let default_maxWidth;
   plugin.trial = function(display_element, trial) {
-
+    
     const elm_jspsych_content = document.getElementById('jspsych-content');
     const style_jspsych_content = window.getComputedStyle(elm_jspsych_content); // stock
-    default_maxWidth = style_jspsych_content.maxWidth;
+    const default_maxWidth = style_jspsych_content.maxWidth;
     elm_jspsych_content.style.maxWidth = 'none'; // The default value is '95%'. To fit the window.
 
     let new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
@@ -181,11 +180,12 @@ jsPsych.plugins["psychophysics"] = (function() {
     const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.
     let start_time;
     
+    let keyboardListener;
     // allow to respond using keyboard or mouse
     jsPsych.pluginAPI.setTimeout(function() {
       if (trial.response_type === 'key'){
         if (trial.choices != jsPsych.NO_KEYS) {
-          var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
+          keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
             callback_function: after_response,
             valid_responses: trial.choices,
             rt_method: motion_rt_method,
@@ -617,7 +617,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (trial.stepFunc !== null) {
+      if (trial.stepFunc !== null) {        
         trial.stepFunc(trial, canvas, ctx, elapsedTime, sumOfStep); // customize
         frameRequestID = window.requestAnimationFrame(step);
         return
