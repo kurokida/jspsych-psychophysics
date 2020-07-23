@@ -282,7 +282,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (stim.endX === 'center') stim.endX = centerX;
       if (stim.endY === 'center') stim.endY = centerY;
 
-      if (origin_center) {
+      if (stim.origin_center) {
         stim.startX = stim.startX + centerX;
         stim.startY = stim.startY + centerY;
       }
@@ -360,7 +360,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         // For motion, startX/Y must be calculated.
         stim.startX = (stim.x1 + stim.x2)/2;
         stim.startY = (stim.y1 + stim.y2)/2;
-        if (origin_center) {
+        if (stim.origin_center) {
           stim.startX = stim.startX + centerX;
           stim.startY = stim.startY + centerY;
         }  
@@ -719,7 +719,9 @@ jsPsych.plugins["psychophysics"] = (function() {
           "key_press": response.key,
           "avg_frame_time": elapsedTime/sumOfStep,
           "click_x": response.clickX,
-          "click_y": response.clickY
+          "click_y": response.clickY,
+          "center_x": centerX,
+          "center_y": centerY,
           // "click_x": response.clickX - centerX,
           // "click_y": response.clickY- centerY
         };
@@ -730,6 +732,8 @@ jsPsych.plugins["psychophysics"] = (function() {
           //"stimulus": trial.stimuli,
           "key_press": response.key,
           "avg_frame_time": elapsedTime/sumOfStep,
+          "center_x": centerX,
+          "center_y": centerY,
         };
 
       }

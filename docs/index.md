@@ -1,12 +1,14 @@
 jspsych-psychophysics is a plugin for conducting Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
+Please cite [de Leeuw's paper (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [mine](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
+
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can specify stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates. You can also present moving objects and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate.
 - The position of the mouse click can be recorded as a response.
-- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin. I am preparing a paper.
+- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 
 ## How to use the jspsych-psychophysics plugin
 This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of the object](objectProperties.md) in detail.
@@ -84,13 +86,8 @@ Note that if you use image and audio files in a trial, please preload them using
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
-## These are links to the programs and data of my research to evaluate SOAs
-- [Two white squares are presented asynchronously without the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_two_rectangles.html)
-- [Two white squares are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_two_rectangles.html)
-- [A white square and a sin-wave sound are presented asynchronously without the jspsych-psychophysics plugin (SOA=500ms)](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound.html)
-- [A sophisticated program proposed by a reviewer in the 0ms-SOA no-plugin condition.](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/native_rect_sound_soa0.html) A white square and a sin-wave sound are presented at the same time (SOA=0) without the jspsych-psychophysics plugin. In this program, a white rectangle image is presented using the the `prompt` parameter of the audio-keyboard-response plugin, and the `use_webaudio` is specified as true.
-- [A white square and a sin-wave sound are presented asynchronously with the jspsych-psychophysics plugin](http://www.psycho.hes.kyushu-u.ac.jp/jspsych-6.0.5-multi-objects/examples/pp_rect_sound.html)
-- The data and materials for all experiments are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
+## Open Science Framework
+- The data and materials of my paper are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
