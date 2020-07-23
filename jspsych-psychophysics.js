@@ -102,6 +102,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             default: false,
             description: 'If true, time is treated in frames.'
           },
+          origin_center: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'origin_center',
+            default: false,
+            description: 'The origin is the center of the window.'
+          }
         }
       },
       choices: {
@@ -276,6 +282,11 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (stim.endX === 'center') stim.endX = centerX;
       if (stim.endY === 'center') stim.endY = centerY;
 
+      if (origin_center) {
+        stim.startX = stim.startX + centerX;
+        stim.startY = stim.startY + centerY;
+      }
+
       if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
       if (typeof stim.motion_end_time === 'undefined') stim.motion_end_time = null;
       if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
@@ -349,6 +360,10 @@ jsPsych.plugins["psychophysics"] = (function() {
         // For motion, startX/Y must be calculated.
         stim.startX = (stim.x1 + stim.x2)/2;
         stim.startY = (stim.y1 + stim.y2)/2;
+        if (origin_center) {
+          stim.startX = stim.startX + centerX;
+          stim.startY = stim.startY + centerY;
+        }  
         stim.currentX = stim.startX;
         stim.currentY = stim.startY;
         stim.angle = Math.atan((stim.y2 - stim.y1)/(stim.x2 - stim.x1)) * (180 / Math.PI);
