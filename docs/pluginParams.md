@@ -28,5 +28,5 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |response_type|string|'key' or 'mouse'|
 |key_press|numeric|Indicates which key the participant pressed. The value is the [numeric key code](https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes) corresponding to the participant's response. '-1' means thant the participant respond using a mouse.|
 |avg_frame_time|numeric|Averaged interframe interval.|
-|click_x|numeric|Horizontal clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
-|click_y|numeric|Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
+|click_x/click_y|numeric|Horizontal/Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
+|center_x/center_y|numeric|Horizontal/Vertical position of the center of the window. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|

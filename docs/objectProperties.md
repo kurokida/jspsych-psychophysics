@@ -19,10 +19,8 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |obj_type|string|undefined|The type of the object (e.g., rect, image, or sound). Refer to the individual explanation below in detail.|
-|startX|numeric|'center'|Horizontal position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startX is specified as `'center'`, the object is presented at the horizontal center of the canvas. The startX is also used as the starting position in motion.|
-|startY|numeric|'center'|Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If the startY is specified as `'center'`, the object is presented at the vertical center of the canvas. The startY is also used as the starting position in motion.|
-|endX|numeric|null|Horizontal end position of the moving object.|
-|endY|numeric|null|Vertical end position of the moving object.|
+|startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window using the `origin_center` property. The unit is the pixel. If the startX/startY is specified as `'center'`, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
+|endX/endY|numeric|null|Horizontal/Vertical end position of the moving object.|
 |origin_center|boolean|false|If you want to change the coordinate origin to the center of the window, set this property to true.|
 |horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display.|
 |horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second.|

@@ -277,14 +277,40 @@ jsPsych.plugins["psychophysics"] = (function() {
     }
 
     function common_set(stim){
-      if (stim.startX === 'center') stim.startX = centerX;
-      if (stim.startY === 'center') stim.startY = centerY;
-      if (stim.endX === 'center') stim.endX = centerX;
-      if (stim.endY === 'center') stim.endY = centerY;
+      if (stim.startX === 'center') {
+        if (stim.origin_center) {
+          stim.startX = 0;
+        } else {
+          stim.startX = centerX;
+        }
+      }
+      if (stim.startY === 'center') {
+        if (stim.origin_center) {
+          stim.startY = 0;
+        } else {
+          stim.startY = centerY;
+        }
+      }
+      if (stim.endX === 'center') {
+        if (stim.origin_center) {
+          stim.endX = 0;
+        } else {
+          stim.endX = centerX;
+        }
+      }
+      if (stim.endY === 'center') {
+        if (stim.origin_center) {
+          stim.endY = 0;
+        } else {
+          stim.endY = centerY;
+        }
+      }
 
       if (stim.origin_center) {
         stim.startX = stim.startX + centerX;
         stim.startY = stim.startY + centerY;
+        if (stim.endX !== null) stim.endX = stim.endX + centerX;
+        if (stim.endY !== null) stim.endY = stim.endY + centerY;
       }
 
       if (typeof stim.motion_start_time === 'undefined') stim.motion_start_time = stim.show_start_time; // Motion will start at the same time as it is displayed.
@@ -293,17 +319,17 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
       
       // calculate the velocity (pix/sec) using the distance and the time.
-      // If the pix_sec is specified, the calc_velocity returns the intact pix_sec.
-      // If the pix_frame is specified, the calc_velocity returns an undefined.
-      stim.horiz_pix_sec = calc_velocity('horiz', stim);
-      stim.vert_pix_sec = calc_velocity('vert', stim);
+      // If the pix_sec is specified, the calc_pix_per_sec returns the intact pix_sec.
+      // If the pix_frame is specified, the calc_pix_per_sec returns an undefined.
+      stim.horiz_pix_sec = calc_pix_per_sec('horiz', stim);
+      stim.vert_pix_sec = calc_pix_per_sec('vert', stim);
 
       // currentX/Y is changed per frame.
       stim.currentX = stim.startX;
       stim.currentY = stim.startY;
     }
 
-    function calc_velocity (direction, stim){
+    function calc_pix_per_sec (direction, stim){
       let pix_sec , pix_frame, startPos, endPos;
       if (direction === 'horiz'){
         pix_sec = stim.horiz_pix_sec;
@@ -325,14 +351,17 @@ jsPsych.plugins["psychophysics"] = (function() {
       
       if (typeof pix_sec !== 'undefined' || typeof pix_frame !== 'undefined') return pix_sec; // returns an 'undefined' when you specify the pix_frame.
 
-      // Velocity is not specified
+      // The velocity is not specified
           
       if (endPos === null) return 0; // This is not motion.
 
-      // Distance is specified
+      if (startPos === endPos) return 0; // This is not motion.
+      
+
+      // The distance is specified
 
       if (motion_end_time === null) { // Only the distance is known
-        alert('When you use the endX/Y property you have to specify the motion_end_time or the velocity.')
+        alert('Please specify the motion_end_time or the velocity when you use the endX/Y property.')
         return 0; // stop the motion
       }
 

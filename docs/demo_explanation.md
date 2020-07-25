@@ -49,6 +49,10 @@ Also, `the motion_start(end)_frame` property is used instead of the `motion_star
 
 Note that if you define motion using the distance and time, you have to specify the time in milliseconds not in frames.
 
+## [origin_center.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/origin_center.html)
+
+This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true.
+
 ## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 
 This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.

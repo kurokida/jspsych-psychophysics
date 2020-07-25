@@ -49,10 +49,23 @@
         origin_center: true // Change the coordinate origin to the center of the window
     }
 
+    var moving_circle = {
+        obj_type: 'circle',        
+        startX: -300, // location of the circle's center in the canvas
+        startY: 0,
+        endX: 300,
+        endY: 0,
+        radius: 30,
+        origin_center: true, // Change the coordinate origin to the center of the window
+        fill_color: 'black',
+        motion_start_time: 1000,
+        horiz_pix_frame: 10,
+    }
+
 
     var trial = {
         type: 'psychophysics',
-        stimuli: [cross_object, circle_object, rect_object, line_object],
+        stimuli: [cross_object, circle_object, rect_object, line_object, moving_circle],
     }
 
     jsPsych.init({
