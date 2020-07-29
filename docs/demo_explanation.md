@@ -51,7 +51,7 @@ Note that if you define motion using the distance and time, you have to specify 
 
 ## [origin_center.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/origin_center.html)
 
-This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true.
+This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true (The default is false).
 
 ## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 

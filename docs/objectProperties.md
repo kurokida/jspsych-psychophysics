@@ -44,8 +44,8 @@ NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the
 CAUTION: [The image and sound files must be preloaded in the jsPsych.init function manually](https://www.jspsych.org/overview/media-preloading/).
 
 ```javascript
-var images = ['img/file1.png'];
-var audio = ['audio/foo.mp3'];
+var images = ['img/file1.png', 'img/file2.png'];
+var audio = ['audio/file1.mp3', 'audio/file2.mp3'];
 
 jsPsych.init({
     timeline: [trial],
@@ -74,8 +74,8 @@ There are two ways to define a line. See, `demos/lines.html`.
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|x1, y1|numeric|undefined| The start position of line drawing.|
-|x2, y2|numeric|undefined| The end position of line drawing.|
+|x1, y1|numeric|undefined| The start position of static line drawing. This property can't be used for the moving line. And it can't be used both with the line_length and angle property.|
+|x2, y2|numeric|undefined| The end position of static line drawing. This property can't be used for the moving line. And it can't be used both with the line_length and angle property.|
 |line_length|numeric|undefined| The length of the line.|
 |line_color|string|#000000 (black)|The color of the line.|
 |angle|numeric|undefined| The angle of the line. Zero means a horizontal line.|

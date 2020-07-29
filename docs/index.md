@@ -55,7 +55,9 @@ var circle_object = {
 }
 ```
 
-The origin of the coordinate is the top left of the canvas, and the unit is the pixel. The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. 
+The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window using the `origin_center` property. The unit is the pixel. 
+
+The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
 
 The **show_start_time** is the most notable property in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
@@ -87,7 +89,7 @@ Note that if you use image and audio files in a trial, please preload them using
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
 ## Open Science Framework
-- The data and materials of my paper are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
+The data and materials of my paper are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
