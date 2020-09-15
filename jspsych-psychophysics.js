@@ -277,6 +277,18 @@ jsPsych.plugins["psychophysics"] = (function() {
     }
 
     function common_set(stim){
+      // restore original values
+      if (typeof stim.original_startX === 'undefined') {
+        stim.original_startX = stim.startX;
+      } else {
+        stim.startX = stim.original_startX;
+      };
+      if (typeof stim.original_startY === 'undefined') {
+        stim.original_startY = stim.startY;
+      } else {
+        stim.startY = stim.original_startY;
+      };
+
       if (stim.startX === 'center') {
         if (stim.origin_center) {
           stim.startX = 0;
