@@ -83,7 +83,9 @@ The **stimuli** property must include all the objects to be presented in the tri
 
 This trial object must be included as the **timeline** property of the jsPsych.init which is a core function of the jsPsych.
 
-Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html).
+Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
+
+Furthermore, the other applications and the tabs in the browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
 
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
