@@ -3,6 +3,8 @@ This plugin can be used free of charge under the MIT license.
 
 Please cite [de Leeuw's paper (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [mine](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
 
+If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues)
+
 ## What you can do with the jspsych-psychophysics plugin
 - You can present a set of stimuli asynchronously. In other words, the plugin can specify stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates. You can also present moving objects and play sound files.
@@ -89,6 +91,9 @@ Furthermore, the other applications and the tabs in the browser should be closed
 
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
+
+## FAQ
+Before asking a question, please read [the FAQ page](faq.md).
 
 ## Open Science Framework
 The data and materials of my paper are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
