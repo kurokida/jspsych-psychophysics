@@ -1,11 +1,11 @@
 # Can the center of the window (canvas) be the origin when specifying the stimulus coordinates?
 
-Yes. Normally, the origin of the coordinate is the top left of the canvas. But the origin can be changed to the center of the window setting [the `origin_center` property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) as true. The unit is the pixel. 
+Yes. Normally, the origin of the coordinate is the top left of the canvas. But the origin can be changed to the center of the window setting [the origin_center property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) as true. The unit is the pixel. 
 
-# Can I specify the stimulus presentation time in frames rather than milliseconds?
+# Can I specify the stimulus presentation time in terms of number of frames rather than milliseconds?
 
 Yes. If you want to control the presentation time strictly, it is better to specify the presentation time with frames instead of milliseconds.
-If [the `is_frame` property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) is true, the plugin tries to present the stimulus for the specified frame. 
+If [the is_frame property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) is true, the plugin tries to present the stimulus for the specified frame. 
 
 # How many frames of stimuli will the plugin present if I specify a presentation time of 40 ms?
 
@@ -19,7 +19,7 @@ However, this prediction is not consistent with the actual results which was mea
 
 For example, [the histograms of the 20-ms display duration condition](https://www.hes.kyushu-u.ac.jp/~kurokid/histograms/Study1_Duration_ProBook.html) which was measured on a ProBook (Windows laptop 64 bit) with the jspsych-psychophysics plugin was almost consistent with the prediction. On the other hand, [the histograms of the 20-ms display duration condition](https://www.hes.kyushu-u.ac.jp/~kurokid/histograms/Study1_Duration_MacBookPro.html) which was measured on a MacBook Pro with the jspsych-psychophysics plugin showed multimodal distributions, with an interval of one frame.
 
-If you want to control the presentation time strictly, it is better to specify the presentation time with frames instead of milliseconds.
+If you want to control the presentation time strictly, it is better to specify the presentation time in terms of frames instead of milliseconds.
 
 # I can't present audio stimuli at all.
 
@@ -29,3 +29,7 @@ You should upload the files to a web server to use the WebAudio.
 This is mentioned at [the jsPsych forum](https://groups.google.com/forum/#!msg/jspsych/eth7QtLghvY/DR8Hx7CADwAJ).
 
 And, you should turn on the WebAudio for accurate presentation of audio stimuli.
+
+# I can't prepare a web server. 
+
+[Cognition](https://www.cognition.run/) is one of the most promising options.
