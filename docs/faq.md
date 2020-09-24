@@ -1,15 +1,15 @@
-# FAQ
+# FAQ about using the jspsych-psychophysics plugin.
 
-## Can the center of the window (canvas) be the origin when specifying the stimulus coordinates?
+## 1. Can the center of the window (canvas) be the origin when specifying the stimulus coordinates?
 
 Yes. Normally, the origin of the coordinate is the top left of the canvas. But the origin can be changed to the center of the window setting [the origin_center property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) as true. The unit is the pixel. 
 
-# Can I specify the stimulus presentation time in terms of number of frames rather than milliseconds?
+## 2. Can I specify the stimulus presentation time in terms of number of frames rather than milliseconds?
 
 Yes. If you want to control the presentation time strictly, it is better to specify the presentation time with frames instead of milliseconds.
 If [the is_frame property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) is true, the plugin tries to present the stimulus for the specified frame. 
 
-# How many frames of stimuli will the plugin present if I specify a presentation time of 40 ms?
+## 3. How many frames of stimuli will the plugin present if I specify a presentation time of 40 ms?
 
 If the is_frame property is false, i.e., if the presentation time is specified in ms, the plugin presents the stimulus according to the following calculation.
 
@@ -23,7 +23,7 @@ For example, [the histograms of the 20-ms display duration condition](https://ww
 
 If you want to control the presentation time strictly, it is better to specify the presentation time in terms of frames instead of milliseconds.
 
-# I can't present audio stimuli at all.
+## 4. I can't present audio stimuli at all.
 
 Perhaps you are running the program on your local computer.
 
@@ -32,6 +32,6 @@ This is mentioned at [the jsPsych forum](https://groups.google.com/forum/#!msg/j
 
 And, you should turn on the WebAudio for accurate presentation of audio stimuli.
 
-# I can't prepare a web server. 
+## 5. I can't prepare a web server. 
 
 [Cognition](https://www.cognition.run/) is one of the most promising options.
