@@ -171,6 +171,36 @@ jsPsych.plugins["psychophysics"] = (function() {
         default: null,
         description: 'This function enables to move objects as you wish.'        
       },
+      mouse_down_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse down function',
+        default: null,
+        description: 'This function is set to the event listener of the mousedown.'        
+      },
+      mouse_move_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse move function',
+        default: null,
+        description: 'This function is set to the event listener of the mousemove.'        
+      },
+      mouse_up_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse up function',
+        default: null,
+        description: 'This function is set to the event listener of the mouseup.'        
+      },
+      key_down_func:{
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Key down function',
+        default: null,
+        description: 'This function is set to the event listener of the keydown.'              
+      },
+      key_up_func:{
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Key up function',
+        default: null,
+        description: 'This function is set to the event listener of the keyup.'              
+      }
     }
   }
 
@@ -185,7 +215,6 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.
     let start_time;
-    
     let keyboardListener;
     // allow to respond using keyboard or mouse
     jsPsych.pluginAPI.setTimeout(function() {
@@ -207,7 +236,6 @@ jsPsych.plugins["psychophysics"] = (function() {
           start_time = performance.now();
         }
 
-        //window.addEventListener("mousedown", mouseDownFunc);
         canvas.addEventListener("mousedown", mouseDownFunc);
       }
     }, trial.response_start_time);
@@ -230,6 +258,27 @@ jsPsych.plugins["psychophysics"] = (function() {
     const centerX = canvas.width/2;
     const centerY = canvas.height/2;
     
+    // add event listeners defined by experimenters.
+    if (trial.mouse_down_func !== null){
+      canvas.addEventListener("mousedown", trial.mouse_down_func);
+    }
+
+    if (trial.mouse_move_func !== null){
+      canvas.addEventListener("mousemove", trial.mouse_move_func);
+    }
+
+    if (trial.mouse_up_func !== null){
+      canvas.addEventListener("mouseup", trial.mouse_up_func);
+    }
+    
+    if (trial.key_down_func !== null){
+      canvas.addEventListener("keydown", trial.key_down_func);
+    }
+
+    if (trial.key_up_func !== null){
+      canvas.addEventListener("keyup", trial.key_up_func);
+    }
+
     if (typeof trial.stimuli === 'undefined' && trial.stepFunc === null){
       alert('You have to specify the stimuli/stepFunc parameter in the psychophysics plugin.')
       return
@@ -719,8 +768,28 @@ jsPsych.plugins["psychophysics"] = (function() {
       // console.log(default_maxWidth)
       document.getElementById('jspsych-content').style.maxWidth = default_maxWidth; // restore
       window.cancelAnimationFrame(frameRequestID); //Cancels the frame request
-      //window.removeEventListener("mousedown", mouseDownFunc);
       canvas.removeEventListener("mousedown", mouseDownFunc);
+
+      // remove event listeners defined by experimenters.
+      if (trial.mouse_down_func !== null){
+        canvas.removeEventListener("mousedown", trial.mouse_down_func);
+      }
+  
+      if (trial.mouse_move_func !== null){
+        canvas.removeEventListener("mousemove", trial.mouse_move_func);
+      }
+  
+      if (trial.mouse_up_func !== null){
+        canvas.removeEventListener("mouseup", trial.mouse_up_func);
+      }
+  
+      if (trial.key_down_func !== null){
+        canvas.removeEventListener("keydown", trial.key_down_func);
+      }
+
+      if (trial.key_up_func !== null){
+        canvas.removeEventListener("keyup", trial.key_up_func);
+      }
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
