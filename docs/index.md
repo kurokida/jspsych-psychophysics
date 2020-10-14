@@ -1,4 +1,4 @@
-jspsych-psychophysics is a plugin for conducting Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
+The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
 Please cite [de Leeuw's paper (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [mine](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
