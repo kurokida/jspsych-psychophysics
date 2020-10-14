@@ -35,3 +35,11 @@ And, you should turn on the WebAudio for accurate presentation of audio stimuli.
 ## 5. I can't prepare a web server. 
 
 [Cognition](https://www.cognition.run/) is one of the most promising options.
+
+## 6. Can I record where the participants click?
+
+Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html). The origin of the coordinate is the top left of the canvas. The coordinates of the center of the canvas are recorded at the same time.
+
+## 7. Can I specify the mouse/keyboard event handler?
+
+Yes. See the [demos/mouse-event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse-event.html) and the [demos/keyboard-event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard-event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.

@@ -34,9 +34,13 @@
 
     const trial = {
         type: 'psychophysics',
-        // canvas_height:300,
+        canvas_height: 500,
+        button_choices: ['YES', 'NO'],
+        prompt: '<p>Click and move the mouse.</p>',
         stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
-        response_type: 'key',
+        response_type: 'button',
+        margin_vertical: '50px',
+        margin_horizontal: '50px',
         mouse_down_func: function(event){
           mouse_move_start = !mouse_move_start;
         },                

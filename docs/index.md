@@ -6,11 +6,11 @@ Please cite [de Leeuw's paper (2015)](https://link.springer.com/article/10.3758/
 If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues)
 
 ## What you can do with the jspsych-psychophysics plugin
-- You can present a set of stimuli asynchronously. In other words, the plugin can specify stimulus onset asynchronies (SOAs).
+- You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates in terms of milliseconds and frames. You can also present moving objects and play sound files.
-- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate.
-- The position of the mouse click can be recorded as a response.
-- According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
+- This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
+- You can specify the mouse/keyboard event handler.
+- Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can also be recorded as a response.
 
 ## How to use the jspsych-psychophysics plugin
 This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of the object](objectProperties.md) in detail.
