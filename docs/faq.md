@@ -42,4 +42,4 @@ Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kuroki
 
 ## 7. Can I specify the mouse/keyboard event handler?
 
-Yes. See the [demos/mouse-event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse-event.html) and the [demos/keyboard-event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard-event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
+Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), and the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
