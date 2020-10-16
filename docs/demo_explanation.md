@@ -20,7 +20,7 @@ This file demonstrates how to use the `stepFunc` which is called by the requestA
 
 ## [keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html)
 
-This file demonstrates how to specify the keyboard-event functions. Pressing the ArrowUp/ArrowDown key, the color of the circle will change. Press the space key to finish the program.
+This file demonstrates how to specify the keyboard-event functions. Pressing the ArrowUp/ArrowDown key, the luminance of the circle will change. Press the space key to finish the program.
 
 ## [lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)
 
@@ -33,6 +33,10 @@ This file demonstrates how to respond using a mouse. This can be made by specify
 ## [manual_drawFunc_gradation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/manual_drawFunc_gradation.html)
 
 A visuals timulus graduated from white to black moves from left to right. This program uses the `drawFunc` function.
+
+## [mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)
+
+This file demonstrates how to specify the mouse-event functions. This demo is like a drawing application. Note that the `clear_canvas` property is set to false.
 
 ## [mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html)
 

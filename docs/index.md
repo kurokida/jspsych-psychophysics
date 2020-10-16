@@ -1,7 +1,7 @@
 The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
-Please cite [de Leeuw's paper (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [mine](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
+Please cite [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [Kuroki (2020)](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
 
 If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues)
 
@@ -9,7 +9,7 @@ If you have any questions, please post them on [the issuues of the GitHub](https
 - You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates in terms of milliseconds and frames. You can also present moving objects and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
-- You can specify the mouse/keyboard event handler. See [the FAQ 7](faq.md).
+- You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](faq.md).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can also be recorded as a response.
 
 ## How to use the jspsych-psychophysics plugin

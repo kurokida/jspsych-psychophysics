@@ -22,8 +22,9 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |key_up_func|function|null|This is the event handler of the keyup on the canvas.|
 |button_choices|array of strings|['Next']|The response_type property must be 'button'. Labels for the buttons. Each different string in the array will generate a different button.|
 |button_html|HTML string|'<button class="jspsych-btn">%choice%</button>'|The response_type property must be 'button'. A template of HTML for generating the button elements. You can override this to create customized buttons of various kinds. The string %choice% will be changed to the corresponding element of the choices array. You may also specify an array of strings, if you need different HTML to render for each button. If you do specify an array, the choices array and this array must have the same length. The HTML from position 0 in the button_html array will be used to create the button for element 0 in the choices array, and so on.|
-|margin_vertical|string|'0px'|Vertical margin of the button(s).|
-|margin_horizontal|string|'8px'|Horizontal margin of the button(s).|
+|vert_button_margin|string|'0px'|Vertical margin of the button(s).|
+|horiz_button_margin|string|'8px'|Horizontal margin of the button(s).|
+|clear_canvas|boolean|true|If true, the canvas is cleared every frame. There are not many cases where this should be false, but if you want to draw the trajectory of the mouse, for example, you need to set it false. Note that in that case, the show_end_time property can not be used.|
 
 Note: Because the prameter of *choices*, *prompt*, *trial_duration*, and *response_ends_trial* is the same as that of the plugins included in the jsPsych, the explanation of these parameters was copied and paseted from the original site.
 
@@ -40,3 +41,9 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |click_x/click_y|numeric|Horizontal/Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
 |center_x/center_y|numeric|Horizontal/Vertical position of the center of the window. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
 |button_pressed|numeric|Indicates which button the subject pressed. The first button in the choices array is 0, the second is 1, and so on.|
+
+# Read only parameters
+
+|Parameter|Description|
+|canvas|You can access the element of the canvas via the jsPsych.currentTrial().canvas.|
+|context|You can access the context of the canvas via the jsPsych.currentTrial().context.|
