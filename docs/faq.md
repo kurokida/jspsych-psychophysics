@@ -1,6 +1,6 @@
 # FAQ about using the jspsych-psychophysics plugin.
 
-## 1. Can the center of the window (canvas) be the origin when specifying the stimulus coordinates?
+## 1. Can I change the center of the window (canvas) to the origin of the coordinates?
 
 Yes. Normally, the origin of the coordinate is the top left of the canvas. But the origin can be changed to the center of the window setting [the origin_center property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) as true. The unit is the pixel. 
 

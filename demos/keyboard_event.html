@@ -7,44 +7,44 @@
     </head>
     <body></body>
     <script>
-    // This file demonstrates how to specify the keyboard-event functions.
+      // This file demonstrates how to specify the keyboard-event functions.
 
-    let current_color = 0;
+      let current_color = 0;
 
-    var circle_obj = {
-        obj_type: 'circle',
-        startX: 'center',
-        startY: 'center',
-        radius: 150,
-        line_color: 'white',
-        fill_color: `rgb(${current_color}, ${current_color}, ${current_color})`,
-        line_width: 5,
-    };
+      var circle_obj = {
+          obj_type: 'circle',
+          startX: 'center',
+          startY: 'center',
+          radius: 150,
+          line_color: 'white',
+          fill_color: `rgb(${current_color}, ${current_color}, ${current_color})`,
+          line_width: 5,
+      };
 
-    const trial = {
-        type: 'psychophysics',
-        canvas_height: 500,
-        prompt: '<p>Pressing the ArrowUp/ArrowDown key, the color of the circle will change. <br>Press the space key to finish the program.</p>',
-        stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
-        response_type: 'key',
-        choices: ['space'],
-        key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
-          if (event.key === 'ArrowUp'){
-            current_color += 10;
-            if (current_color > 255) current_color = 255;
-          } else if (event.key === 'ArrowDown'){
-            current_color -= 10;
-            if (current_color < 0) current_color = 0;
-          }
-          
-          jsPsych.currentTrial().stimuli[0].fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
-        },
-    }
+      const trial = {
+          type: 'psychophysics',
+          canvas_height: 500,
+          prompt: '<p>Pressing the ArrowUp/ArrowDown key, the color of the circle will change. <br>Press the space key to finish the program.</p>',
+          stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+          response_type: 'key',
+          choices: ['space'],
+          key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
+            if (event.key === 'ArrowUp'){
+              current_color += 10;
+              if (current_color > 255) current_color = 255;
+            } else if (event.key === 'ArrowDown'){
+              current_color -= 10;
+              if (current_color < 0) current_color = 0;
+            }
+            
+            jsPsych.currentTrial().stimuli[0].fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
+          },
+      }
 
-    /* start the experiment */
-    jsPsych.init({
-      timeline: [trial],
-      on_finish: function(){jsPsych.data.displayData();}
-    });
+      /* start the experiment */
+      jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+      });
   </script>
 </html>

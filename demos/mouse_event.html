@@ -11,69 +11,69 @@
       // As you move the mouse, the slope of the line segment changes. 
       // By changing the direction of the mouse in motion,  the direction of rotation of the line changes.
 
-    var circle_obj = {
-        obj_type: 'circle',
-        startX: 'center',
-        startY: 'center',
-        radius: 150,
-        line_color: 'white',
-        line_width: 5,
-    };
+      var circle_obj = {
+          obj_type: 'circle',
+          startX: 'center',
+          startY: 'center',
+          radius: 150,
+          line_color: 'white',
+          line_width: 5,
+      };
 
-    let prev_mouseX = null;
-    let start_angle;
-    let mouse_move_start = false;
-    
-    const line_obj = {
-        obj_type: 'line',
-        line_length: 300,
-        line_color: 'white',
-        line_width: 5,
-        angle: 0
-    }
+      let prev_mouseX = null;
+      let start_angle;
+      let mouse_move_start = false;
+      
+      const line_obj = {
+          obj_type: 'line',
+          line_length: 300,
+          line_color: 'white',
+          line_width: 5,
+          angle: 0
+      }
 
-    const trial = {
-        type: 'psychophysics',
-        canvas_height: 500,
-        button_choices: ['YES', 'NO'],
-        prompt: '<p>Click and move the mouse.</p>',
-        stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
-        response_type: 'button',
-        margin_vertical: '50px',
-        margin_horizontal: '50px',
-        mouse_down_func: function(event){
-          mouse_move_start = !mouse_move_start;
-        },                
-        // mouse_up_func: function(event){ // This also works, but, please comment out the mouse_down_function.
-        //   mouse_move_start = !mouse_move_start;
-        // },
-        mouse_move_func: function(event){ // This function will be automatically added as the event listener of the canvas.
-          if (mouse_move_start === false) return;
+      const trial = {
+          type: 'psychophysics',
+          canvas_height: 500,
+          button_choices: ['YES', 'NO'],
+          prompt: '<p>Click and move the mouse.</p>',
+          stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+          response_type: 'button',
+          vert_button_margin: '50px',
+          horiz_button_margin: '50px',
+          mouse_down_func: function(event){
+            mouse_move_start = !mouse_move_start;
+          },                
+          // mouse_up_func: function(event){ // This also works, but, please comment out the mouse_down_function.
+          //   mouse_move_start = !mouse_move_start;
+          // },
+          mouse_move_func: function(event){ // This function will be automatically added as the event listener of the canvas.
+            if (mouse_move_start === false) return;
 
-          if (prev_mouseX === null){
+            if (prev_mouseX === null){
+              prev_mouseX = event.offsetX;
+              start_angle = jsPsych.currentTrial().stimuli[1].angle; 
+              // stimuli[0] means a circle, and stimuli[1] means a line.
+              // start_angle is saved for resotring.
+              return
+            }
+
+            if (event.offsetX > prev_mouseX){
+              jsPsych.currentTrial().stimuli[1].angle += 5; // The angle changes by 5 degrees.
+            } else {
+              jsPsych.currentTrial().stimuli[1].angle -= 5;
+            }
             prev_mouseX = event.offsetX;
-            start_angle = jsPsych.currentTrial().stimuli[1].angle; 
-            // stimuli[0] means a circle, and stimuli[1] means a line.
-            // start_angle is saved for resotring.
-            return
+          },
+          on_finish: function(){
+              jsPsych.currentTrial().stimuli[1].angle = start_angle; // Restoring
           }
+      }
 
-          if (event.offsetX > prev_mouseX){
-            jsPsych.currentTrial().stimuli[1].angle += 5; // The angle changes by 5 degrees.
-          } else {
-            jsPsych.currentTrial().stimuli[1].angle -= 5;
-          }
-          prev_mouseX = event.offsetX;
-        },
-        on_finish: function(){
-            jsPsych.currentTrial().stimuli[1].angle = start_angle; // Restoring
-        }
-    }
-
-    /* start the experiment */
-    jsPsych.init({
-      timeline: [trial],
-      on_finish: function(){jsPsych.data.displayData();}
-    });
+      /* start the experiment */
+      jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+      });
   </script>
 </html>

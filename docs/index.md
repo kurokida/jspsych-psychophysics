@@ -9,7 +9,7 @@ If you have any questions, please post them on [the issuues of the GitHub](https
 - You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs).
 - You can present visual stimuli (e.g., image, line, rectangle, circle, and text) at intended coordinates in terms of milliseconds and frames. You can also present moving objects and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. As a result, the display duration is expected to be more accurate. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
-- You can specify the mouse/keyboard event handler.
+- You can specify the mouse/keyboard event handler. See [the FAQ 7](faq.md).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can also be recorded as a response.
 
 ## How to use the jspsych-psychophysics plugin

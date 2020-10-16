@@ -9,11 +9,12 @@
  *
  **/
 
+ /* global jsPsych */
 
 jsPsych.plugins["psychophysics"] = (function() {
   console.log('jspsych-psychophysics Version 1.4')
 
-  var plugin = {};
+  let plugin = {};
 
   plugin.info = {
     name: 'psychophysics',
@@ -108,6 +109,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             pretty_name: 'origin_center',
             default: false,
             description: 'The origin is the center of the window.'
+          },
+          is_presented: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'is_presented',
+            default: false,
+            description: 'This will be true when the stimulus is presented.'
           }
         }
       },
@@ -217,18 +224,24 @@ jsPsych.plugins["psychophysics"] = (function() {
         array: true,
         description: 'The html of the button. Can create own style.'
       },
-      margin_vertical: {
+      vert_button_margin: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin vertical',
         default: '0px',
         description: 'The vertical margin of the button.'
       },
-      margin_horizontal: {
+      horiz_button_margin: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin horizontal',
         default: '8px',
         description: 'The horizontal margin of the button.'
       },
+      clear_canvas: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        pretty_name: 'clear_canvas',
+        default: true,
+        description: 'Clear the canvas per frame.'
+      }
     }
   }
 
@@ -287,7 +300,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     //display buttons
     if (trial.response_type === 'button'){
-      const buttons = [];
+      let buttons = [];
       if (Array.isArray(trial.button_html)) {
         if (trial.button_html.length == trial.button_choices.length) {
           buttons = trial.button_html;
@@ -295,14 +308,14 @@ jsPsych.plugins["psychophysics"] = (function() {
           console.error('Error: The length of the button_html array does not equal the length of the button_choices array');
         }
       } else {
-        for (var i = 0; i < trial.button_choices.length; i++) {
+        for (let i = 0; i < trial.button_choices.length; i++) {
           buttons.push(trial.button_html);
         }
       }
       new_html += '<div id="jspsych-image-button-response-btngroup">';
-      for (var i = 0; i < trial.button_choices.length; i++) {
-        var str = buttons[i].replace(/%choice%/g, trial.button_choices[i]);
-        new_html += '<div class="jspsych-image-button-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-image-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+      for (let i = 0; i < trial.button_choices.length; i++) {
+        let str = buttons[i].replace(/%choice%/g, trial.button_choices[i]);
+        new_html += '<div class="jspsych-image-button-response-button" style="display: inline-block; margin:'+trial.vert_button_margin+' '+trial.horiz_button_margin+'" id="jspsych-image-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
       }
       new_html += '</div>';
   
@@ -324,6 +337,9 @@ jsPsych.plugins["psychophysics"] = (function() {
       return;
     }
     const ctx = canvas.getContext('2d');
+
+    trial.canvas = canvas;
+    trial.context = ctx;
     
     const centerX = canvas.width/2;
     const centerY = canvas.height/2;
@@ -401,12 +417,12 @@ jsPsych.plugins["psychophysics"] = (function() {
         stim.original_startX = stim.startX;
       } else {
         stim.startX = stim.original_startX;
-      };
+      }
       if (typeof stim.original_startY === 'undefined') {
         stim.original_startY = stim.startY;
       } else {
         stim.startY = stim.original_startY;
-      };
+      }
 
       if (stim.startX === 'center') {
         if (stim.origin_center) {
@@ -449,6 +465,9 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
       if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
       
+      // console.log(trial.clear_canvas)
+      if (trial.clear_canvas === false && stim.show_end_time !== null) alert('You can not specify the show_end_time with the clear_canvas property.');
+
       // calculate the velocity (pix/sec) using the distance and the time.
       // If the pix_sec is specified, the calc_pix_per_sec returns the intact pix_sec.
       // If the pix_frame is specified, the calc_pix_per_sec returns an undefined.
@@ -773,7 +792,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       }
     }
 
-    function present_sound(stim){
+    function present_sound(){
       // This is not needed actually.
     }
 
@@ -789,8 +808,9 @@ jsPsych.plugins["psychophysics"] = (function() {
         sumOfStep += 1;
       }
       elapsedTime = timestamp - startStep; // unit is ms. This can be used within the stepFunc().
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (trial.clear_canvas)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (trial.stepFunc !== null) {        
         trial.stepFunc(trial, canvas, ctx, elapsedTime, sumOfStep); // customize
@@ -807,6 +827,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         // if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
         if (elapsed < show_start) continue;
         if (show_end !== null && elapsed >= show_end) continue;
+        if (trial.clear_canvas === false && stim.is_presented) continue;
 
         update_position(stim, elapsed);
 
@@ -815,6 +836,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         } else {
           present_functions[stim.obj_type](stim);
         }
+        stim.is_presented = true;
       }
       frameRequestID = window.requestAnimationFrame(step);
     }
@@ -823,18 +845,18 @@ jsPsych.plugins["psychophysics"] = (function() {
     let frameRequestID = window.requestAnimationFrame(step);
 
     
-    deg2rad = function (degrees){
+    function deg2rad(degrees){
       return degrees / 180 * Math.PI;
     }
 
     // store response
-    var response = {
+    let response = {
       rt: null,
       key: null
     };
 
     // function to end trial when it is time
-    var end_trial = function() {
+    let end_trial = function() {
       // console.log(default_maxWidth)
       document.getElementById('jspsych-content').style.maxWidth = default_maxWidth; // restore
       window.cancelAnimationFrame(frameRequestID); //Cancels the frame request
@@ -865,6 +887,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       // remove end event listeners if they exist
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
+        stim.is_presented = false;
         //console.log(stim);
         if (typeof stim.context !== 'undefined') {
           if(stim.context !== null){
@@ -885,7 +908,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
       }
 
-      // gather the data to store for the trial　音の再生時からの反応時間をとるわけではないから不要？
+      // gather the data to store for the trial //音の再生時からの反応時間をとるわけではないから不要？
       // if(context !== null && response.rt !== null){
       //   response.rt = Math.round(response.rt * 1000);
       // }
@@ -918,8 +941,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     // }
 
     // function to handle responses by the subject
-    var after_response = function(info) {
-      console.log(info)
+    let after_response = function(info) {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
@@ -936,8 +958,8 @@ jsPsych.plugins["psychophysics"] = (function() {
         // display_element.querySelector('#jspsych-image-button-response-stimulus').className += ' responded';
 
         // disable all the buttons after a response
-        var btns = document.querySelectorAll('.jspsych-image-button-response-button button');
-        for(var i=0; i<btns.length; i++){
+        let btns = document.querySelectorAll('.jspsych-image-button-response-button button');
+        for(let i=0; i<btns.length; i++){
           //btns[i].removeEventListener('click');
           btns[i].setAttribute('disabled', 'disabled');
         }
@@ -950,7 +972,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     // start the response listener
     // if (trial.choices != jsPsych.NO_KEYS) {
-    //   var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
+    //   let keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
     //     callback_function: after_response,
     //     valid_responses: trial.choices,
     //     rt_method: 'date',
