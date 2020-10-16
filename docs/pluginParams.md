@@ -1,6 +1,6 @@
 Only the 'stimuli' parameter is required; Other parameters can be left unspecified if the default value is acceptable.
 
-# Parameters
+# Main parameters
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
@@ -15,13 +15,25 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |prompt|string|null|This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is that it can be used to provide a reminder about the action the participant is supposed to take (e.g., which key(s) to press).|
 |trial_duration|numeric|null|How long to wait for the participant to make a response before ending the trial in milliseconds. If the participant fails to make a response before this timer is reached, the participant's response will be recorded as null for the trial and the trial will end. If the value of this parameter is null, the trial will wait for a response indefinitely.|
 |response_ends_trial|boolean|true|If true, then the trial will end whenever the participant makes a response (assuming they make their response before the cutoff specified by the trial_duration parameter). If false, then the trial will continue until the value for trial_duration is reached. You can use this parameter to force the participant to view a stimulus for a fixed amount of time, even if they respond before the time is complete.|
+
+# Parameters related to event handlers
+
+|Parameter|Type|Default Value|Description|
+|---|---|---|---|
 |mouse_down_func|function|null|This is the event handler of the mousedown on the canvas. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html) and [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html).|
 |mouse_up_func|function|null|This is the event handler of the mouseup on the canvas.|
 |mouse_move_func|function|null|This is the event handler of the mousemove on the canvas.|
 |key_down_func|function|null|This is the event handler of the keydown on the document. See the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html).|
 |key_up_func|function|null|This is the event handler of the keyup on the canvas.|
-|button_choices|array of strings|['Next']|The `response_type` property must be 'button'. Labels for the buttons. Each different string in the array will generate a different button.|
-|button_html|HTML string|'<button class="jspsych-btn">%choice%</button>'|The `response_type` property must be 'button'. A template of HTML for generating the button elements. You can override this to create customized buttons of various kinds. The string %choice% will be changed to the corresponding element of the choices array. You may also specify an array of strings, if you need different HTML to render for each button. If you do specify an array, the choices array and this array must have the same length. The HTML from position 0 in the button_html array will be used to create the button for element 0 in the choices array, and so on.|
+
+# Parameters related to a button response
+
+The following parameters are enabled when the `response_type` is 'button'.
+
+|Parameter|Type|Default Value|Description|
+|---|---|---|---|
+|button_choices|array of strings|['Next']|Labels for the buttons. Each different string in the array will generate a different button.|
+|button_html|HTML string|'<button class="jspsych-btn">%choice%</button>'| A template of HTML for generating the button elements. You can override this to create customized buttons of various kinds. The string %choice% will be changed to the corresponding element of the choices array. You may also specify an array of strings, if you need different HTML to render for each button. If you do specify an array, the choices array and this array must have the same length. The HTML from position 0 in the button_html array will be used to create the button for element 0 in the choices array, and so on.|
 |vert_button_margin|string|'0px'|Vertical margin of the button(s).|
 |horiz_button_margin|string|'8px'|Horizontal margin of the button(s).|
 |clear_canvas|boolean|true|If true, the canvas is cleared every frame. There are not many cases where this should be false, but if you want to draw the trajectory of the mouse, for example, you need to set it false. Note that in that case, the show_end_time property can not be used.  See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)|
@@ -46,5 +58,5 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 
 |Parameter|Description|
 |---|---|
-|canvas|You can access the element of the canvas via the jsPsych.currentTrial().canvas.|
-|context|You can access the context of the canvas via the jsPsych.currentTrial().context.|
+|canvas|You can access the element of the canvas via the `jsPsych.currentTrial().canvas`.|
+|context|You can access the context of the canvas via the `jsPsych.currentTrial().context`.|
