@@ -13,7 +13,7 @@ If you have any questions, please post them on [the issuues of the GitHub](https
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can also be recorded as a response.
 
 ## How to use the jspsych-psychophysics plugin
-This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of the object](objectProperties.md) in detail.
+This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of objects](objectProperties.md) in detail.
 
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
@@ -57,11 +57,11 @@ var circle_object = {
 }
 ```
 
-The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window using the `origin_center` property. The unit is the pixel. 
+The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) setting the `origin_center` property as true. The unit is the pixel. 
 
 The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
 
-The **show_start_time** is the most notable property in this object, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
+The **show_start_time** property is one of the most notable properties, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
 ### 4. Specify a trial object including the stimuli in the jsPsych's timeline
 
@@ -87,7 +87,7 @@ This trial object must be included as the **timeline** property of the jsPsych.i
 
 Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
 
-Furthermore, the other applications and the tabs in the browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
+In addition, the other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
 
 ## Demonstration
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
