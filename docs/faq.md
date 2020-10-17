@@ -1,6 +1,6 @@
 # FAQ about using the jspsych-psychophysics plugin.
 
-## 1. Can the center of the window (canvas) be the origin when specifying the stimulus coordinates?
+## 1. Can I change the center of the window (canvas) to the origin of the coordinates?
 
 Yes. Normally, the origin of the coordinate is the top left of the canvas. But the origin can be changed to the center of the window setting [the origin_center property](http://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) as true. The unit is the pixel. 
 
@@ -35,3 +35,11 @@ And, you should turn on the WebAudio for accurate presentation of audio stimuli.
 ## 5. I can't prepare a web server. 
 
 [Cognition](https://www.cognition.run/) is one of the most promising options.
+
+## 6. Can I record where the participants click?
+
+Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html). The origin of the coordinate is the top left of the canvas. The coordinates of the center of the canvas are recorded at the same time.
+
+## 7. Can I specify the mouse/keyboard event handler?
+
+Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), and the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.

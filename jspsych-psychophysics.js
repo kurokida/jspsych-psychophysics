@@ -9,10 +9,12 @@
  *
  **/
 
+ /* global jsPsych */
 
 jsPsych.plugins["psychophysics"] = (function() {
+  console.log('jspsych-psychophysics Version 1.4')
 
-  var plugin = {};
+  let plugin = {};
 
   plugin.info = {
     name: 'psychophysics',
@@ -107,6 +109,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             pretty_name: 'origin_center',
             default: false,
             description: 'The origin is the center of the window.'
+          },
+          is_presented: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'is_presented',
+            default: false,
+            description: 'This will be true when the stimulus is presented.'
           }
         }
       },
@@ -155,7 +163,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       },
       response_type: {
         type: jsPsych.plugins.parameterType.STRING,
-        pretty_name: 'key or mouse',
+        pretty_name: 'key, mouse or button',
         default: 'key',
         description: 'How to make a response.'
       },
@@ -171,6 +179,69 @@ jsPsych.plugins["psychophysics"] = (function() {
         default: null,
         description: 'This function enables to move objects as you wish.'        
       },
+      mouse_down_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse down function',
+        default: null,
+        description: 'This function is set to the event listener of the mousedown.'        
+      },
+      mouse_move_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse move function',
+        default: null,
+        description: 'This function is set to the event listener of the mousemove.'        
+      },
+      mouse_up_func: {
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Mouse up function',
+        default: null,
+        description: 'This function is set to the event listener of the mouseup.'        
+      },
+      key_down_func:{
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Key down function',
+        default: null,
+        description: 'This function is set to the event listener of the keydown.'              
+      },
+      key_up_func:{
+        type: jsPsych.plugins.parameterType.FUNCTION,
+        pretty_name: 'Key up function',
+        default: null,
+        description: 'This function is set to the event listener of the keyup.'              
+      },
+      button_choices: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Button choices',
+        // default: undefined,
+        default: ['Next'],
+        array: true,
+        description: 'The labels for the buttons.'
+      },
+      button_html: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Button HTML',
+        default: '<button class="jspsych-btn">%choice%</button>',
+        array: true,
+        description: 'The html of the button. Can create own style.'
+      },
+      vert_button_margin: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Margin vertical',
+        default: '0px',
+        description: 'The vertical margin of the button.'
+      },
+      horiz_button_margin: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Margin horizontal',
+        default: '8px',
+        description: 'The horizontal margin of the button.'
+      },
+      clear_canvas: {
+        type: jsPsych.plugins.parameterType.BOOL,
+        pretty_name: 'clear_canvas',
+        default: true,
+        description: 'Clear the canvas per frame.'
+      }
     }
   }
 
@@ -185,9 +256,9 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.
     let start_time;
-    
     let keyboardListener;
-    // allow to respond using keyboard or mouse
+
+    // allow to respond using keyboard mouse or button
     jsPsych.pluginAPI.setTimeout(function() {
       if (trial.response_type === 'key'){
         if (trial.choices != jsPsych.NO_KEYS) {
@@ -199,7 +270,7 @@ jsPsych.plugins["psychophysics"] = (function() {
             allow_held_key: false
           });
         }  
-      } else {
+      } else if (trial.response_type === 'mouse')  {
 
         if (motion_rt_method == 'date') {
           start_time = (new Date()).getTime();
@@ -207,10 +278,49 @@ jsPsych.plugins["psychophysics"] = (function() {
           start_time = performance.now();
         }
 
-        //window.addEventListener("mousedown", mouseDownFunc);
         canvas.addEventListener("mousedown", mouseDownFunc);
+      } else { // button
+        start_time = performance.now();
+        for (let i = 0; i < trial.button_choices.length; i++) {
+          display_element.querySelector('#jspsych-image-button-response-button-' + i).addEventListener('click', function(e){
+            const choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
+            // after_response(choice);
+            // console.log(performance.now())
+            // console.log(start_time)
+            after_response({
+              key: -1,
+              rt: performance.now() - start_time,
+              button: choice,
+          });
+    
+          });
+        }
       }
     }, trial.response_start_time);
+
+    //display buttons
+    if (trial.response_type === 'button'){
+      let buttons = [];
+      if (Array.isArray(trial.button_html)) {
+        if (trial.button_html.length == trial.button_choices.length) {
+          buttons = trial.button_html;
+        } else {
+          console.error('Error: The length of the button_html array does not equal the length of the button_choices array');
+        }
+      } else {
+        for (let i = 0; i < trial.button_choices.length; i++) {
+          buttons.push(trial.button_html);
+        }
+      }
+      new_html += '<div id="jspsych-image-button-response-btngroup">';
+      for (let i = 0; i < trial.button_choices.length; i++) {
+        let str = buttons[i].replace(/%choice%/g, trial.button_choices[i]);
+        new_html += '<div class="jspsych-image-button-response-button" style="display: inline-block; margin:'+trial.vert_button_margin+' '+trial.horiz_button_margin+'" id="jspsych-image-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+      }
+      new_html += '</div>';
+  
+    }
+    
 
     // add prompt
     if(trial.prompt !== null){
@@ -220,16 +330,41 @@ jsPsych.plugins["psychophysics"] = (function() {
     // draw
     display_element.innerHTML = new_html;
 
+
     const canvas = document.getElementById('myCanvas');
     if ( ! canvas || ! canvas.getContext ) {
       alert('This browser does not support the canvas element.');
       return;
     }
     const ctx = canvas.getContext('2d');
+
+    trial.canvas = canvas;
+    trial.context = ctx;
     
     const centerX = canvas.width/2;
     const centerY = canvas.height/2;
     
+    // add event listeners defined by experimenters.
+    if (trial.mouse_down_func !== null){
+      canvas.addEventListener("mousedown", trial.mouse_down_func);
+    }
+
+    if (trial.mouse_move_func !== null){
+      canvas.addEventListener("mousemove", trial.mouse_move_func);
+    }
+
+    if (trial.mouse_up_func !== null){
+      canvas.addEventListener("mouseup", trial.mouse_up_func);
+    }
+    
+    if (trial.key_down_func !== null){
+      document.addEventListener("keydown", trial.key_down_func); // It doesn't work if the canvas is specified instead of the document.
+    }
+
+    if (trial.key_up_func !== null){
+      document.addEventListener("keyup", trial.key_up_func);
+    }
+
     if (typeof trial.stimuli === 'undefined' && trial.stepFunc === null){
       alert('You have to specify the stimuli/stepFunc parameter in the psychophysics plugin.')
       return
@@ -282,12 +417,12 @@ jsPsych.plugins["psychophysics"] = (function() {
         stim.original_startX = stim.startX;
       } else {
         stim.startX = stim.original_startX;
-      };
+      }
       if (typeof stim.original_startY === 'undefined') {
         stim.original_startY = stim.startY;
       } else {
         stim.startY = stim.original_startY;
-      };
+      }
 
       if (stim.startX === 'center') {
         if (stim.origin_center) {
@@ -330,6 +465,9 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (typeof stim.motion_start_frame === 'undefined') stim.motion_start_frame = stim.show_start_frame; // Motion will start at the same frame as it is displayed.
       if (typeof stim.motion_end_frame === 'undefined') stim.motion_end_frame = null;
       
+      // console.log(trial.clear_canvas)
+      if (trial.clear_canvas === false && stim.show_end_time !== null) alert('You can not specify the show_end_time with the clear_canvas property.');
+
       // calculate the velocity (pix/sec) using the distance and the time.
       // If the pix_sec is specified, the calc_pix_per_sec returns the intact pix_sec.
       // If the pix_frame is specified, the calc_pix_per_sec returns an undefined.
@@ -654,7 +792,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       }
     }
 
-    function present_sound(stim){
+    function present_sound(){
       // This is not needed actually.
     }
 
@@ -670,8 +808,9 @@ jsPsych.plugins["psychophysics"] = (function() {
         sumOfStep += 1;
       }
       elapsedTime = timestamp - startStep; // unit is ms. This can be used within the stepFunc().
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (trial.clear_canvas)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (trial.stepFunc !== null) {        
         trial.stepFunc(trial, canvas, ctx, elapsedTime, sumOfStep); // customize
@@ -688,6 +827,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         // if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
         if (elapsed < show_start) continue;
         if (show_end !== null && elapsed >= show_end) continue;
+        if (trial.clear_canvas === false && stim.is_presented) continue;
 
         update_position(stim, elapsed);
 
@@ -696,6 +836,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         } else {
           present_functions[stim.obj_type](stim);
         }
+        stim.is_presented = true;
       }
       frameRequestID = window.requestAnimationFrame(step);
     }
@@ -704,28 +845,49 @@ jsPsych.plugins["psychophysics"] = (function() {
     let frameRequestID = window.requestAnimationFrame(step);
 
     
-    deg2rad = function (degrees){
+    function deg2rad(degrees){
       return degrees / 180 * Math.PI;
     }
 
     // store response
-    var response = {
+    let response = {
       rt: null,
       key: null
     };
 
     // function to end trial when it is time
-    var end_trial = function() {
+    let end_trial = function() {
       // console.log(default_maxWidth)
       document.getElementById('jspsych-content').style.maxWidth = default_maxWidth; // restore
       window.cancelAnimationFrame(frameRequestID); //Cancels the frame request
-      //window.removeEventListener("mousedown", mouseDownFunc);
       canvas.removeEventListener("mousedown", mouseDownFunc);
+
+      // remove event listeners defined by experimenters.
+      if (trial.mouse_down_func !== null){
+        canvas.removeEventListener("mousedown", trial.mouse_down_func);
+      }
+  
+      if (trial.mouse_move_func !== null){
+        canvas.removeEventListener("mousemove", trial.mouse_move_func);
+      }
+  
+      if (trial.mouse_up_func !== null){
+        canvas.removeEventListener("mouseup", trial.mouse_up_func);
+      }
+  
+      if (trial.key_down_func !== null){
+        document.removeEventListener("keydown", trial.key_down_func);
+      }
+
+      if (trial.key_up_func !== null){
+        document.removeEventListener("keyup", trial.key_up_func);
+      }
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
+        stim.is_presented = false;
         //console.log(stim);
         if (typeof stim.context !== 'undefined') {
           if(stim.context !== null){
@@ -746,40 +908,26 @@ jsPsych.plugins["psychophysics"] = (function() {
         jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
       }
 
-      // gather the data to store for the trial　音の再生時からの反応時間をとるわけではないから不要？
+      // gather the data to store for the trial //音の再生時からの反応時間をとるわけではないから不要？
       // if(context !== null && response.rt !== null){
       //   response.rt = Math.round(response.rt * 1000);
       // }
 
       // gather the data to store for the trial
-      if (typeof response.clickX !== 'undefined'){
-        var trial_data = {
-          "rt": response.rt,
-          "response_type": trial.response_type,
-          //"stimulus": trial.stimuli,
-          "key_press": response.key,
-          "avg_frame_time": elapsedTime/sumOfStep,
-          "click_x": response.clickX,
-          "click_y": response.clickY,
-          "center_x": centerX,
-          "center_y": centerY,
-          // "click_x": response.clickX - centerX,
-          // "click_y": response.clickY- centerY
-        };
-      } else {
-        var trial_data = {
-          "rt": response.rt,
-          "response_type": trial.response_type,
-          //"stimulus": trial.stimuli,
-          "key_press": response.key,
-          "avg_frame_time": elapsedTime/sumOfStep,
-          "center_x": centerX,
-          "center_y": centerY,
-        };
+      const trial_data = {}
+      trial_data['rt'] = response.rt;
+      trial_data['response_type'] = trial.response_type;
+      trial_data['key_press'] = response.key;
+      trial_data['avg_frame_time'] = elapsedTime/sumOfStep;
+      trial_data['center_x'] = centerX;
+      trial_data['center_y'] = centerY;
 
+      if (trial.response_type === 'mouse'){
+        trial_data['click_x'] = response.clickX;
+        trial_data['click_y'] = response.clickY;
+      } else if (trial.response_type === 'button'){
+        trial_data['button_pressed'] = response.button;
       }
-      
-      
 
       // clear the display
       display_element.innerHTML = '';
@@ -793,7 +941,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     // }
 
     // function to handle responses by the subject
-    var after_response = function(info) {
+    let after_response = function(info) {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
@@ -804,6 +952,19 @@ jsPsych.plugins["psychophysics"] = (function() {
         response = info;
       }
 
+      if (trial.response_type === 'button'){
+        // after a valid response, the stimulus will have the CSS class 'responded'
+        // which can be used to provide visual feedback that a response was recorded
+        // display_element.querySelector('#jspsych-image-button-response-stimulus').className += ' responded';
+
+        // disable all the buttons after a response
+        let btns = document.querySelectorAll('.jspsych-image-button-response-button button');
+        for(let i=0; i<btns.length; i++){
+          //btns[i].removeEventListener('click');
+          btns[i].setAttribute('disabled', 'disabled');
+        }
+      }
+
       if (trial.response_ends_trial) {
         end_trial();
       }
@@ -811,7 +972,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     // start the response listener
     // if (trial.choices != jsPsych.NO_KEYS) {
-    //   var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
+    //   let keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
     //     callback_function: after_response,
     //     valid_responses: trial.choices,
     //     rt_method: 'date',

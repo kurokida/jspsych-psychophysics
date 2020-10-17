@@ -18,6 +18,10 @@ This file demonstrates how to present two images repeatedly until a participant 
 
 This file demonstrates how to use the `stepFunc` which is called by the requestAnimationFrame method. The elapsed time after begging of a trial is presented both in milliseconds and in frames.
 
+## [keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html)
+
+This file demonstrates how to specify the keyboard-event functions. Pressing the ArrowUp/ArrowDown key, the luminance of the circle will change. Press the space key to finish the program.
+
 ## [lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)
 
 This file demonstrates how to present lines. There are two ways to define a line; one is to specify the `angle` and `line_length`, the other is to specify the start (x1, y1) and end (x2, y2) positions of the line. Note that you can not specify both the angle and positions for the same object.
@@ -29,6 +33,14 @@ This file demonstrates how to respond using a mouse. This can be made by specify
 ## [manual_drawFunc_gradation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/manual_drawFunc_gradation.html)
 
 A visuals timulus graduated from white to black moves from left to right. This program uses the `drawFunc` function.
+
+## [mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)
+
+This file demonstrates how to specify the mouse-event functions. This demo is like a drawing application. Note that the `clear_canvas` property is set to false.
+
+## [mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html)
+
+This file demonstrates how to specify the mouse-event functions. As you move the mouse, the slope of the line segment changes. By changing the direction of the mouse in motion, the direction of rotation of the line changes. This also demonstrates how to use buttons as a response.
 
 ## [movingCircles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/movingCircles.html)
 
