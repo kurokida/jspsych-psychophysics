@@ -12,9 +12,9 @@
       // Note that the clear_canvas property is set to false.
 
 
-      let isDrawing = false;
-      let x = 0;
-      let y = 0;
+      let isDrawing;
+      let x;
+      let y;
 
       const img_obj = {
           obj_type: 'image',
@@ -42,6 +42,11 @@
           response_type: 'button',
           horiz_button_margin: '50px',
           clear_canvas: false,
+          on_load: function(){
+            isDrawing = false;
+            x = 0;
+            y = 0;
+          },
           mouse_down_func: function(e){
               x = e.offsetX;
               y = e.offsetY;
