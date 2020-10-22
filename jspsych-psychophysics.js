@@ -885,17 +885,19 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
-      for (let i = 0; i < trial.stimuli.length; i++){
-        const stim = trial.stimuli[i];
-        stim.is_presented = false;
-        //console.log(stim);
-        if (typeof stim.context !== 'undefined') {
-          if(stim.context !== null){
-            stim.source.stop();
-            stim.source.onended = function() { }
-          } else {
-            stim.audio.pause();
-            //audio.removeEventListener('ended', end_trial);
+      if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the stepFunc is specified.
+        for (let i = 0; i < trial.stimuli.length; i++){
+          const stim = trial.stimuli[i];
+          stim.is_presented = false;
+          //console.log(stim);
+          if (typeof stim.context !== 'undefined') {
+            if(stim.context !== null){
+              stim.source.stop();
+              stim.source.onended = function() { }
+            } else {
+              stim.audio.pause();
+              //audio.removeEventListener('ended', end_trial);
+            }
           }
         }
       }
