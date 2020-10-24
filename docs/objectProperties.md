@@ -38,6 +38,7 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |line_width|numeric|1| The width of the line.|
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
+|change_attr|function|null|You can change the attributes of the object dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html).| 
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
@@ -119,7 +120,7 @@ This object would be used as the fixation point.
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
-|drawFunc|function|undefined|You can draw whatever the `<canvas>` supports.| 
+|drawFunc|function|null|You can draw whatever the `<canvas>` supports.| 
 
 If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 

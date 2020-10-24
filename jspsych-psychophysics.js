@@ -98,6 +98,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             default: null,
             description: 'This function enables to move objects horizontally and vertically.'
           },
+          change_attr: {
+            type: jsPsych.plugins.parameterType.FUNCTION,
+            pretty_name: 'Change attributes',
+            default: null,
+            description: 'This function enables to change attributes of objects immediately before drawing.'
+          },
           is_frame: {
             type: jsPsych.plugins.parameterType.BOOL,
             pretty_name: 'time is in frames',
@@ -834,6 +840,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (stim.drawFunc !== null) {
           stim.drawFunc(stim, canvas, ctx);
         } else {
+          if (stim.change_attr != null) stim.change_attr(stim, elapsedTime, sumOfStep)
           present_functions[stim.obj_type](stim);
         }
         stim.is_presented = true;
