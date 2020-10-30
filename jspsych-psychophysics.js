@@ -121,7 +121,13 @@ jsPsych.plugins["psychophysics"] = (function() {
             pretty_name: 'is_presented',
             default: false,
             description: 'This will be true when the stimulus is presented.'
-          }
+          },
+          trial_ends_after_audio: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'Trial ends after audio',
+            default: false,
+            description: 'If true, then the trial will end as soon as the audio file finishes playing.'
+          },
         }
       },
       choices: {
@@ -404,6 +410,17 @@ jsPsych.plugins["psychophysics"] = (function() {
         stim.audio = jsPsych.pluginAPI.getAudioBuffer(stim.file);
         stim.audio.currentTime = 0;
         console.log('HTML5 audio')
+      }
+
+      // set up end event if trial needs it
+      if(stim.trial_ends_after_audio){
+        if(stim.context !== null){
+          stim.source.onended = function() {
+            end_trial();
+          }
+        } else {
+          stim.audio.addEventListener('ended', end_trial);
+        }
       }
 
       jsPsych.pluginAPI.setTimeout(function() {
@@ -897,13 +914,13 @@ jsPsych.plugins["psychophysics"] = (function() {
           const stim = trial.stimuli[i];
           stim.is_presented = false;
           //console.log(stim);
-          if (typeof stim.context !== 'undefined') {
+          if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
             if(stim.context !== null){
               stim.source.stop();
               stim.source.onended = function() { }
             } else {
               stim.audio.pause();
-              //audio.removeEventListener('ended', end_trial);
+              stim.audio.removeEventListener('ended', end_trial);
             }
           }
         }
