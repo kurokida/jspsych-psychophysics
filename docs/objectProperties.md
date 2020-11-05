@@ -67,6 +67,7 @@ jsPsych.init({
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the sound.|
+|trial_ends_after_audio|boolean|false|If true, then the trial will end as soon as the audio file finishes playing.|
 
 # obj_type: 'line'
 
