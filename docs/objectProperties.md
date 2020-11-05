@@ -38,7 +38,7 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |line_width|numeric|1| The width of the line.|
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
-|change_attr|function|null|You can change the attributes of the object dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html).| 
+|change_attr|function|null|You can change [some the attributes of the object](change_attr.md) dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html).| 
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
