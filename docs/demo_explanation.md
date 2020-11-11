@@ -18,6 +18,10 @@ This file demonstrates how to present two images repeatedly until a participant 
 
 This file demonstrates how to use the `stepFunc` which is called by the requestAnimationFrame method. The elapsed time after begging of a trial is presented both in milliseconds and in frames.
 
+## [how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html)
+
+This file works as the same as the twoImagesWithSOA.html, but the use of the jsPsych.timelineVariable function is slightly different. When you want to use the timeline_variables property with the jspsych-psychophysics plugin, see this file first.
+
 ## [keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html)
 
 This file demonstrates how to specify the keyboard-event functions. Pressing the ArrowUp/ArrowDown key, the luminance of the circle will change. Press the space key to finish the program.
