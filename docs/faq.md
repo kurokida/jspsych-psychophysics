@@ -43,3 +43,9 @@ Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kuroki
 ## 7. Can I specify the mouse/keyboard event handler?
 
 Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), and the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
+
+## 8. The jsPsych.timelineVariable function which specified in a stimulus object does not work properly.
+
+There are two ways to specify the jsPsych.timelineVariable function for the stimuli property.
+
+See the [demos/how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html)
