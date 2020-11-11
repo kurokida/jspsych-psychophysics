@@ -12,7 +12,7 @@
  /* global jsPsych */
 
 jsPsych.plugins["psychophysics"] = (function() {
-  console.log('jspsych-psychophysics Version 1.4')
+  console.log('jspsych-psychophysics Version 1.4.2')
 
   let plugin = {};
 
@@ -880,7 +880,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     };
 
     // function to end trial when it is time
-    let end_trial = function() {
+    // let end_trial = function() { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial); 
+    function end_trial(){
       // console.log(default_maxWidth)
       document.getElementById('jspsych-content').style.maxWidth = default_maxWidth; // restore
       window.cancelAnimationFrame(frameRequestID); //Cancels the frame request
@@ -967,7 +968,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     // }
 
     // function to handle responses by the subject
-    let after_response = function(info) {
+    // let after_response = function(info) { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial); 
+    function after_response(info) {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
