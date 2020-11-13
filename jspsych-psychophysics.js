@@ -446,7 +446,17 @@ jsPsych.plugins["psychophysics"] = (function() {
       } else {
         stim.startY = stim.original_startY;
       }
-
+      if (typeof stim.original_endX === 'undefined') {
+        stim.original_endX = stim.endX;
+      } else {
+        stim.endX = stim.original_endX;
+      }
+      if (typeof stim.original_endY === 'undefined') {
+        stim.original_endY = stim.endY;
+      } else {
+        stim.endY = stim.original_endY;
+      }
+      
       if (stim.startX === 'center') {
         if (stim.origin_center) {
           stim.startX = 0;
