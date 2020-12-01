@@ -1,0 +1,22 @@
+{
+  "name": "jspsychophysics",
+  "version": "1.0.0",
+  "description": "This is a jsPsych plugin for psychophysics.\r Please refer to the website: https://kurokida.github.io/jspsych-psychophysics/",
+  "main": "jspsych-psychophysics.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurokida/jspsych-psychophysics.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kurokida/jspsych-psychophysics/issues"
+  },
+  "homepage": "https://github.com/kurokida/jspsych-psychophysics#readme"
+}
