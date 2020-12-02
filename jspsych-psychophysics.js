@@ -12,7 +12,7 @@
  /* global jsPsych */
 
 jsPsych.plugins["psychophysics"] = (function() {
-  console.log('jspsych-psychophysics Version 1.4.2')
+  console.log('jspsych-psychophysics Version 2.0')
 
   let plugin = {};
 
@@ -185,7 +185,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         default: 0,
         description: 'When the subject is allowed to respond to the stimulus.'
       },
-      stepFunc: {
+      raf_func: {
         type: jsPsych.plugins.parameterType.FUNCTION,
         pretty_name: 'Step function',
         default: null,
@@ -261,16 +261,13 @@ jsPsych.plugins["psychophysics"] = (function() {
 
     // Class for visual and audio stimuli
     class psychophysics_stimulus {
-      // コンストラクタの定義
       constructor(stim) {
         Object.assign(this, stim)
       }
     }
 
     class visual_stimulus extends psychophysics_stimulus {
-      // コンストラクタの定義
       constructor(stim) {
-        // 親クラスのコンストラクタを実行
         super(stim);
         
         if (this.startX === 'center') {
@@ -314,14 +311,13 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (typeof this.motion_start_frame === 'undefined') this.motion_start_frame = this.show_start_frame; // Motion will start at the same frame as it is displayed.
         if (typeof this.motion_end_frame === 'undefined') this.motion_end_frame = null;
         
-        // console.log(trial.clear_canvas)
         if (trial.clear_canvas === false && this.show_end_time !== null) alert('You can not specify the show_end_time with the clear_canvas property.');
 
         // calculate the velocity (pix/sec) using the distance and the time.
         // If the pix_sec is specified, the calc_pix_per_sec returns the intact pix_sec.
         // If the pix_frame is specified, the calc_pix_per_sec returns an undefined.
-        this.horiz_pix_sec = this.calc_pix_per_sec('horiz', this);
-        this.vert_pix_sec = this.calc_pix_per_sec('vert', this);
+        this.horiz_pix_sec = this.calc_pix_per_sec('horiz');
+        this.vert_pix_sec = this.calc_pix_per_sec('vert');
 
         // currentX/Y is changed per frame.
         this.currentX = this.startX;
@@ -329,21 +325,21 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       }
 
-      calc_pix_per_sec (direction, stim){
+      calc_pix_per_sec (direction){
         let pix_sec , pix_frame, startPos, endPos;
         if (direction === 'horiz'){
-          pix_sec = stim.horiz_pix_sec;
-          pix_frame = stim.horiz_pix_frame;
-          startPos = stim.startX;
-          endPos = stim.endX;
+          pix_sec = this.horiz_pix_sec;
+          pix_frame = this.horiz_pix_frame;
+          startPos = this.startX;
+          endPos = this.endX;
         } else {
-          pix_sec = stim.vert_pix_sec;
-          pix_frame = stim.vert_pix_frame;
-          startPos = stim.startY;
-          endPos = stim.endY;
+          pix_sec = this.vert_pix_sec;
+          pix_frame = this.vert_pix_frame;
+          startPos = this.startY;
+          endPos = this.endY;
         }
-        const motion_start_time = stim.motion_start_time;
-        const motion_end_time = stim.motion_end_time;
+        const motion_start_time = this.motion_start_time;
+        const motion_end_time = this.motion_end_time;
         if ((typeof pix_sec !== 'undefined' || typeof pix_frame !== 'undefined') && endPos !== null && motion_end_time !== null) {
           alert('You can not specify the speed, location, and time at the same time.');
           pix_sec = 0; // stop the motion
@@ -407,6 +403,8 @@ jsPsych.plugins["psychophysics"] = (function() {
           } else {
             return current_pos + pix_frame; 
           }
+        } else {
+          return current_pos
         }
       }
 
@@ -427,6 +425,13 @@ jsPsych.plugins["psychophysics"] = (function() {
         this.img = new Image();
         this.img.src = this.file;
   
+      }
+
+      show(){
+        const scale = typeof this.scale === 'undefined' ? 1:this.scale;
+        const tmpW = this.img.width * scale;
+        const tmpH = this.img.height * scale;              
+        ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
       }
     }
 
@@ -460,6 +465,25 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (typeof this.line_color === 'undefined') this.line_color = '#000000';
   
       }
+
+      show(){
+        // common
+        ctx.beginPath();            
+        ctx.lineWidth = this.line_width;
+        ctx.lineJoin = this.lineJoin;
+        ctx.miterLimit = this.miterLimit;
+        //
+        const theta = deg2rad(this.angle);
+        const x1 = this.currentX - this.line_length/2 * Math.cos(theta);
+        const y1 = this.currentY - this.line_length/2 * Math.sin(theta);
+        const x2 = this.currentX + this.line_length/2 * Math.cos(theta);
+        const y2 = this.currentY + this.line_length/2 * Math.sin(theta);
+        ctx.strokeStyle = this.line_color;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+      }
     }
 
     class rect_stimulus extends visual_stimulus{
@@ -471,26 +495,86 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of the line_color or fill_color property.');      
   
       }
+
+      show(){
+        // common
+        // ctx.beginPath();            
+        ctx.lineWidth = this.line_width;
+        ctx.lineJoin = this.lineJoin;
+        ctx.miterLimit = this.miterLimit;
+        //
+        // First, draw a filled rectangle, then an edge.
+        if (typeof this.fill_color !== 'undefined') {
+          ctx.fillStyle = this.fill_color;
+          ctx.fillRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height); 
+        } 
+        if (typeof this.line_color !== 'undefined') {
+          ctx.strokeStyle = this.line_color;
+          ctx.strokeRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height);
+        }      
+
+      }
     }
 
     class cross_stimulus extends visual_stimulus {
-      // コンストラクタの定義
       constructor(stim) {
-        // 親クラスのコンストラクタを実行
         super(stim);
         
         if (typeof this.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
         if (typeof this.line_color === 'undefined') this.line_color = '#000000';
       }
+
+      show(){
+        // common
+        ctx.beginPath();            
+        ctx.lineWidth = this.line_width;
+        ctx.lineJoin = this.lineJoin;
+        ctx.miterLimit = this.miterLimit;
+        //
+        ctx.strokeStyle = this.line_color;
+        const x1 = this.currentX;
+        const y1 = this.currentY - this.line_length/2;
+        const x2 = this.currentX;
+        const y2 = this.currentY + this.line_length/2;                
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        const x3 = this.currentX - this.line_length/2;
+        const y3 = this.currentY;
+        const x4 = this.currentX + this.line_length/2;
+        const y4 = this.currentY;                
+        ctx.moveTo(x3, y3);
+        ctx.lineTo(x4, y4);
+        // ctx.closePath();
+        ctx.stroke();
+      }
     }
   
     class circle_stimulus extends visual_stimulus {
       constructor(stim){
-          // 親クラスのコンストラクタを実行
         super(stim);
         
         if (typeof this.radius === 'undefined') alert('You have to specify the radius of circles.');
         if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');      
+      }
+
+      show(){
+        // common
+        ctx.beginPath();            
+        ctx.lineWidth = this.line_width;
+        ctx.lineJoin = this.lineJoin;
+        ctx.miterLimit = this.miterLimit;
+        //
+        if (typeof this.fill_color !== 'undefined') {
+          ctx.fillStyle = this.fill_color;
+          ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
+          ctx.fill();
+        } 
+        if (typeof this.line_color !== 'undefined') {
+          ctx.strokeStyle = this.line_color;
+          ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
+          ctx.stroke();
+        }
+
       }
     }
     
@@ -503,12 +587,45 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (typeof this.text_space === 'undefined') this.text_space = 20;
   
       }
+
+      show(){
+        // common
+        // ctx.beginPath();            
+        ctx.lineWidth = this.line_width;
+        ctx.lineJoin = this.lineJoin;
+        ctx.miterLimit = this.miterLimit;
+        //
+        if (typeof this.font !== 'undefined') ctx.font = this.font;
+
+        ctx.fillStyle = this.text_color;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle"
+
+        let column = [''];
+        let line = 0;
+        for (let i = 0; i < this.content.length; i++) {
+            let char = this.content.charAt(i);
+
+            if (char == "\n") {    
+                line++;
+                column[line] = '';
+            }
+            column[line] += char;
+        }
+
+        for (let i = 0; i < column.length; i++) {
+            ctx.fillText(column[i], this.currentX, this.currentY - this.text_space * (column.length-1) / 2 + this.text_space * i);
+        }
+
+      }
     }
 
     class manual_stimulus extends visual_stimulus{
       constructor(stim){
         super(stim)
       }
+
+      show(){}
     }
 
     class audio_stimulus extends psychophysics_stimulus{
@@ -543,18 +660,20 @@ jsPsych.plugins["psychophysics"] = (function() {
             this.audio.addEventListener('ended', end_trial);
           }
         }
+      }
   
-        jsPsych.pluginAPI.setTimeout(function() {
-          // start audio
-          if(this.context !== null){
-            //startTime = this.context.currentTime;
-            this.source.start(this.context.currentTime);
-          } else {
-            this.audio.play();
-          }  
-        }, this.show_start_time);
+      play(){
+        // start audio
+        if(this.context !== null){
+          //startTime = this.context.currentTime;
+          this.source.start(this.context.currentTime);
+        } else {
+          this.audio.play();
+        }
       }
     }
+
+    if (typeof trial.stepFunc !== 'undefined') alert(`The stepFunc is no longer supported. Please use the raf_func instead.`)
 
     const elm_jspsych_content = document.getElementById('jspsych-content');
     const style_jspsych_content = window.getComputedStyle(elm_jspsych_content); // stock
@@ -652,6 +771,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     
     const centerX = canvas.width/2;
     const centerY = canvas.height/2;
+    trial.centerX = centerX;
+    trial.centerY = centerY;
     
     // add event listeners defined by experimenters.
     if (trial.mouse_down_func !== null){
@@ -674,8 +795,8 @@ jsPsych.plugins["psychophysics"] = (function() {
       document.addEventListener("keyup", trial.key_up_func);
     }
 
-    if (typeof trial.stimuli === 'undefined' && trial.stepFunc === null){
-      alert('You have to specify the stimuli/stepFunc parameter in the psychophysics plugin.')
+    if (typeof trial.stimuli === 'undefined' && trial.raf_func === null){
+      alert('You have to specify the stimuli/raf_func parameter in the psychophysics plugin.')
       return
     }
 
@@ -693,7 +814,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       cross: cross_stimulus,
       manual: manual_stimulus
     }
-    if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the stepFunc is specified.
+    if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
       for (let i = 0; i < trial.stimuli.length; i++){
         const stim = trial.stimuli[i];
         if (typeof stim.obj_type === 'undefined'){
@@ -703,6 +824,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         oop_stim.push(new set_instance[stim.obj_type](stim))
       }
     }
+    trial.stim_array = oop_stim
 
     function mouseDownFunc(e){
       
@@ -726,140 +848,6 @@ jsPsych.plugins["psychophysics"] = (function() {
       });
     }
 
-    //console.log(canvas.style.left);
-
-    
-
-    const present_functions = {
-      image: present_image,
-      line: present_line,
-      rect: present_rect,
-      circle: present_circle,
-      text: present_text,
-      cross: present_cross,
-      sound: present_sound
-    }
-    
-    function present_image(stim){
-      const scale = typeof stim.scale === 'undefined' ? 1:stim.scale;
-      const tmpW = stim.img.width * scale;
-      const tmpH = stim.img.height * scale;              
-      ctx.drawImage(stim.img, 0, 0, stim.img.width, stim.img.height, stim.currentX - tmpW / 2, stim.currentY - tmpH / 2, tmpW, tmpH); 
-    }
-
-    function present_line(stim){
-      // common
-      ctx.beginPath();            
-      ctx.lineWidth = stim.line_width;
-      ctx.lineJoin = stim.lineJoin;
-      ctx.miterLimit = stim.miterLimit;
-      //
-      const theta = deg2rad(stim.angle);
-      const x1 = stim.currentX - stim.line_length/2 * Math.cos(theta);
-      const y1 = stim.currentY - stim.line_length/2 * Math.sin(theta);
-      const x2 = stim.currentX + stim.line_length/2 * Math.cos(theta);
-      const y2 = stim.currentY + stim.line_length/2 * Math.sin(theta);
-      ctx.strokeStyle = stim.line_color;
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-    }
-
-    function present_rect(stim){
-      // common
-      // ctx.beginPath();            
-      ctx.lineWidth = stim.line_width;
-      ctx.lineJoin = stim.lineJoin;
-      ctx.miterLimit = stim.miterLimit;
-      //
-      // First, draw a filled rectangle, then an edge.
-      if (typeof stim.fill_color !== 'undefined') {
-        ctx.fillStyle = stim.fill_color;
-        ctx.fillRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height); 
-      } 
-      if (typeof stim.line_color !== 'undefined') {
-        ctx.strokeStyle = stim.line_color;
-        ctx.strokeRect(stim.currentX-stim.width/2, stim.currentY-stim.height/2, stim.width, stim.height);
-      }      
-    }
-
-    function present_cross(stim){
-      // common
-      ctx.beginPath();            
-      ctx.lineWidth = stim.line_width;
-      ctx.lineJoin = stim.lineJoin;
-      ctx.miterLimit = stim.miterLimit;
-      //
-      ctx.strokeStyle = stim.line_color;
-      const x1 = stim.currentX;
-      const y1 = stim.currentY - stim.line_length/2;
-      const x2 = stim.currentX;
-      const y2 = stim.currentY + stim.line_length/2;                
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      const x3 = stim.currentX - stim.line_length/2;
-      const y3 = stim.currentY;
-      const x4 = stim.currentX + stim.line_length/2;
-      const y4 = stim.currentY;                
-      ctx.moveTo(x3, y3);
-      ctx.lineTo(x4, y4);
-      // ctx.closePath();
-      ctx.stroke();
-    }
-
-    function present_circle(stim){
-      // common
-      ctx.beginPath();            
-      ctx.lineWidth = stim.line_width;
-      ctx.lineJoin = stim.lineJoin;
-      ctx.miterLimit = stim.miterLimit;
-      //
-      if (typeof stim.fill_color !== 'undefined') {
-        ctx.fillStyle = stim.fill_color;
-        ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
-        ctx.fill();
-      } 
-      if (typeof stim.line_color !== 'undefined') {
-        ctx.strokeStyle = stim.line_color;
-        ctx.arc(stim.currentX, stim.currentY, stim.radius, 0, Math.PI*2, false);
-        ctx.stroke();
-      }
-    }
-
-    function present_text(stim){
-      // common
-      // ctx.beginPath();            
-      ctx.lineWidth = stim.line_width;
-      ctx.lineJoin = stim.lineJoin;
-      ctx.miterLimit = stim.miterLimit;
-      //
-      if (typeof stim.font !== 'undefined') ctx.font = stim.font;
-
-      ctx.fillStyle = stim.text_color;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle"
-
-      let column = [''];
-      let line = 0;
-      for (let i = 0; i < stim.content.length; i++) {
-          let char = stim.content.charAt(i);
-
-          if (char == "\n") {    
-              line++;
-              column[line] = '';
-          }
-          column[line] += char;
-      }
-
-      for (let i = 0; i < column.length; i++) {
-          ctx.fillText(column[i], stim.currentX, stim.currentY - stim.text_space * (column.length-1) / 2 + stim.text_space * i);
-      }
-    }
-
-    function present_sound(){
-      // This is not needed actually.
-    }
-
     let startStep = null;
     let sumOfStep;
     let elapsedTime;
@@ -871,26 +859,32 @@ jsPsych.plugins["psychophysics"] = (function() {
       } else {
         sumOfStep += 1;
       }
-      elapsedTime = timestamp - startStep; // unit is ms. This can be used within the stepFunc().
+      elapsedTime = timestamp - startStep; // unit is ms. This can be used within the raf_func().
 
       if (trial.clear_canvas)
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (trial.stepFunc !== null) {        
-        trial.stepFunc(trial, canvas, ctx, elapsedTime, sumOfStep); // customize
+      if (trial.raf_func !== null) {        
+        trial.raf_func(trial, elapsedTime, sumOfStep); // customize
         frameRequestID = window.requestAnimationFrame(step);
         return
       }
 
-      // for (let i = 0; i < trial.stimuli.length; i++){
-      //   const stim = trial.stimuli[i];
-      for (let i = 0; i < oop_stim.length; i++){
-        const stim = oop_stim[i];  
+      for (let i = 0; i < trial.stim_array.length; i++){
+        const stim = trial.stim_array[i];
         const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
         const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
         const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
 
-        // if (elapsed >= show_start && (show_end === null || elapsed < show_end)) {
+        if (stim.obj_type === 'sound'){
+          if (elapsed >= show_start && !stim.is_presented){
+            stim.play(); // play the sound.
+            stim.is_presented = true;
+          }
+          continue;
+        }
+
+        // visual stimuli
         if (elapsed < show_start) continue;
         if (show_end !== null && elapsed >= show_end) continue;
         if (trial.clear_canvas === false && stim.is_presented) continue;
@@ -901,7 +895,7 @@ jsPsych.plugins["psychophysics"] = (function() {
           stim.drawFunc(stim, canvas, ctx);
         } else {
           if (stim.change_attr != null) stim.change_attr(stim, elapsedTime, sumOfStep)
-          present_functions[stim.obj_type](stim);
+          stim.show()
         }
         stim.is_presented = true;
       }
@@ -953,11 +947,10 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
-      if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the stepFunc is specified.
+      if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
         for (let i = 0; i < trial.stimuli.length; i++){
           const stim = trial.stimuli[i];
           stim.is_presented = false;
-          //console.log(stim);
           if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
             if(stim.context !== null){
               stim.source.stop();
@@ -1004,7 +997,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       // move on to the next trial
       jsPsych.finishTrial(trial_data);
-    };
+    }
 
     // getAvgSD = function(){
 
@@ -1039,7 +1032,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       if (trial.response_ends_trial) {
         end_trial();
       }
-    };
+    }
 
     // start the response listener
     // if (trial.choices != jsPsych.NO_KEYS) {

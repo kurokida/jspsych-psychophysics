@@ -21,7 +21,6 @@
       };
 
       let prev_mouseX = null;
-      let start_angle;
       let mouse_move_start = false;
       
       const line_obj = {
@@ -37,7 +36,7 @@
           canvas_height: 500,
           button_choices: ['YES', 'NO'],
           prompt: '<p>Click and move the mouse.</p>',
-          stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+          stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stim_array array.
           response_type: 'button',
           vert_button_margin: '50px',
           horiz_button_margin: '50px',
@@ -52,27 +51,27 @@
 
             if (prev_mouseX === null){
               prev_mouseX = event.offsetX;
-              start_angle = jsPsych.currentTrial().stimuli[1].angle; 
-              // stimuli[0] means a circle, and stimuli[1] means a line.
-              // start_angle is saved for resotring.
               return
             }
 
+            // stim_array[0] means a circle, and stim_array[1] means a line.
             if (event.offsetX > prev_mouseX){
-              jsPsych.currentTrial().stimuli[1].angle += 5; // The angle changes by 5 degrees.
+              jsPsych.currentTrial().stim_array[1].angle += 5; // The angle changes by 5 degrees.
             } else {
-              jsPsych.currentTrial().stimuli[1].angle -= 5;
+              jsPsych.currentTrial().stim_array[1].angle -= 5;
             }
             prev_mouseX = event.offsetX;
           },
-          on_finish: function(){
-              jsPsych.currentTrial().stimuli[1].angle = start_angle; // Restoring
-          }
       }
 
       /* start the experiment */
       jsPsych.init({
-        timeline: [trial],
+        timeline: [
+          {
+            timeline: [trial],
+            repetitions: 3
+          }
+        ],
         on_finish: function(){jsPsych.data.displayData();}
       });
   </script>

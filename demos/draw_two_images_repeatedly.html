@@ -36,7 +36,7 @@
                 ],
                 canvas_height: 500,
                 prompt: 'Press any key to proceed.',
-                stepFunc: function(trial, canvas, context, elapsedTime){
+                raf_func: function(trial, elapsedTime){
                     const first_image_onset = 0; // ms
                     const display_duration = 500; // ms
                     const isi = 500; // ms
@@ -46,13 +46,13 @@
                     const time_from_first_image_onset = elapsedTime % period;
 
                     if (time_from_first_image_onset > first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
-                        const stim = trial.stimuli[0];
-                        context.drawImage(stim.img, 0, 0); 
+                        const stim = trial.stim_array[0];
+                        stim.show();
                     }
 
                     if (time_from_first_image_onset > second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
-                        const stim = trial.stimuli[1];
-                        context.drawImage(stim.img, 0, 0); 
+                        const stim = trial.stim_array[1];
+                        stim.show();
                     }
                 }
             },

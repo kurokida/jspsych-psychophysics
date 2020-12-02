@@ -12,7 +12,8 @@
     var rotation = {
         type: 'psychophysics',
         // Note: The properties which depend on objects like show_start_time can not be written here.
-        stepFunc: function(trial, canvas, context, elapsedTime, elapsedFrame){
+        raf_func: function(trial, elapsedTime, elapsedFrame){
+            const context = trial.context;
             context.font = "48px serif";
             context.fillText('Elapsed Time in seconds', 10, 50);
             context.fillText(Math.round(elapsedTime/1000), 10, 100);
