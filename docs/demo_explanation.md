@@ -16,7 +16,7 @@ This file demonstrates how to present two images repeatedly until a participant 
 
 ## [elapsed_time_frame.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame.html)
 
-This file demonstrates how to use the `stepFunc` which is called by the requestAnimationFrame method. The elapsed time after begging of a trial is presented both in milliseconds and in frames.
+This file demonstrates how to use the `raf_func` which is called by the requestAnimationFrame method. The elapsed time after begging of a trial is presented both in milliseconds and in frames.
 
 ## [how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html)
 
@@ -69,6 +69,22 @@ Note that if you define motion using the distance and time, you have to specify 
 
 This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true (The default is false).
 
+## [play_html5_sound_by_key.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/play_html5_sound_by_key.html)
+
+This file demonstrates how to play the sound by pressing a key. This program doesn't use the Web Audio API.
+
+## [play_webaudio_sound_by_key.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/play_webaudio_sound_by_key.html)
+
+This file demonstrates how to play the sound by pressing a key. This program uses the Web Audio API. The Web Audio API should be used for time-accurate presentation, but the code would be a bit more complex compared with *the play_html5_sound_by_key.html.*
+
+## [raf_func.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/raf_func.html)
+
+A circle moves on a virtual circumference.
+
+This file demonstrates how to use the raf_func which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
+
+You can directly access the canvas (of which the context) using the raf_func. You can draw complex visual stimuli.
+
 ## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 
 This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
@@ -77,13 +93,9 @@ This file demonstrates how to present a fixation point and an image in a randomi
 
 This file demonstrates how to present (moving) rectangles.
 
-## [stepFunc.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/stepFunc.html)
+## [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html)
 
-A circle moves on a virtual circumference.
-
-This file demonstrates how to use the stepFunc which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
-
-You can directly access the canvas (of which the context) using the stepFunc. You can draw complex visual stimuli.
+This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.
 
 ## [text-rect-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/text-rect-circle.html)
 
