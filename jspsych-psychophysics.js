@@ -3,7 +3,7 @@
  * Copyright (c) 2019 Daiichiro Kuroki
  * Released under the MIT license
  * 
- * jspsych-psychophysics is a plugin for conducting Web-based psychophysical experiments using jsPsych (de Leeuw, 2015). 
+ * jspsych-psychophysics is a plugin for conducting online/Web-based psychophysical experiments using jsPsych (de Leeuw, 2015). 
  *
  * http://jspsychophysics.hes.kyushu-u.ac.jp/
  *
@@ -18,7 +18,7 @@ jsPsych.plugins["psychophysics"] = (function() {
 
   plugin.info = {
     name: 'psychophysics',
-    description: '',
+    description: 'A plugin for conducting online/Web-based psychophysical experiments',
     parameters: {
       stimuli: {
         type: jsPsych.plugins.parameterType.COMPLEX, // This is similar to the quesions of the survey-likert. 
@@ -671,6 +671,17 @@ jsPsych.plugins["psychophysics"] = (function() {
           this.audio.play();
         }
       }
+
+      stop(){
+        if(this.context !== null){
+          this.source.stop();
+          this.source.onended = function() { }
+        } else {
+          this.audio.pause();
+          this.audio.removeEventListener('ended', end_trial);
+        }
+
+      }
     }
 
     if (typeof trial.stepFunc !== 'undefined') alert(`The stepFunc is no longer supported. Please use the raf_func instead.`)
@@ -683,7 +694,7 @@ jsPsych.plugins["psychophysics"] = (function() {
     let new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
 
     const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.
-    let start_time;
+    let start_time; // used for mouse and button responses.
     let keyboardListener;
 
     // allow to respond using keyboard mouse or button
@@ -825,6 +836,9 @@ jsPsych.plugins["psychophysics"] = (function() {
       }
     }
     trial.stim_array = oop_stim
+    // for (let i = 0; i < trial.stim_array.length; i++){
+    //   console.log(trial.stim_array[i].is_presented)
+    // }
 
     function mouseDownFunc(e){
       
@@ -947,18 +961,13 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
-      if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
-        for (let i = 0; i < trial.stimuli.length; i++){
-          const stim = trial.stimuli[i];
-          stim.is_presented = false;
-          if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
-            if(stim.context !== null){
-              stim.source.stop();
-              stim.source.onended = function() { }
-            } else {
-              stim.audio.pause();
-              stim.audio.removeEventListener('ended', end_trial);
-            }
+      if (typeof trial.stim_array !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
+        for (let i = 0; i < trial.stim_array.length; i++){
+          const stim = trial.stim_array[i];
+          // stim.is_presented = false;
+          // if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
+          if (stim.obj_type === 'sound') { // If the stimulus is audio data
+            stim.stop();
           }
         }
       }
@@ -999,10 +1008,6 @@ jsPsych.plugins["psychophysics"] = (function() {
       jsPsych.finishTrial(trial_data);
     }
 
-    // getAvgSD = function(){
-
-    // }
-
     // function to handle responses by the subject
     // let after_response = function(info) { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial); 
     function after_response(info) {
@@ -1033,25 +1038,6 @@ jsPsych.plugins["psychophysics"] = (function() {
         end_trial();
       }
     }
-
-    // start the response listener
-    // if (trial.choices != jsPsych.NO_KEYS) {
-    //   let keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
-    //     callback_function: after_response,
-    //     valid_responses: trial.choices,
-    //     rt_method: 'date',
-    //     persist: false,
-    //     allow_held_key: false
-    //   });
-    // }
-
-    // hide stimulus if stimulus_duration is set
-    // if (trial.stimulus_duration !== null) {
-    //   jsPsych.pluginAPI.setTimeout(function() {
-    //     //display_element.querySelector('#jspsych-html-keyboard-response-stimulus').style.visibility = 'hidden';
-    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //   }, trial.stimulus_duration);
-    // }
 
     // end trial if trial_duration is set
     if (trial.trial_duration !== null) {

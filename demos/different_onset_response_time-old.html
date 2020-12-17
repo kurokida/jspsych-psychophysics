@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present two images with 500-ms SOA
+    // このデモは、試行ごとに異なる画像の呈示を開始する時間を設定し、その時間を基準にした反応時間を取得する方法について説明します。
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+    ];
+
+    var trial = {
+        timeline: [
+            {
+                type: 'psychophysics',
+                response_start_time: jsPsych.timelineVariable('start_time'),
+                stimuli: [
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('stim'),
+                        show_start_time: jsPsych.timelineVariable('start_time'), // ms after the start of the trial
+                    }
+                ],
+                canvas_height: 500,
+                prompt: 'Press any key to respond.',
+                data: {
+                    'image_name': jsPsych.timelineVariable('stim'),
+                    'start_time': jsPsych.timelineVariable('start_time')
+                }
+            }
+        ],
+        timeline_variables: [
+            {stim: images[0], start_time: 1000},
+            {stim: images[1], start_time: 2000},
+            {stim: images[2], start_time: 3000},
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        preload_images: images, // The image data should be preloaded.
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

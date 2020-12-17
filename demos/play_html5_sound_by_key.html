@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <script src="../jspsych-html-button-response.js"></script>
+      <link href="../css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body></body>
+    <script>
+        // This file demonstrates how to play the sound by pressing a key.
+
+        const sounds = [ // All the sound files used in this demo
+            './sound/tone100ms.wav',
+            './sound/880Hz_100ms.wav'
+        ];
+
+        const sound1 = {
+            obj_type: 'sound',
+            file: sounds[0]
+        }
+
+        const sound2 = {
+            obj_type: 'sound',
+            file: sounds[1]
+        }
+    
+        const trial = {
+            type: 'psychophysics',
+            stimuli: [sound1, sound2], // These can be referenced using the jsPsych.currentTrial().stim_array.
+            prompt: '<p>Pressing the F or J key to play the sound.</p>',
+            canvas_height: 500,
+            response_type: 'key',
+            choices: ['space'],
+            key_down_func: function(event){ 
+                if (event.key === 'f'){
+                    jsPsych.currentTrial().stim_array[0].play()
+                }
+                if (event.key === 'j'){
+                    jsPsych.currentTrial().stim_array[1].play()
+                }
+            },
+            raf_func: function(){ // You have to write the empty raf_func to prevent playing the sound automatically.
+
+            }
+        }
+
+        // See also jspsych-audio-keyboard-response.html
+        var pre_audio = {
+            type: 'html-button-response',
+            stimulus: 'Recent versions of Chrome require the user to interact with a page before it can play audio. '+
+            'Clicking the button below counts as an interaction. Be aware of this when planning audio experiments if '+
+            'you want the first trial to include audio.',
+            choices: ['Continue']
+        }
+
+        jsPsych.init({
+            timeline: [pre_audio, trial],
+            use_webaudio: false, // required for this demo to run properly.
+            preload_audio: sounds, // The sound data should be preloaded.
+            on_finish: function(){jsPsych.data.displayData();}
+        });
+  </script>
+</html>
