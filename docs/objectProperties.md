@@ -127,12 +127,11 @@ If you want to draw something that the jspsych-psychophysics does not provide th
 
 The first argument is `stimulus` by which you can access the properties of the object. For example, `stimulus.currentX/Y` can be used to refer the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
 
-The second argument is `canvas`, and the third argument is `context` of the canvas.
-
 The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, `demos/manual-drawFunc.html`.
 
 ```javascript
-drawFunc: function(stimulus, canvas, context){
+drawFunc: function(stimulus){
+    context = jsPsych.currentTrial().context;
     context.beginPath();
 
     const gradLength = 200;

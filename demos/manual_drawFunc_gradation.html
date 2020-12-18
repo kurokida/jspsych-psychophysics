@@ -16,7 +16,8 @@
         motion_start_time: 2000,
         startX: 0,
         startY: 0,
-        drawFunc: function(stimulus, canvas, context){
+        drawFunc: function(stimulus){
+            context = jsPsych.currentTrial().context;
             context.beginPath();
 
             const gradLength = 200;
