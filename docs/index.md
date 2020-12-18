@@ -1,7 +1,7 @@
 The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
-Please cite [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) and [Kuroki (2020)](https://rdcu.be/b5Nie) when you report your research using the jspsych-psychophysics plugin.
+I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) as well as [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) when you report your research using this plugin.
 
 If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues)
 
