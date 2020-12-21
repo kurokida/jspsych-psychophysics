@@ -14,7 +14,7 @@
  /* global jsPsych */
 
 jsPsych.plugins["psychophysics"] = (function() {
-  console.log('jspsych-psychophysics Version 2.0')
+  console.log('jspsych-psychophysics Version 2.1')
 
   let plugin = {};
 
@@ -265,6 +265,12 @@ jsPsych.plugins["psychophysics"] = (function() {
     class psychophysics_stimulus {
       constructor(stim) {
         Object.assign(this, stim)
+        const keys = Object.keys(this)
+        for (var i = 0; i < keys.length; i++) {
+          if (typeof this[keys[i]] === "function") {
+            this[keys[i]] = this[keys[i]].call()
+          }
+        }
       }
     }
 

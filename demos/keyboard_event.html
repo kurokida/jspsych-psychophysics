@@ -36,6 +36,8 @@
               current_color -= 10;
               if (current_color < 0) current_color = 0;
             }
+
+            // Note that when specify the space bar, you need to write event.key === ' ' not event.key === 'space'.
             
             jsPsych.currentTrial().stim_array[0].fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
           },
