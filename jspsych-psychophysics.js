@@ -267,9 +267,12 @@ jsPsych.plugins["psychophysics"] = (function() {
         Object.assign(this, stim)
         const keys = Object.keys(this)
         for (var i = 0; i < keys.length; i++) {
-          if (typeof this[keys[i]] === "function") {
-            this[keys[i]] = this[keys[i]].call()
-          }
+            if (typeof this[keys[i]] === "function") {
+              if (keys[i] === "drawFunc") continue
+              if (keys[i] === "change_attr") continue
+
+              this[keys[i]] = this[keys[i]].call()
+            }
         }
       }
     }
