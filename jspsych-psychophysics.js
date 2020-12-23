@@ -11,7 +11,7 @@
  *
  **/
 
- /* global jsPsych */
+ /* global jsPsych, gaborgen */
 
 jsPsych.plugins["psychophysics"] = (function() {
   console.log('jspsych-psychophysics Version 2.1')
@@ -446,6 +446,43 @@ jsPsych.plugins["psychophysics"] = (function() {
       }
     }
 
+    class gabor_stimulus extends visual_stimulus {
+      constructor(stim){
+        super(stim);
+
+        // if (typeof this.file === 'undefined') {
+        //   alert('You have to specify the file property.');
+        //   return;
+        // }
+        this.img = new Image();
+        this.img.src = gaborgen(this.tilt, this.sf, this.phase)
+        this.update_count = 0
+  
+      }
+
+      show(){
+        const scale = typeof this.scale === 'undefined' ? 1:this.scale;
+        const tmpW = this.img.width * scale;
+        const tmpH = this.img.height * scale;              
+        ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
+      }
+
+      update_position(elapsed){
+        this.update_count += 1
+        this.currentX = this.calc_current_position ('horiz', elapsed)
+        this.currentY = this.calc_current_position ('vert', elapsed)
+        // 
+        if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
+          // 実験者が速度を指定するのではなく、１フレームの変化にどの程度の時間を要したかは測定できるのでは？
+          // 実際の速度のようなものを知ることができるのでは？
+          // console.log(this.phase)
+          this.phase += this.phase2
+          this.img.src = gaborgen(this.tilt, this.sf, this.phase)
+        }
+      }
+
+    }
+
     class line_stimulus extends visual_stimulus{
       constructor(stim){
         super(stim)
@@ -834,7 +871,8 @@ jsPsych.plugins["psychophysics"] = (function() {
       circle: circle_stimulus,
       text: text_stimulus,
       cross: cross_stimulus,
-      manual: manual_stimulus
+      manual: manual_stimulus,
+      gabor: gabor_stimulus
     }
     if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
       for (let i = 0; i < trial.stimuli.length; i++){

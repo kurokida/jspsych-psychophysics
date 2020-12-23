@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <script src="../numeric.min.js"></script>
+  <script src="../gab.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present a gabor patch.
+
+    const gabor_stim = {
+        obj_type: 'gabor',
+        tilt: 50,
+        sf: 20,
+        phase: 30,
+        // phase2: 30,
+        phase2: 0
+    }
+
+    const trial = {
+        type: 'psychophysics',
+        stimuli: [gabor_stim],
+        canvas_height: 500,
+        prompt: 'Press any key to proceed.',
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>
