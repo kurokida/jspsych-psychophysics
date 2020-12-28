@@ -11,7 +11,7 @@
  *
  **/
 
- /* global jsPsych, gaborgen */
+ /* global jsPsych, gaborgen, math */
 
 jsPsych.plugins["psychophysics"] = (function() {
   console.log('jspsych-psychophysics Version 2.1')
@@ -261,6 +261,11 @@ jsPsych.plugins["psychophysics"] = (function() {
     
   plugin.trial = function(display_element, trial) {
 
+    // returns an array starting with 'start_num' of which length is 'count'.
+    function getNumbering(start_num, count) {
+      return [...Array(count)].map((_, i) => i + start_num) 
+    }
+
     // Class for visual and audio stimuli
     class psychophysics_stimulus {
       constructor(stim) {
@@ -450,32 +455,103 @@ jsPsych.plugins["psychophysics"] = (function() {
       constructor(stim){
         super(stim);
 
-        // if (typeof this.file === 'undefined') {
-        //   alert('You have to specify the file property.');
-        //   return;
-        // }
-        // this.img = new Image();
-        // this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        // this.update_count = 0
-        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
-        // const img_data = []
-        // for (let i = 0; i < gabor_data.length; i++){
-        //   img_data.push()
-        // }
+        // const width = 400;
+        // const coord_array = getNumbering(5, 10)
 
-        const width = 400;
-        const imageData = ctx.createImageData(width, width);
-
-        const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
-
-        // Iterate through every pixel
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          // Modify pixel data
-          imageData.data[i + 0] = gabor_data[i + 0];  // R value
-          imageData.data[i + 1] = gabor_data[i + 1];    // G value
-          imageData.data[i + 2] = gabor_data[i + 2];  // B value
-          imageData.data[i + 3] = gabor_data[i + 3];  // A value
+        //let coord_array = getNumbering(Math.round(this.currentX - this.width/2), this.width)
+        let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+        // console.log(coord_array)
+        let coord_matrix = []
+        for (let i = 0; i< this.width; i++){
+          coord_matrix.push(coord_array)
         }
+        // console.log(coord_matrix)
+
+        const matrix_x = math.matrix(coord_matrix) // Matrix
+        console.log( matrix_x._data[179][179])
+        
+
+        // coord_array = getNumbering(Math.round(this.currentY - this.width/2), this.width)
+        coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+        // console.log(coord_array)
+        coord_matrix = []
+        for (let i = 0; i< this.width; i++){
+          coord_matrix.push(coord_array)
+        }
+
+        const matrix_y = math.transpose(math.matrix(coord_matrix))
+
+        // console.log(matrix_y)
+
+        const abc = math.unit(2.5, 'radian')
+        console.log(abc)
+        console.log(abc.toNumber('deg'))
+        // console.log(math.to(abc, 'deg'))
+        // print(math.to(abc, 'deg'))
+
+        const tilt_deg = math.unit(this.tilt, 'deg')
+        const a = math.multiply(math.cos(tilt_deg), this.sf, 360)
+        const b = math.multiply(math.sin(tilt_deg), this.sf, 360)
+        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) // scalar: this calculation doesn't use the math.js
+
+        const x_factor = math.multiply(-1, math.square(matrix_x))
+        const y_factor = math.multiply(-1, math.square(matrix_y))
+
+        const tmp0 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), this.phase)
+        // console.log(tmp0)
+        // const sinWave = math.sin(math.unit(30, 'deg'))
+        const sinWave = math.sin(tmp0)
+       
+        const varScale = 2 * math.square(this.sc)
+        const exp_value = math.exp(math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale)))
+        const tmp1 = math.dotMultiply(exp_value, sinWave)
+        const tmp2 = math.multiply(multConst, tmp1)
+        const tmp3 = math.multiply(this.contrast, tmp2)
+        const m = math.multiply(255, math.add(0.5, tmp3))
+        const gabor_data = m._data
+
+        console.log(gabor_data[200][200])
+
+        // console.log(m._data[200][200])
+        // console.log(m._data[0][0])
+        
+        // console.log(matrix_y)
+
+        // console.log(math.cos(math.unit(180, 'deg')) )
+
+        // const array1 = math.range(2,6,1)
+        // let array2 = array1
+        // array2 = math.concat(array2, array1, 0)
+        // console.log(array2)
+        // const matrix1 = math.matrix()
+        // const array2 = array1.resize([2,3]) 
+        // console.log(array2)
+        // console.log(math.reshape(array1, [2,3]))
+        const imageData = ctx.createImageData(this.width, this.width);
+
+        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+
+        let cnt = 0;
+        // Iterate through every pixel
+        for (let i = 0; i < this.width; i++) {
+          for (let j = 0; j < this.width; j++) {
+            // Modify pixel data
+            imageData.data[cnt] = gabor_data[i][j];  // R value
+            cnt++;
+            imageData.data[cnt] = gabor_data[i][j];  // G
+            cnt++;
+            imageData.data[cnt] = gabor_data[i][j];  // B
+            cnt++;
+            imageData.data[cnt] = gabor_data[i][j];  // alpha
+          }
+        }
+        // for (let i = 0; i < imageData.data.length; i += 4) {
+        //   // Modify pixel data
+        //   imageData.data[i + 0] = gabor_data[i + 0];  // R value
+        //   imageData.data[i + 1] = gabor_data[i + 1];    // G value
+        //   imageData.data[i + 2] = gabor_data[i + 2];  // B value
+        //   imageData.data[i + 3] = gabor_data[i + 3];  // A value
+        // }
         
 
         
@@ -513,18 +589,18 @@ jsPsych.plugins["psychophysics"] = (function() {
         const width = 400;
         const imageData = ctx.createImageData(width, width);
 
-        const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
 
-        // Iterate through every pixel
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          // Modify pixel data
-          imageData.data[i + 0] = gabor_data[i + 0];  // R value
-          imageData.data[i + 1] = gabor_data[i + 1];    // G value
-          imageData.data[i + 2] = gabor_data[i + 2];  // B value
-          imageData.data[i + 3] = gabor_data[i + 3];  // A value
-        }
+        // // Iterate through every pixel
+        // for (let i = 0; i < imageData.data.length; i += 4) {
+        //   // Modify pixel data
+        //   imageData.data[i + 0] = gabor_data[i + 0];  // R value
+        //   imageData.data[i + 1] = gabor_data[i + 1];    // G value
+        //   imageData.data[i + 2] = gabor_data[i + 2];  // B value
+        //   imageData.data[i + 3] = gabor_data[i + 3];  // A value
+        // }
         
-        this.img_data = imageData
+        // this.img_data = imageData
 
         
         // 
