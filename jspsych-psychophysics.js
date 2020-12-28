@@ -454,31 +454,87 @@ jsPsych.plugins["psychophysics"] = (function() {
         //   alert('You have to specify the file property.');
         //   return;
         // }
-        this.img = new Image();
-        this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        this.update_count = 0
+        // this.img = new Image();
+        // this.img.src = gaborgen(this.tilt, this.sf, this.phase)
+        // this.update_count = 0
+        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+        // const img_data = []
+        // for (let i = 0; i < gabor_data.length; i++){
+        //   img_data.push()
+        // }
+
+        const width = 400;
+        const imageData = ctx.createImageData(width, width);
+
+        const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+
+        // Iterate through every pixel
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          // Modify pixel data
+          imageData.data[i + 0] = gabor_data[i + 0];  // R value
+          imageData.data[i + 1] = gabor_data[i + 1];    // G value
+          imageData.data[i + 2] = gabor_data[i + 2];  // B value
+          imageData.data[i + 3] = gabor_data[i + 3];  // A value
+        }
+        
+
+        
+        // let myImageData = ctx.createImageData(width, width);
+
+        
+
+        // myImageData.data = img_data
+        
+        this.img_data = imageData
+
+        // this.img_data = gaborgen(this.tilt, this.sf, this.phase)
+        // console.log(this.img_data)
   
       }
 
       show(){
-        const scale = typeof this.scale === 'undefined' ? 1:this.scale;
-        const tmpW = this.img.width * scale;
-        const tmpH = this.img.height * scale;              
-        ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
+        // const scale = typeof this.scale === 'undefined' ? 1:this.scale;
+        // const tmpW = this.img.width * scale;
+        // const tmpH = this.img.height * scale;     
+
+        // ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
+
+        ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
       }
 
       update_position(elapsed){
         this.update_count += 1
         this.currentX = this.calc_current_position ('horiz', elapsed)
         this.currentY = this.calc_current_position ('vert', elapsed)
+
+        this.phase += this.phase2
+        // console.log(this.phase)
+
+        const width = 400;
+        const imageData = ctx.createImageData(width, width);
+
+        const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+
+        // Iterate through every pixel
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          // Modify pixel data
+          imageData.data[i + 0] = gabor_data[i + 0];  // R value
+          imageData.data[i + 1] = gabor_data[i + 1];    // G value
+          imageData.data[i + 2] = gabor_data[i + 2];  // B value
+          imageData.data[i + 3] = gabor_data[i + 3];  // A value
+        }
+        
+        this.img_data = imageData
+
+        
         // 
-        if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
+        // if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
           // 実験者が速度を指定するのではなく、１フレームの変化にどの程度の時間を要したかは測定できるのでは？
           // 実際の速度のようなものを知ることができるのでは？
           // console.log(this.phase)
-          this.phase += this.phase2
-          this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        }
+          // this.phase += this.phase2
+          // this.img.src = gaborgen(this.tilt, this.sf, this.phase)
+        // }
       }
 
     }

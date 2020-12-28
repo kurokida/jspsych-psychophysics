@@ -9,8 +9,8 @@ gaborgen = function(tilt, sf, phase) {
   reso = 400;
   sc = 50.0;
   
-  reso = 600;
-  sc = 20.0;
+  // reso = 600;
+  // sc = 20.0;
   
   // phase = 0;
   // phase = phase;
@@ -24,8 +24,8 @@ gaborgen = function(tilt, sf, phase) {
   sf_max = .1;
   tilt = rescale_core(tilt, tilt_min, tilt_max, 1, 100);
   sf = rescale_core(sf, sf_min, sf_max, 1, 100);
-  console.log(sf)
-  console.log(tilt)
+  // console.log(sf)
+  // console.log(tilt)
   x = reso / 2;
   y = reso / 2;
   a = numeric.cos([deg2rad(tilt)]) * sf * 360;
@@ -63,7 +63,22 @@ gaborgen = function(tilt, sf, phase) {
   
   scaledM = rescale(m, 0, 254);
   // console.log(scaledM)
-  return numeric.imageURL([scaledM, scaledM, scaledM]);
+
+  const output = []
+  // for (let i = 0; i < scaledM.length; i++){
+  //   for (let j = 0; j < scaledM[0].length; j++){
+  for (let i = 0; i < 400; i++){
+    for (let j = 0; j < 400; j++){
+      output.push(scaledM[i][j]) // R
+      output.push(scaledM[i][j]) // G
+      output.push(scaledM[i][j]) // B
+      output.push(255) // alpha
+    }
+  }
+  // console.log(output)
+  return output
+  // console.log(scaledM) // RGBA (A=255)
+  // return numeric.imageURL([scaledM, scaledM, scaledM]);
 };
 
 pi = 3.1416;
