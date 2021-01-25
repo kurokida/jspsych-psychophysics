@@ -89,6 +89,10 @@ You can directly access the canvas (of which the context) using the raf_func. Yo
 
 This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
 
+## [randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html).
+
+This file demonstrates how to randomize the show_start_time of a image stimulus. The stimulus image is presented from 500 to 3000ms after the fixation point.
+
 ## [rectangles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rectangles.html)
 
 This file demonstrates how to present (moving) rectangles.
