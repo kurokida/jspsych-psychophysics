@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to randomize the show_start_time of a image stimulus.
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+        './img/pin.png',
+        './img/tape.png',
+        './img/clip.png'
+    ];
+
+    const fixation =  {
+        obj_type: 'cross',
+        line_length: 20,
+    }
+
+    const stim_img = {
+        obj_type: 'image',
+        show_start_time: 500,
+        file: jsPsych.timelineVariable('stim'),
+    }
+
+    var trial = {
+        timeline: [
+            {
+                type: 'psychophysics',
+                stimuli: [fixation, stim_img],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                on_start: function(trial){
+                    const min = 500; // ms
+                    const max = 3000; // ms
+
+                    // The index of the stimuli depends on the order in which they are declared
+                    // trial.stimuli[0] means the fixation
+                    // trial.stimuli[1] means the image
+                    trial.stimuli[1].show_start_time = min + Math.floor(Math.random() * (max - min));
+                    
+                    console.log(trial.stimuli[1].show_start_time)
+                }
+            }
+        ],
+        timeline_variables: [
+            {stim: images[0]},
+            {stim: images[1]},
+            {stim: images[2]},
+            {stim: images[3]},
+            {stim: images[4]},
+            {stim: images[5]}
+        ],
+        randomize_order: true,
+        repetitions: 2,
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        preload_images: images, // The image data should be preloaded.
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>
