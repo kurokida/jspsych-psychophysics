@@ -456,7 +456,7 @@ jsPsych.plugins["psychophysics"] = (function() {
         // }
         this.img = new Image();
         this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        this.update_count = 0
+        // this.update_count = 0
   
       }
 
@@ -467,19 +467,19 @@ jsPsych.plugins["psychophysics"] = (function() {
         ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
       }
 
-      update_position(elapsed){
-        this.update_count += 1
-        this.currentX = this.calc_current_position ('horiz', elapsed)
-        this.currentY = this.calc_current_position ('vert', elapsed)
+      // update_position(elapsed){
+        // this.update_count += 1
+        // this.currentX = this.calc_current_position ('horiz', elapsed)
+        // this.currentY = this.calc_current_position ('vert', elapsed)
         // 
-        if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
-          // 実験者が速度を指定するのではなく、１フレームの変化にどの程度の時間を要したかは測定できるのでは？
-          // 実際の速度のようなものを知ることができるのでは？
-          // console.log(this.phase)
-          this.phase += this.phase2
-          this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        }
-      }
+        // if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
+        //   // 実験者が速度を指定するのではなく、１フレームの変化にどの程度の時間を要したかは測定できるのでは？
+        //   // 実際の速度のようなものを知ることができるのでは？
+        //   // console.log(this.phase)
+        //   this.phase += this.phase2
+        //   this.img.src = gaborgen(this.tilt, this.sf, this.phase)
+        // }
+      // }
 
     }
 

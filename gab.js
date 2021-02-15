@@ -9,8 +9,8 @@ gaborgen = function(tilt, sf, phase) {
   reso = 400;
   sc = 50.0;
   
-  reso = 600;
-  sc = 20.0;
+  // reso = 600;
+  // sc = 20.0;
   
   // phase = 0;
   // phase = phase;
@@ -24,8 +24,8 @@ gaborgen = function(tilt, sf, phase) {
   sf_max = .1;
   tilt = rescale_core(tilt, tilt_min, tilt_max, 1, 100);
   sf = rescale_core(sf, sf_min, sf_max, 1, 100);
-  console.log(sf)
-  console.log(tilt)
+  // console.log(sf)
+  // console.log(tilt)
   x = reso / 2;
   y = reso / 2;
   a = numeric.cos([deg2rad(tilt)]) * sf * 360;

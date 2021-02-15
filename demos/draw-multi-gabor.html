@@ -11,23 +11,23 @@
 <script>
     // This file demonstrates how to present a gabor patch.
 
+    // The background color of gabor2 is slightly different from the background color of gabor1. I do not know why.
+
     const gabor1 = {
         obj_type: 'gabor',
         tilt: 50,
         sf: 20,
         phase: 10,
-        phase2: 0, // 運動させないために必要
         origin_center: true,
         startX: -200,
         startY: -100
     }
 
-    const gabor2 = { // なぜか gabor1と背景色が微妙に違う
+    const gabor2 = {
         obj_type: 'gabor',
         tilt: 50,
         sf: 20,
         phase: 50,
-        phase2: 0,　// 運動させないために必要
         origin_center: true,
         startX: 200,
         startY: -100
