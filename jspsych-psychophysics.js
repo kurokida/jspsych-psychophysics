@@ -455,59 +455,92 @@ jsPsych.plugins["psychophysics"] = (function() {
       constructor(stim){
         super(stim);
 
-        // const width = 400;
-        // const coord_array = getNumbering(5, 10)
-
         //let coord_array = getNumbering(Math.round(this.currentX - this.width/2), this.width)
         let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-        // console.log(coord_array)
         let coord_matrix = []
         for (let i = 0; i< this.width; i++){
           coord_matrix.push(coord_array)
         }
-        // console.log(coord_matrix)
 
-        const matrix_x = math.matrix(coord_matrix) // Matrix
-        console.log( matrix_x._data[179][179])
-        
+        const matrix_x = math.matrix(coord_matrix) // Convert to Matrix data
 
         // coord_array = getNumbering(Math.round(this.currentY - this.width/2), this.width)
         coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-        // console.log(coord_array)
         coord_matrix = []
         for (let i = 0; i< this.width; i++){
           coord_matrix.push(coord_array)
         }
-
         const matrix_y = math.transpose(math.matrix(coord_matrix))
 
-        // console.log(matrix_y)
-
-        const abc = math.unit(2.5, 'radian')
-        console.log(abc)
-        console.log(abc.toNumber('deg'))
+        // const abc = math.unit(2.5, 'radian')
+        // console.log(abc)
+        // console.log(abc.toNumber('deg'))
         // console.log(math.to(abc, 'deg'))
         // print(math.to(abc, 'deg'))
 
-        const tilt_deg = math.unit(this.tilt, 'deg')
-        const a = math.multiply(math.cos(tilt_deg), this.sf, 360)
-        const b = math.multiply(math.sin(tilt_deg), this.sf, 360)
-        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) // scalar: this calculation doesn't use the math.js
+        const tilt_rad = deg2rad(this.tilt)
+        const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
+        const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
+        // const a = Math.cos(tilt_rad) * this.sf * 360
+        // const b = Math.sin(tilt_rad) * this.sf * 360
+        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) // This is a scalar: this calculation doesn't use the math.js
+        
+        // const tilt_deg = math.unit(this.tilt, 'deg')
+        // console.log(this.tilt)
+        // console.log(tilt_deg)
+        // console.log(math.cos(tilt_deg))
+        // const a = math.multiply(math.cos(tilt_deg), this.sf, 360)
+        // console.log(a)
+        // const b = math.multiply(math.sin(tilt_deg), this.sf, 360)
+        // console.log(b)
+        // console.log(multConst)
+
+        // console.log(matrix_x)
 
         const x_factor = math.multiply(-1, math.square(matrix_x))
         const y_factor = math.multiply(-1, math.square(matrix_y))
 
-        const tmp0 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), this.phase)
+        // console.log(x_factor._data[0][0])
+
+        const phase_rad = deg2rad(this.phase)
+        console.log(phase_rad)
+
+        const tmp0 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // rad
+        console.log(matrix_x._data[100][100])
+        console.log(matrix_y._data[100][100])
+
+        console.log(tmp0._data[100][100]) // Matlabと一致
+
+        // const tmp0_deg = math.unit(tmp0, 'deg')
+
+        // console.log(math.sin(deg2rad(30)))
         // console.log(tmp0)
         // const sinWave = math.sin(math.unit(30, 'deg'))
         const sinWave = math.sin(tmp0)
+        // const sinWave = math.sin(tmp0_deg)
+        console.log(sinWave._data[100][100]) // Matlabと一致
        
+
         const varScale = 2 * math.square(this.sc)
-        const exp_value = math.exp(math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale)))
+        console.log(varScale) // Matlabと一致
+
+        const tmp5 = math.divide(x_factor, varScale)
+        console.log(tmp5._data[100][100]) // Matlabと一致
+
+        const tmp6 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
+        console.log(tmp6._data[100][100]) // Matlabと一致
+
+        const exp_value = math.exp(tmp6)
+        console.log(exp_value._data[200][200])
         const tmp1 = math.dotMultiply(exp_value, sinWave)
+        console.log(tmp1._data[100][100]) // Matlabと一致
         const tmp2 = math.multiply(multConst, tmp1)
         const tmp3 = math.multiply(this.contrast, tmp2)
+        const tmp4 = math.add(0.5, tmp3)
+        console.log(tmp4._data[150][150])
         const m = math.multiply(255, math.add(0.5, tmp3))
+
+        // const m = math.add(128, tmp3)
         const gabor_data = m._data
 
         console.log(gabor_data[200][200])
@@ -543,6 +576,7 @@ jsPsych.plugins["psychophysics"] = (function() {
             imageData.data[cnt] = gabor_data[i][j];  // B
             cnt++;
             imageData.data[cnt] = gabor_data[i][j];  // alpha
+            cnt++;
           }
         }
         // for (let i = 0; i < imageData.data.length; i += 4) {
@@ -578,16 +612,16 @@ jsPsych.plugins["psychophysics"] = (function() {
         ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
       }
 
-      update_position(elapsed){
-        this.update_count += 1
-        this.currentX = this.calc_current_position ('horiz', elapsed)
-        this.currentY = this.calc_current_position ('vert', elapsed)
+      // update_position(elapsed){
+        // this.update_count += 1
+        // this.currentX = this.calc_current_position ('horiz', elapsed)
+        // this.currentY = this.calc_current_position ('vert', elapsed)
 
-        this.phase += this.phase2
-        // console.log(this.phase)
+        // this.phase += this.phase2
+        // const width = 400;
+        // const imageData = ctx.createImageData(width, width);
 
-        const width = 400;
-        const imageData = ctx.createImageData(width, width);
+        // ここまで
 
         // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
 
@@ -611,7 +645,7 @@ jsPsych.plugins["psychophysics"] = (function() {
           // this.phase += this.phase2
           // this.img.src = gaborgen(this.tilt, this.sf, this.phase)
         // }
-      }
+      // }
 
     }
 
