@@ -455,13 +455,18 @@ jsPsych.plugins["psychophysics"] = (function() {
       constructor(stim){
         super(stim);
 
+        // The following calculation method is based on Psychtoolbox (MATLAB), 
+        // although it doesn't use procedural texture mapping.
+
+        // Since the meshgrid function is not available in javascript, the math.js is used to create the matrix.
+        // Note that "Math" and "math" are not the same.
+
         //let coord_array = getNumbering(Math.round(this.currentX - this.width/2), this.width)
         let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
         let coord_matrix = []
         for (let i = 0; i< this.width; i++){
           coord_matrix.push(coord_array)
         }
-
         const matrix_x = math.matrix(coord_matrix) // Convert to Matrix data
 
         // coord_array = getNumbering(Math.round(this.currentY - this.width/2), this.width)
@@ -472,98 +477,31 @@ jsPsych.plugins["psychophysics"] = (function() {
         }
         const matrix_y = math.transpose(math.matrix(coord_matrix))
 
-        // const abc = math.unit(2.5, 'radian')
-        // console.log(abc)
-        // console.log(abc.toNumber('deg'))
-        // console.log(math.to(abc, 'deg'))
-        // print(math.to(abc, 'deg'))
+        const tilt_rad = deg2rad(90 - this.tilt)
 
-        const tilt_rad = deg2rad(this.tilt)
+        // These values are scalars, so need not to use the math.js.
         const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
         const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
-        // const a = Math.cos(tilt_rad) * this.sf * 360
-        // const b = Math.sin(tilt_rad) * this.sf * 360
-        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) // This is a scalar: this calculation doesn't use the math.js
-        
-        // const tilt_deg = math.unit(this.tilt, 'deg')
-        // console.log(this.tilt)
-        // console.log(tilt_deg)
-        // console.log(math.cos(tilt_deg))
-        // const a = math.multiply(math.cos(tilt_deg), this.sf, 360)
-        // console.log(a)
-        // const b = math.multiply(math.sin(tilt_deg), this.sf, 360)
-        // console.log(b)
-        // console.log(multConst)
-
-        // console.log(matrix_x)
+        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
 
         const x_factor = math.multiply(-1, math.square(matrix_x))
         const y_factor = math.multiply(-1, math.square(matrix_y))
 
-        // console.log(x_factor._data[0][0])
-
         const phase_rad = deg2rad(this.phase)
-        console.log(phase_rad)
 
-        const tmp0 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // rad
-        console.log(matrix_x._data[100][100])
-        console.log(matrix_y._data[100][100])
-
-        console.log(tmp0._data[100][100]) // Matlabと一致
-
-        // const tmp0_deg = math.unit(tmp0, 'deg')
-
-        // console.log(math.sin(deg2rad(30)))
-        // console.log(tmp0)
-        // const sinWave = math.sin(math.unit(30, 'deg'))
-        const sinWave = math.sin(tmp0)
-        // const sinWave = math.sin(tmp0_deg)
-        console.log(sinWave._data[100][100]) // Matlabと一致
-       
-
+        const tmp1 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // radians
+        const sinWave = math.sin(tmp1)
         const varScale = 2 * math.square(this.sc)
-        console.log(varScale) // Matlabと一致
-
-        const tmp5 = math.divide(x_factor, varScale)
-        console.log(tmp5._data[100][100]) // Matlabと一致
-
-        const tmp6 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
-        console.log(tmp6._data[100][100]) // Matlabと一致
-
-        const exp_value = math.exp(tmp6)
-        console.log(exp_value._data[200][200])
-        const tmp1 = math.dotMultiply(exp_value, sinWave)
-        console.log(tmp1._data[100][100]) // Matlabと一致
-        const tmp2 = math.multiply(multConst, tmp1)
-        const tmp3 = math.multiply(this.contrast, tmp2)
-        const tmp4 = math.add(0.5, tmp3)
-        console.log(tmp4._data[150][150])
-        const m = math.multiply(255, math.add(0.5, tmp3))
-
-        // const m = math.add(128, tmp3)
+        const tmp2 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
+        const exp_value = math.exp(tmp2)
+        const tmp3 = math.dotMultiply(exp_value, sinWave)
+        const tmp4 = math.multiply(multConst, tmp3)
+        const tmp5 = math.multiply(this.contrast, tmp4)
+        const m = math.multiply(255, math.add(0.5, tmp5))
         const gabor_data = m._data
 
-        console.log(gabor_data[200][200])
-
-        // console.log(m._data[200][200])
-        // console.log(m._data[0][0])
-        
-        // console.log(matrix_y)
-
-        // console.log(math.cos(math.unit(180, 'deg')) )
-
-        // const array1 = math.range(2,6,1)
-        // let array2 = array1
-        // array2 = math.concat(array2, array1, 0)
-        // console.log(array2)
-        // const matrix1 = math.matrix()
-        // const array2 = array1.resize([2,3]) 
-        // console.log(array2)
-        // console.log(math.reshape(array1, [2,3]))
         const imageData = ctx.createImageData(this.width, this.width);
-
-        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
-
+        
         let cnt = 0;
         // Iterate through every pixel
         for (let i = 0; i < this.width; i++) {
@@ -575,31 +513,12 @@ jsPsych.plugins["psychophysics"] = (function() {
             cnt++;
             imageData.data[cnt] = gabor_data[i][j];  // B
             cnt++;
-            imageData.data[cnt] = gabor_data[i][j];  // alpha
+            imageData.data[cnt] = 255;  // alpha
             cnt++;
           }
         }
-        // for (let i = 0; i < imageData.data.length; i += 4) {
-        //   // Modify pixel data
-        //   imageData.data[i + 0] = gabor_data[i + 0];  // R value
-        //   imageData.data[i + 1] = gabor_data[i + 1];    // G value
-        //   imageData.data[i + 2] = gabor_data[i + 2];  // B value
-        //   imageData.data[i + 3] = gabor_data[i + 3];  // A value
-        // }
-        
 
-        
-        // let myImageData = ctx.createImageData(width, width);
-
-        
-
-        // myImageData.data = img_data
-        
         this.img_data = imageData
-
-        // this.img_data = gaborgen(this.tilt, this.sf, this.phase)
-        // console.log(this.img_data)
-  
       }
 
       show(){
