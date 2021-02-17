@@ -6,6 +6,10 @@ This list is in alphabetical order
 
 The cross object can be used to present a fixation point. In this demo, moving two cross are presented. 
 
+## [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)
+
+This file demonstrates how to present gabor patches. See [the description](gabor.md).
+
 ## [draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)
 
 This file demonstrates how to use the `drawFunc` with the image object. You need not to use the drawFunc when you present intact images. But if you want to modify the images, for example, if you want to present a part of the image, the drawFunc is useful.
@@ -13,6 +17,10 @@ This file demonstrates how to use the `drawFunc` with the image object. You need
 ## [draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
 
 This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like the change blindness.
+
+## [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)
+
+This file demonstrates how to present a drifting gabor patch. See [the description](gabor.md).
 
 ## [elapsed_time_frame.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame.html)
 
