@@ -11,10 +11,10 @@
  *
  **/
 
- /* global jsPsych, gaborgen, math */
+ /* global jsPsych, math, numeric */
 
 jsPsych.plugins["psychophysics"] = (function() {
-  console.log('jspsych-psychophysics Version 2.1')
+  console.log('jspsych-psychophysics Version 2.2')
 
   let plugin = {};
 
@@ -130,6 +130,55 @@ jsPsych.plugins["psychophysics"] = (function() {
             default: false,
             description: 'If true, then the trial will end as soon as the audio file finishes playing.'
           },
+          tilt: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'tilt',
+            default: 0,
+            description: 'The tilt of the gabor patch.'
+          },
+          sf: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'spatial frequency',
+            default: 0.05,
+            description: 'The spatial frequency of the gabor patch.'
+          },
+          phase: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'phase',
+            default: 0,
+            description: 'The phase (degrees) of the gabor patch.'
+          },
+          sc: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'standard deviation',
+            default: 20,
+            description: 'The standard deviation of the distribution.'
+          },
+          contrast: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'contrast',
+            default: 20,
+            description: 'The contrast of the gabor patch.'
+          },
+          drift: {
+            type: jsPsych.plugins.parameterType.FLOAT,
+            pretty_name: 'drift',
+            default: 0,
+            description: 'The velocity of the drifting gabor patch.'
+          },
+          method: {
+            type: jsPsych.plugins.parameterType.STRING,
+            pretty_name: 'gabor_drawing_method',
+            default: 'numeric',
+            description: 'The method of drawing the gabor patch.'
+          },
+          disableNorm: {
+            type: jsPsych.plugins.parameterType.BOOL,
+            pretty_name: 'disableNorm',
+            default: false,
+            description: 'Disable normalization of the gaussian function.'
+          },
+
         }
       },
       choices: {
@@ -458,12 +507,6 @@ jsPsych.plugins["psychophysics"] = (function() {
       }
 
       show(){
-        // const scale = typeof this.scale === 'undefined' ? 1:this.scale;
-        // const tmpW = this.img.width * scale;
-        // const tmpH = this.img.height * scale;     
-
-        // ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
-
         ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
       }
 
@@ -475,43 +518,46 @@ jsPsych.plugins["psychophysics"] = (function() {
         if (typeof this.img_data !== 'undefined' && this.drift === 0) return
 
         let gabor_data;
-        console.log(this.method)
+        // console.log(this.method)
+
+        // The following calculation method is based on Psychtoolbox (MATLAB), 
+        // although it doesn't use procedural texture mapping.
+        // I also have referenced the gaborgen-js code: https://github.com/jtth/gaborgen-js 
+
+        // You can choose either the numeric.js or the math.js as the method for drawing gabor patches.
+        // The numeric.js is considerably faster than the math.js, but the latter is being developed more aggressively than the former.
+        // Note that "Math" and "math" are not the same.
+
+        let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+        let coord_matrix_x = []
+        for (let i = 0; i< this.width; i++){
+          coord_matrix_x.push(coord_array)
+        }
+
+        coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+        let coord_matrix_y = []
+        for (let i = 0; i< this.width; i++){
+          coord_matrix_y.push(coord_array)
+        }
+
+        const tilt_rad = deg2rad(90 - this.tilt)
+
+        // These values are scalars.
+        const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
+        const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
+        let multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
+        if (this.disableNorm) multConst = 1
+
+        
+        // const phase_rad = deg2rad(this.phase)
+        const phase_rad = deg2rad(this.phase + this.drift * this.update_count)
+        this.update_count += 1
+
         if (this.method === 'math') {
-
-          // The following calculation method is based on Psychtoolbox (MATLAB), 
-          // although it doesn't use procedural texture mapping.
-
-          // Since the meshgrid function is not available in javascript, the math.js is used to create the matrix.
-          // Note that "Math" and "math" are not the same.
-
-          let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-          let coord_matrix = []
-          for (let i = 0; i< this.width; i++){
-            coord_matrix.push(coord_array)
-          }
-          const matrix_x = math.matrix(coord_matrix) // Convert to Matrix data
-
-          coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-          coord_matrix = []
-          for (let i = 0; i< this.width; i++){
-            coord_matrix.push(coord_array)
-          }
-          const matrix_y = math.transpose(math.matrix(coord_matrix))
-
-          const tilt_rad = deg2rad(90 - this.tilt)
-
-          // These values are scalars, so need not to use the math.js.
-          const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
-          const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
-          const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
-
+          const matrix_x = math.matrix(coord_matrix_x) // Convert to Matrix data
+          const matrix_y = math.transpose(math.matrix(coord_matrix_y))
           const x_factor = math.multiply(-1, math.square(matrix_x))
           const y_factor = math.multiply(-1, math.square(matrix_y))
-
-          // const phase_rad = deg2rad(this.phase)
-          const phase_rad = deg2rad(this.phase + this.drift * this.update_count)
-          this.update_count += 1
-
           const tmp1 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // radians
           const sinWave = math.sin(tmp1)
           const varScale = 2 * math.square(this.sc)
@@ -522,14 +568,23 @@ jsPsych.plugins["psychophysics"] = (function() {
           const tmp5 = math.multiply(this.contrast, tmp4)
           const m = math.multiply(255, math.add(0.5, tmp5))
           gabor_data = m._data
-
-          
-        } else { // gaborgen-js
-          gabor_data = gaborgen(this.tilt, this.sf, this.phase)
-          // gabor_data = gaborgen(50, 20, 10)
-
+        } else { // numeric
+          const matrix_x = coord_matrix_x
+          const matrix_y = numeric.transpose(coord_matrix_y)
+          const x_factor = numeric.mul(-1, numeric.pow(matrix_x, 2))
+          const y_factor = numeric.mul(-1, numeric.pow(matrix_y, 2))
+          const tmp1 = numeric.add(numeric.mul(a, matrix_x), numeric.mul(b, matrix_y), phase_rad) // radians
+          const sinWave = numeric.sin(tmp1)
+          const varScale = 2 * numeric.pow([this.sc], 2)
+          const tmp2 = numeric.add(numeric.div(x_factor, varScale), numeric.div(y_factor, varScale));
+          const exp_value = numeric.exp(tmp2)
+          const tmp3 = numeric.mul(exp_value, sinWave)
+          const tmp4 = numeric.mul(multConst, tmp3)
+          const tmp5 = numeric.mul(this.contrast, tmp4)
+          const m = numeric.mul(255, numeric.add(0.5, tmp5))
+          gabor_data = m
         }
-        
+        // console.log(gabor_data)
         const imageData = ctx.createImageData(this.width, this.width);
         let cnt = 0;
         // Iterate through every pixel
@@ -549,37 +604,6 @@ jsPsych.plugins["psychophysics"] = (function() {
 
         this.img_data = imageData
       }
-
-        // this.phase += this.phase2
-        // const width = 400;
-        // const imageData = ctx.createImageData(width, width);
-
-        // ここまで
-
-        // const gabor_data = gaborgen(this.tilt, this.sf, this.phase)
-
-        // // Iterate through every pixel
-        // for (let i = 0; i < imageData.data.length; i += 4) {
-        //   // Modify pixel data
-        //   imageData.data[i + 0] = gabor_data[i + 0];  // R value
-        //   imageData.data[i + 1] = gabor_data[i + 1];    // G value
-        //   imageData.data[i + 2] = gabor_data[i + 2];  // B value
-        //   imageData.data[i + 3] = gabor_data[i + 3];  // A value
-        // }
-        
-        // this.img_data = imageData
-
-        
-        // 
-        // if (this.update_count % 3 === 0 && this.phase2 !== 0){ // 運動のときだけでいいはず
-          // 実験者が速度を指定するのではなく、１フレームの変化にどの程度の時間を要したかは測定できるのでは？
-          // 実際の速度のようなものを知ることができるのでは？
-          // console.log(this.phase)
-          // this.phase += this.phase2
-          // this.img.src = gaborgen(this.tilt, this.sf, this.phase)
-        // }
-      // }
-
     }
 
     class line_stimulus extends visual_stimulus{

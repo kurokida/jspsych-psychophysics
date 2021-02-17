@@ -5,24 +5,27 @@
   <script src="../jspsych-psychophysics.js"></script>
   <script src="../numeric.min.js"></script>
   <script src="../gab.js"></script>
+  <script src="../math.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
 <script>
     // This file demonstrates how to present a gabor patch.
 
-    const gabor_stim = {
+    const gabor1 = {
         obj_type: 'gabor',
-        tilt: 50,
-        sf: 20,
-        phase: 30,
-        phase2: 10,
-        // phase2: 0
+        tilt: 30,
+        sf: 0.05,
+        phase: 90,
+        width: 300,
+        sc: 30,
+        contrast: 20,
+        drift: 10,
     }
 
     const trial = {
         type: 'psychophysics',
-        stimuli: [gabor_stim],
+        stimuli: [gabor1],
         canvas_height: 500,
         prompt: 'Press any key to proceed.',
     }
