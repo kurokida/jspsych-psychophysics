@@ -454,54 +454,83 @@ jsPsych.plugins["psychophysics"] = (function() {
     class gabor_stimulus extends visual_stimulus {
       constructor(stim){
         super(stim);
+        this.update_count = 0;
+      }
 
-        // The following calculation method is based on Psychtoolbox (MATLAB), 
-        // although it doesn't use procedural texture mapping.
+      show(){
+        // const scale = typeof this.scale === 'undefined' ? 1:this.scale;
+        // const tmpW = this.img.width * scale;
+        // const tmpH = this.img.height * scale;     
 
-        // Since the meshgrid function is not available in javascript, the math.js is used to create the matrix.
-        // Note that "Math" and "math" are not the same.
+        // ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
 
-        //let coord_array = getNumbering(Math.round(this.currentX - this.width/2), this.width)
-        let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-        let coord_matrix = []
-        for (let i = 0; i< this.width; i++){
-          coord_matrix.push(coord_array)
-        }
-        const matrix_x = math.matrix(coord_matrix) // Convert to Matrix data
+        ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
+      }
 
-        // coord_array = getNumbering(Math.round(this.currentY - this.width/2), this.width)
-        coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
-        coord_matrix = []
-        for (let i = 0; i< this.width; i++){
-          coord_matrix.push(coord_array)
-        }
-        const matrix_y = math.transpose(math.matrix(coord_matrix))
-
-        const tilt_rad = deg2rad(90 - this.tilt)
-
-        // These values are scalars, so need not to use the math.js.
-        const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
-        const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
-        const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
-
-        const x_factor = math.multiply(-1, math.square(matrix_x))
-        const y_factor = math.multiply(-1, math.square(matrix_y))
-
-        const phase_rad = deg2rad(this.phase)
-
-        const tmp1 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // radians
-        const sinWave = math.sin(tmp1)
-        const varScale = 2 * math.square(this.sc)
-        const tmp2 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
-        const exp_value = math.exp(tmp2)
-        const tmp3 = math.dotMultiply(exp_value, sinWave)
-        const tmp4 = math.multiply(multConst, tmp3)
-        const tmp5 = math.multiply(this.contrast, tmp4)
-        const m = math.multiply(255, math.add(0.5, tmp5))
-        const gabor_data = m._data
-
-        const imageData = ctx.createImageData(this.width, this.width);
+      update_position(elapsed){
         
+        this.currentX = this.calc_current_position ('horiz', elapsed)
+        this.currentY = this.calc_current_position ('vert', elapsed)
+
+        if (typeof this.img_data !== 'undefined' && this.drift === 0) return
+
+        let gabor_data;
+        console.log(this.method)
+        if (this.method === 'math') {
+
+          // The following calculation method is based on Psychtoolbox (MATLAB), 
+          // although it doesn't use procedural texture mapping.
+
+          // Since the meshgrid function is not available in javascript, the math.js is used to create the matrix.
+          // Note that "Math" and "math" are not the same.
+
+          let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+          let coord_matrix = []
+          for (let i = 0; i< this.width; i++){
+            coord_matrix.push(coord_array)
+          }
+          const matrix_x = math.matrix(coord_matrix) // Convert to Matrix data
+
+          coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+          coord_matrix = []
+          for (let i = 0; i< this.width; i++){
+            coord_matrix.push(coord_array)
+          }
+          const matrix_y = math.transpose(math.matrix(coord_matrix))
+
+          const tilt_rad = deg2rad(90 - this.tilt)
+
+          // These values are scalars, so need not to use the math.js.
+          const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
+          const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
+          const multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
+
+          const x_factor = math.multiply(-1, math.square(matrix_x))
+          const y_factor = math.multiply(-1, math.square(matrix_y))
+
+          // const phase_rad = deg2rad(this.phase)
+          const phase_rad = deg2rad(this.phase + this.drift * this.update_count)
+          this.update_count += 1
+
+          const tmp1 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // radians
+          const sinWave = math.sin(tmp1)
+          const varScale = 2 * math.square(this.sc)
+          const tmp2 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
+          const exp_value = math.exp(tmp2)
+          const tmp3 = math.dotMultiply(exp_value, sinWave)
+          const tmp4 = math.multiply(multConst, tmp3)
+          const tmp5 = math.multiply(this.contrast, tmp4)
+          const m = math.multiply(255, math.add(0.5, tmp5))
+          gabor_data = m._data
+
+          
+        } else { // gaborgen-js
+          gabor_data = gaborgen(this.tilt, this.sf, this.phase)
+          // gabor_data = gaborgen(50, 20, 10)
+
+        }
+        
+        const imageData = ctx.createImageData(this.width, this.width);
         let cnt = 0;
         // Iterate through every pixel
         for (let i = 0; i < this.width; i++) {
@@ -520,21 +549,6 @@ jsPsych.plugins["psychophysics"] = (function() {
 
         this.img_data = imageData
       }
-
-      show(){
-        // const scale = typeof this.scale === 'undefined' ? 1:this.scale;
-        // const tmpW = this.img.width * scale;
-        // const tmpH = this.img.height * scale;     
-
-        // ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
-
-        ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
-      }
-
-      // update_position(elapsed){
-        // this.update_count += 1
-        // this.currentX = this.calc_current_position ('horiz', elapsed)
-        // this.currentY = this.calc_current_position ('vert', elapsed)
 
         // this.phase += this.phase2
         // const width = 400;
