@@ -117,6 +117,20 @@ This object would be used as the fixation point.
 |line_length|numeric|undefined| The length of the line.|
 |line_color|string|#000000 (black)|The color of the line.|
 
+# obj_type: 'gabor' 
+
+|Property name|Type|Default Value|Description|
+|---|---|---|---|
+|width|numeric|undefined| The size (width x width) of the area where the gabor patch is drawn. |
+|tilt|numeric|0| The tilt of the gabor patch. |
+|sf|numeric|0.05| The spatial frequency of the gabor patch. |
+|phase|numeric|0| The phase (degrees) of the gabor patch. |
+|sc|numeric|20| The standard deviation of the gaussian distribution. |
+|contrast|numeric|20| The contrast of the gabor patch. |
+|drift|numeric|0| The velocity of the drifting gabor patch. |
+|method|text|numeric| The method of drawing the gabor patch. |
+|disableNorm|boolean|false| Disable normalization of the gaussian function. |
+
 # obj_type: 'manual' 
 
 |Property name|Type|Default Value|Description|
