@@ -178,7 +178,6 @@ jsPsych.plugins["psychophysics"] = (function() {
             default: false,
             description: 'Disable normalization of the gaussian function.'
           },
-
         }
       },
       choices: {
@@ -566,7 +565,7 @@ jsPsych.plugins["psychophysics"] = (function() {
           const tmp3 = math.dotMultiply(exp_value, sinWave)
           const tmp4 = math.multiply(multConst, tmp3)
           const tmp5 = math.multiply(this.contrast, tmp4)
-          const m = math.multiply(255, math.add(0.5, tmp5))
+          const m = math.multiply(256, math.add(0.5, tmp5))
           gabor_data = m._data
         } else { // numeric
           const matrix_x = coord_matrix_x
@@ -581,7 +580,7 @@ jsPsych.plugins["psychophysics"] = (function() {
           const tmp3 = numeric.mul(exp_value, sinWave)
           const tmp4 = numeric.mul(multConst, tmp3)
           const tmp5 = numeric.mul(this.contrast, tmp4)
-          const m = numeric.mul(255, numeric.add(0.5, tmp5))
+          const m = numeric.mul(256, numeric.add(0.5, tmp5))
           gabor_data = m
         }
         // console.log(gabor_data)
@@ -591,11 +590,11 @@ jsPsych.plugins["psychophysics"] = (function() {
         for (let i = 0; i < this.width; i++) {
           for (let j = 0; j < this.width; j++) {
             // Modify pixel data
-            imageData.data[cnt] = gabor_data[i][j];  // R value
+            imageData.data[cnt] = Math.round(gabor_data[i][j]);  // R value
             cnt++;
-            imageData.data[cnt] = gabor_data[i][j];  // G
+            imageData.data[cnt] = Math.round(gabor_data[i][j]);  // G
             cnt++;
-            imageData.data[cnt] = gabor_data[i][j];  // B
+            imageData.data[cnt] = Math.round(gabor_data[i][j]);  // B
             cnt++;
             imageData.data[cnt] = 255;  // alpha
             cnt++;

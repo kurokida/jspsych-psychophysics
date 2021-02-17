@@ -119,17 +119,20 @@ This object would be used as the fixation point.
 
 # obj_type: 'gabor' 
 
+See [the description](gabor.md).
+
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |width|numeric|undefined| The size (width x width) of the area where the gabor patch is drawn. |
-|tilt|numeric|0| The tilt of the gabor patch. |
+|tilt|numeric|0| The tilt of the gabor patch. The unit is the degree relative to the horizontal axis.|
 |sf|numeric|0.05| The spatial frequency of the gabor patch. |
 |phase|numeric|0| The phase (degrees) of the gabor patch. |
 |sc|numeric|20| The standard deviation of the gaussian distribution. |
 |contrast|numeric|20| The contrast of the gabor patch. |
 |drift|numeric|0| The velocity of the drifting gabor patch. |
-|method|text|numeric| The method of drawing the gabor patch. |
-|disableNorm|boolean|false| Disable normalization of the gaussian function. |
+|method|text|numeric| The method of drawing the gabor patch. 'numeric' or 'math' [The numeric.js](https://github.com/sloisel/numeric) is considerably faster than [the math.js](https://mathjs.org/).|
+|disableNorm|boolean|false| Disable normalization of the gaussian function. That is, coefficient: 1/(sqrt(2*pi) * sc)
+will not be multiplied.|
 
 # obj_type: 'manual' 
 
