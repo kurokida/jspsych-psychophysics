@@ -3,17 +3,17 @@ This plugin can be used free of charge under the MIT license.
 
 I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) as well as [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) when you report your research using this plugin.
 
-If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues)
+If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues).
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs) in a trial.
-- You can present visual stimuli (e.g., [gabor](gabor.md), image, line, rectangle, circle, and text) at intended coordinates in terms of milliseconds and frames. You can also present moving objects and play sound files.
+- You can present visual stimuli (e.g., [gabor patches](gabor.md), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of milliseconds and frames. You can also present moving objects and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](faq.md).
-- Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can also be recorded as a response.
+- Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
 
 ## How to use the jspsych-psychophysics plugin
-This is the brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of objects](objectProperties.md) in detail.
+This is a brief explanation how to use the plugin. Please refer to [the parameters of the plugin](pluginParams.md) and [the properties of objects](objectProperties.md) in detail.
 
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
@@ -21,8 +21,8 @@ This figure illustrates a trial flow to be made by this tutorial.
 You can see [the sample of this tutorial.](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
 
 ### 1. Download the plugin package.
-[Please download the latest files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
-The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015), and released under [the MIT license](https://opensource.org/licenses/MIT).
+[Please download the latest plugin files from GitHub.](https://github.com/kurokida/jspsych-psychophysics/releases)
+The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015). The psychophysics plugin is released under [the MIT license](https://opensource.org/licenses/MIT).
 
 
 ### 2. Include the plugin file using the `<script>` tag
