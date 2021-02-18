@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../css/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    const text = {
+        obj_type: 'text',
+        content: 'Hello!',
+        font: "22px 'Arial'",        
+    }
+
+    var trial = {
+        type: 'psychophysics',
+        stimuli: [text],
+        on_start: function(trial){
+            console.log(trial)
+            trial.stimuli[0].content = `The width of the canvas is ${trial.canvas_width} and the height is ${trial.canvas_height}`
+        }
+    }
+
+    jsPsych.init({
+        timeline: [trial],
+        on_finish: function(){jsPsych.data.displayData();}
+    });
+</script>
+
+</html>

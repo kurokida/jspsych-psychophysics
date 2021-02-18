@@ -50,8 +50,12 @@ See the [demos/how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~k
 
 ## 9. How can I change properties of the stimulus in other functions?
 
-There are two ways for changing properties of the stimulus: one is using the `stimuli` and the other is using the `stim_array`.
+There are two ways for changing properties of the stimulus: one is using the `stimuli` and the other is using the `stim_array`. Sorry for the confusion.
 
 Please use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See the [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html).
 
 Please use the `stim_array` when you want to change properties of the stimulus during the trial. See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
+
+## 10. What is the avg_frame_time?
+
+The avg_frame_time is the value of an elapsed time divided by the number of times the requestAnimationFrame was called. The elapsed time is the time when the requestAnimationFrame was last called minus the time when the requestAnimationFrame was first called. So, the avg_frame_time is a measure of how accurately the stimuli were presented. When using a display with a refresh rate of 60 Hz, theoretically the avg_frame_time would be 16.7 ms. However, when the load of stimulus presentation was high, the avg_frame_time would exceed 16.7ms. The large avg_frame_time means that the stimulus could not be presented in the expected time.

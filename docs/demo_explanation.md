@@ -105,6 +105,10 @@ This file demonstrates how to randomize the show_start_time of a image stimulus.
 
 This file demonstrates how to present (moving) rectangles.
 
+## [resolution.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/resolution.html)
+
+If you are using a Mac which has a retina display, the resolution may not match the number of pixels of the canvas. Using this demo, you can know the number of pixels of the canvas.
+
 ## [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html)
 
 This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.

@@ -8,6 +8,8 @@ You can choose either [the numeric.js](https://github.com/sloisel/numeric) or [t
 
 There is still the issue of display calibration. Unfortunately, my plugin does not provide a solution to this problem.
 
+See the Gabor section of [the page on object properties](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html).
+
 # The drifting gabor patch
 
 You are capable of making a gabor patch drift. The Gabor patch drifts more smoothly when it is presented using the numeric.js more than using the math.js. However, its speed is not accurate when using either library.
