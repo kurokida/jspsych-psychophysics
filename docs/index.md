@@ -57,7 +57,7 @@ var circle_object = {
 }
 ```
 
-The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) setting the `origin_center` property as true. The unit is the pixel. 
+The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) by specifying the `origin_center` property as true. The unit is the pixel. 
 
 The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
 
