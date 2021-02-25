@@ -1,4 +1,4 @@
-# Demonsration of the jspsych-psychophysics plugin.
+# Demonsrations of the jspsych-psychophysics plugin.
 
 This list is in alphabetical order
 

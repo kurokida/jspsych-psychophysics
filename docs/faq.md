@@ -59,3 +59,7 @@ Please use the `stim_array` when you want to change properties of the stimulus d
 ## 10. What is the avg_frame_time?
 
 The avg_frame_time is the value of an elapsed time divided by the number of times the requestAnimationFrame was called. The elapsed time is the time when the requestAnimationFrame was last called minus the time when the requestAnimationFrame was first called. So, the avg_frame_time is a measure of how accurately the stimuli were presented. When using a display with a refresh rate of 60 Hz, theoretically the avg_frame_time would be 16.7 ms. However, when the load of stimulus presentation was high, the avg_frame_time would exceed 16.7ms. The large avg_frame_time means that the stimulus could not be presented in the expected time.
+
+## 11. Is there a way to control stimulus size and viewing distance in online experiments?
+
+Yes, there is. Please use [the jspsych-virtual-chinrest plugin](https://www.jspsych.org/plugins/jspsych-virtual-chinrest/). This plugin is included in the jsPsych library.

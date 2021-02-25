@@ -89,7 +89,7 @@ Note that if you use image and audio files in a trial, please preload them using
 
 In addition, the other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
 
-## Demonstration
+## Demonstrations
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
 ## FAQ
