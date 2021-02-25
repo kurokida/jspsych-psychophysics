@@ -4,12 +4,13 @@
   <script src="../jspsych.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
   <script src="../jspsych-html-button-response.js"></script>
+  <script src="../jspsych-preload.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
 <script>
-    // This demo explains how to specify different start time of presentation of an image for each trial, 
-    // and how to get the reaction time based on the start time.
+    // This demo explains how to set a different time to start presenting images for each trial, 
+    // and how to get the reaction time based on that time.
     // Note that the response_start_time property needs to be specified in terms of ms. 
     // In other words, if you are using the start_frame property instead of the start_time property, 
     // you need to convert it to ms.
@@ -19,6 +20,12 @@
         './img/pen.png',
         './img/battery.png',
     ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: 'preload',
+        images: images,
+    }
 
     const instruction = {
         type: 'html-button-response',
@@ -55,8 +62,7 @@
     }
 
     jsPsych.init({
-        timeline: [instruction, trial],
-        preload_images: images, // The image data should be preloaded.
+        timeline: [preload, instruction, trial],
         on_finish: function(){jsPsych.data.displayData();}
     });
 </script>

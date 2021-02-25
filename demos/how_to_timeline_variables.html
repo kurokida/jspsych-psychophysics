@@ -3,6 +3,7 @@
 <head>
   <script src="../jspsych.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
+  <script src="../jspsych-preload.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
@@ -17,6 +18,12 @@
         './img/tape.png',
         './img/clip.png'
     ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: 'preload',
+        images: images,
+    }
 
     const image1 = {
         obj_type: 'image',
@@ -52,7 +59,7 @@
     }
 
     jsPsych.init({
-        timeline: [trial],
+        timeline: [preload, trial],
         preload_images: images, // The image data should be preloaded.
         on_finish: function(){jsPsych.data.displayData();}
     });

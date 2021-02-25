@@ -4,6 +4,7 @@
   <script src="../jspsych.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
   <script src="../jspsych-html-button-response.js"></script>
+  <script src="../jspsych-preload.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
@@ -11,10 +12,16 @@
     // This file demonstrates how to present sounds with 1000-ms SOA.
     // Note that the experimental files (html, js, and audio) must be uploaded in a web-server to run.
 
-    sounds = [ // All the sound files used in this demo
+    const sounds = [ // All the sound files used in this demo
         './sound/tone100ms.wav',
         './sound/880Hz_100ms.wav'
     ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: 'preload',
+        audio: sounds,
+    }
 
     var trial = {
         timeline: [
@@ -53,8 +60,7 @@
     }
 
     jsPsych.init({
-        timeline: [pre_audio, trial],
-        preload_audio: sounds, // The image data should be preloaded.
+        timeline: [preload, pre_audio, trial],
         on_finish: function(){jsPsych.data.displayData();}
     });
 </script>

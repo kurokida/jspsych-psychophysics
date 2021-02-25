@@ -3,6 +3,7 @@
 <head>
   <script src="../jspsych.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
+  <script src="../jspsych-preload.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
@@ -19,6 +20,13 @@
         './img/tape.png',
         './img/clip.png'
     ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: 'preload',
+        images: images,
+    }
+
 
     const fixation =  {
         obj_type: 'cross',
@@ -64,8 +72,7 @@
     }
 
     jsPsych.init({
-        timeline: [trial],
-        preload_images: images, // The image data should be preloaded.
+        timeline: [preload, trial],
         on_finish: function(){jsPsych.data.displayData();}
     });
 </script>

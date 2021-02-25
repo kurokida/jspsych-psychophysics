@@ -27,7 +27,7 @@
           prompt: '<p>Pressing the ArrowUp/ArrowDown key, the color of the circle will change. <br>Press the space key to finish the program.</p>',
           stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
           response_type: 'key',
-          choices: ['space'],
+          choices: [' '],
           key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
             if (event.key === 'ArrowUp'){
               current_color += 10;

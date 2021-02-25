@@ -3,13 +3,14 @@
 <head>
   <script src="../jspsych.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
+  <script src="../jspsych-preload.js"></script>
   <link rel="stylesheet" href="../css/jspsych.css"></link>
 </head>
 <body></body>
 <script>
     // This file demonstrates how to present two images with 1000-ms SOA
 
-    images = [ // All the images used in this demo
+    const images = [ // All the images used in this demo
         './img/scissors.png',
         './img/pen.png',
         './img/battery.png',
@@ -17,6 +18,13 @@
         './img/tape.png',
         './img/clip.png'
     ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: 'preload',
+        images: images,
+    }
+
 
     var trial = {
         timeline: [
@@ -55,8 +63,7 @@
     }
 
     jsPsych.init({
-        timeline: [trial],
-        preload_images: images, // The image data should be preloaded.
+        timeline: [preload, trial],
         on_finish: function(){jsPsych.data.displayData();}
     });
 </script>
