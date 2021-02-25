@@ -14,7 +14,8 @@
  /* global jsPsych, math, numeric */
 
 jsPsych.plugins["psychophysics"] = (function() {
-  console.log('jspsych-psychophysics Version 2.2')
+  console.log(`jsPsych Version ${jsPsych.version()}`)
+  console.log('jspsych-psychophysics Version 2.2.1')
 
   let plugin = {};
 
@@ -806,37 +807,44 @@ jsPsych.plugins["psychophysics"] = (function() {
           alert('You have to specify the file property.')
           return;
         }
-  
+
         // setup stimulus
         this.context = jsPsych.pluginAPI.audioContext();
-        if(this.context !== null){
-          this.source = this.context.createBufferSource();
-          this.source.buffer = jsPsych.pluginAPI.getAudioBuffer(this.file);
-          this.source.connect(this.context.destination);
-          console.log('WebAudio')
-        } else {
-          this.audio = jsPsych.pluginAPI.getAudioBuffer(this.file);
-          this.audio.currentTime = 0;
-          console.log('HTML5 audio')
-        }
+
+        // load audio file
+        jsPsych.pluginAPI.getAudioBuffer(this.file)
+          .then(function (buffer) {
+            if (this.context !== null) {
+              this.audio = this.context.createBufferSource();
+              this.audio.buffer = buffer;
+              this.audio.connect(this.context.destination);
+              console.log('WebAudio')
+            } else {
+              this.audio = buffer;
+              this.audio.currentTime = 0;
+              console.log('HTML5 audio')
+            }
+            // setupTrial();
+          }.bind(this))
+          .catch(function (err) {
+            console.error(`Failed to load audio file "${this.file}". Try checking the file path. We recommend using the preload plugin to load audio files.`)
+            console.error(err)
+          }.bind(this));
+
   
         // set up end event if trial needs it
-        if(this.trial_ends_after_audio){
-          if(this.context !== null){
-            this.source.onended = function() {
-              end_trial();
-            }
-          } else {
-            this.audio.addEventListener('ended', end_trial);
-          }
+        if (this.trial_ends_after_audio) {
+          this.audio.addEventListener('ended', end_trial);
         }
       }
   
       play(){
         // start audio
         if(this.context !== null){
-          //startTime = this.context.currentTime;
-          this.source.start(this.context.currentTime);
+          //startTime = this.context.currentTime; 
+          // オリジナルのjspsychではwebaudioが使えるときは時間のデータとしてcontext.currentTimeを使っている。
+          // psychophysicsプラグインでは、performance.now()で統一している
+          this.audio.start(this.context.currentTime);
         } else {
           this.audio.play();
         }
@@ -844,12 +852,13 @@ jsPsych.plugins["psychophysics"] = (function() {
 
       stop(){
         if(this.context !== null){
-          this.source.stop();
-          this.source.onended = function() { }
+          this.audio.stop();
+          // this.source.onended = function() { }
         } else {
           this.audio.pause();
-          this.audio.removeEventListener('ended', end_trial);
+          
         }
+        this.audio.removeEventListener('ended', end_trial);
 
       }
     }
