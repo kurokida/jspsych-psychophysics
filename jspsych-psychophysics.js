@@ -1170,6 +1170,7 @@ jsPsych.plugins["psychophysics"] = (function() {
       trial_data['rt'] = response.rt;
       trial_data['response_type'] = trial.response_type;
       trial_data['key_press'] = response.key;
+      trial_data['response'] = response.key; // compatible with the jsPsych >= 6.3.0
       trial_data['avg_frame_time'] = elapsedTime/sumOfStep;
       trial_data['center_x'] = centerX;
       trial_data['center_y'] = centerY;
