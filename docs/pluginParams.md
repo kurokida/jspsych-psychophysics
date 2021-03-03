@@ -1,3 +1,11 @@
+---
+layout: single
+toc: true
+toc_label: "Table of contents"
+toc_icon: "bicycle"
+toc_sticky: true
+---
+
 Only the 'stimuli' parameter is required; Other parameters can be left unspecified if the default value is acceptable.
 
 # Main parameters
