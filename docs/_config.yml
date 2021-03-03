@@ -14,6 +14,7 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: jspsych-psychophysics plugin
+subtitle: A jsPsych plugin for online psychophysical experiments.
 email:
 description: >- # this means to ignore newlines until "baseurl:"
   A jsPsych plugin for online psychophysical experiments.
@@ -77,13 +78,10 @@ footer:
   links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
+      url: "https://twitter.com/kurokida1"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+      url: "https://github.com/kurokida"
 
 defaults:
   # _posts
@@ -111,3 +109,9 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+---
+toc: true
+toc_label: "My Table of Contents"
+toc_icon: "cog"
+---
