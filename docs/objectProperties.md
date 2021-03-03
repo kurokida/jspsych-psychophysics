@@ -42,7 +42,7 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
-CAUTION: [The image and sound files must be preloaded manually](https://www.jspsych.org/overview/media-preloading/).
+CAUTION: [The image and sound files must be preloaded manually](https://www.jspsych.org/overview/media-preloading/). The method has changed since jspsych 6.3.0.
 
 ```javascript
 const images = ['img/file1.png', 'img/file2.png'];
