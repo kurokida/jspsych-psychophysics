@@ -19,7 +19,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   A jsPsych plugin for online psychophysical experiments.
 twitter_username: kurokida1
 github_username: kurokida
-minimal_mistakes_skin: default
+minimal_mistakes_skin: air
 search: true
 
 # Build settings
@@ -56,7 +56,7 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name   : "First Lastname"
+  name   : "Daiichiro Kuroki"
   avatar : "/assets/images/bio-photo.jpg"
   bio    : "My awesome biography constrained to a sentence or two goes here."
   links:
