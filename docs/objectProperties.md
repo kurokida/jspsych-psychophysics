@@ -1,3 +1,11 @@
+---
+layout: posts
+toc: true
+toc_label: "Table of contents"
+toc_icon: "bicycle"
+toc_sticky: true
+---
+
 All the stimuli used in the program with the jspsych-psychophysics plugin must be specified as a JavaScript object as follows:
 ```javascript
 var rect_object = {
