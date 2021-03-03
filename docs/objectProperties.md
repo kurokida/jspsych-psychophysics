@@ -42,16 +42,20 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
-CAUTION: [The image and sound files must be preloaded in the jsPsych.init function manually](https://www.jspsych.org/overview/media-preloading/).
+CAUTION: [The image and sound files must be preloaded manually](https://www.jspsych.org/overview/media-preloading/).
 
 ```javascript
-var images = ['img/file1.png', 'img/file2.png'];
-var audio = ['audio/file1.mp3', 'audio/file2.mp3'];
+const images = ['img/file1.png', 'img/file2.png'];
+const audio = ['audio/file1.mp3', 'audio/file2.mp3'];
+
+const preload = {
+    type: 'preload',
+    images: images,
+    audio: audio
+}
 
 jsPsych.init({
-    timeline: [trial],
-    preload_audio: audio,
-    preload_images: images,
+    timeline: [preload, trial],
 });
 ```
 
@@ -60,7 +64,15 @@ jsPsych.init({
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the image.|
-|scale|numeric|1 (original size)|Image scaling.|
+|scale|numeric|1 (original size)|Image scaling. Note that scaling will not work simultaneously with masking and filtering.|
+|filter|string|undefined|Read [this page](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter) carefully.| 
+|mask|string|undefined|'gauss', 'circle', 'rect', or 'manual' See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).|
+|width (gauss)|numeric|undefined| The size (width x width) of the area where the gaussian mask is applied.|
+|sc|numeric|20| The standard deviation of the gaussian distribution. |
+|width (circle/rect)|numeric|undefined| The width of the masking circle/rect.|
+|height (circle/rect)|numeric|undefined| The height of the masking circle/rect.|
+|center_x/y|numeric|undefined| The x/y-coordinate of the center of the masking circle/rect.|
+|mask_func(canvas)|function|null|You can mask the image manually. Don't forget to specify the mask property as 'manual'. An argument is the canvas on which the image is drawn. See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).| 
 
 # obj_type: 'sound'
 
