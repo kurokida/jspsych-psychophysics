@@ -1,5 +1,6 @@
 ---
 layout: home
+author_profile: true
 toc: true
 toc_label: "Table of contents"
 toc_icon: "bicycle"
