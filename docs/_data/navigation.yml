@@ -5,7 +5,7 @@ docs:
         url: /
       - title: "Parameters of the plugin"
         url: /pluginParams/
-      - title: "Properties of stimulus"
+      - title: "Stimulus properties"
         url: /objectProperties/
       - title: "Demonstrations"
         url: /demo_explanation/
@@ -15,16 +15,3 @@ docs:
         url: https://doi.org/10.17605/OSF.IO/PJ4SB
       - title: "Citation"
         url: https://jspsychophysics.hes.kyushu-u.ac.jp/#citation
-
-  - title: Customization
-    children:
-      - title: "Configuration"
-        url: /docs/configuration/
-      - title: "Navigation"
-        url: /docs/navigation/
-      - title: "UI Text"
-        url: /docs/ui-text/
-      - title: "Authors"
-        url: /docs/authors/
-      - title: "Layouts"
-        url: /docs/layouts/
