@@ -1,4 +1,7 @@
-# FAQ about using the jspsych-psychophysics plugin.
+---
+permalink: /faq/
+title: "FAQ about the jspsych-psychophysics plugin"
+---
 
 ## 1. Can I change the center of the window (canvas) to the origin of the coordinates?
 

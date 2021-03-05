@@ -1,3 +1,8 @@
+---
+permalink: /osf_wiki/
+title: "Links to my Open Science Framework"
+---
+
 Histograms related to the data which is submitted to Behavior Research Methods can be seen from the following links.
 
 The histograms show the frequency of times as a function of actual display duration or stimulus onset asynchrony (SOA). 

@@ -1,4 +1,7 @@
-# Attributes that can be changed using the change_attr function
+---
+permalink: /change_attr/
+title: "Attributes that can be changed using the change_attr function"
+---
 
 |obj_type|attributes|
 |---|---|

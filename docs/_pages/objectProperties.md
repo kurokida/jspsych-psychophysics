@@ -1,9 +1,6 @@
 ---
-layout: single
-toc: true
-toc_label: "Table of contents"
-toc_icon: "bicycle"
-toc_sticky: true
+permalink: /objectProperties/
+title: "Stimulus properties"
 ---
 
 All the stimuli used in the program with the jspsych-psychophysics plugin must be specified as a JavaScript object as follows:

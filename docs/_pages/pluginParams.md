@@ -1,9 +1,6 @@
 ---
-layout: single
-toc: true
-toc_label: "Table of contents"
-toc_icon: "bicycle"
-toc_sticky: true
+permalink: /pluginParams/
+title: "Parameters of the plugin"
 ---
 
 Only the 'stimuli' parameter is required; Other parameters can be left unspecified if the default value is acceptable.
@@ -13,8 +10,6 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |stimuli|array|undefined|An array of objects, each object represents a stimulus to be presented in a trial. The properties of each object are depend on the type of the object. See [the properties of the stimulus object](objectProperties.md). Wnen you use the *raf_func* called by the requestAnimationFrame method, you have to specify the stimuli as an empty array. See the [raf_func.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/raf_func.html)|
-|canvas_width|numeric|window.innerWidth|The width of the canvas in which stimuli are drawn. If it is not specified, the width of the canvas is identical to that of the window.|
-|canvas_height|numeric|window.innerHeight|The height of the canvas in which stimuli are drawn. If it is not specified, the height of the canvas is identical to that of the window.|
 |background_color|string|'grey'|The background color of the canvas.The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. |
 |response_type|string|'key'|How participants will respond. You can specify 'key', 'mouse', or 'button'.|
 |response_start_time|numeric|0|The defalut value (0) means that the participant can respond to the stimuli from the start of the trial, and the reaction time is the time from the start of the trial until the participant's response. If the response_start_time is set to 1000, the participant can respond to the stimuli 1000 ms after from the start of the trial, and the reaction time is the time from 1000 ms after the start of the trial until the participant's response.|
@@ -25,6 +20,12 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |trial_duration|numeric|null|How long to wait for the participant to make a response before ending the trial in milliseconds. If the participant fails to make a response before this timer is reached, the participant's response will be recorded as null for the trial and the trial will end. If the value of this parameter is null, the trial will wait for a response indefinitely.|
 |response_ends_trial|boolean|true|If true, then the trial will end whenever the participant makes a response (assuming they make their response before the cutoff specified by the trial_duration parameter). If false, then the trial will continue until the value for trial_duration is reached. You can use this parameter to force the participant to view a stimulus for a fixed amount of time, even if they respond before the time is complete.|
 |clear_canvas|boolean|true|If true, the canvas is cleared every frame. There are not many cases where this should be false, but if you want to draw the trajectory of the mouse, for example, you need to set it false. Note that in that case, the show_end_time property can not be used.  See the [mouse drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)|
+
+|Parameter|Type|Default Value|Description|
+|---|---|---|---|
+|canvas_width|numeric|window.innerWidth|The width of the canvas in which stimuli are drawn. If it is not specified, the width of the canvas is identical to that of the window.|
+|canvas_height|numeric|window.innerHeight|The height of the canvas in which stimuli are drawn. If it is not specified, the height of the canvas is identical to that of the window.|
+
 
 # Parameters related to event handlers
 

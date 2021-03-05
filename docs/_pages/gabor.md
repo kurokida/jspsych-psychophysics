@@ -1,9 +1,7 @@
 ---
-layout: single
-classes: wide
+permalink: /gabor/
+title: "Presenting gabor patches in online/web experiments"
 ---
-
-# Presenting gabor patches in online/web experiments.
 
 You can present gabor patches using the jspsych-psychophysics plugin.
 ![gabor](./images/gabor.png)
