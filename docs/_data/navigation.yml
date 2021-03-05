@@ -2,13 +2,19 @@ docs:
   - title: Table of contents
     children:
       - title: "Top page"
-        url: index.html
+        url: /
       - title: "Parameters of the plugin"
         url: /pluginParams/
       - title: "Properties of stimulus"
         url: /objectProperties/
-      - title: "Upgrading"
-        url: /docs/upgrading/
+      - title: "Demonstrations"
+        url: /demo_explanation/
+      - title: "FAQ"
+        url: /faq/
+      - title: "Open Science Framework"
+        url: https://doi.org/10.17605/OSF.IO/PJ4SB
+      - title: "Citation"
+        url: https://jspsychophysics.hes.kyushu-u.ac.jp/#citation
 
   - title: Customization
     children:
