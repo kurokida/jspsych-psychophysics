@@ -11,10 +11,6 @@ toc_sticky: true
 The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
-I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) as well as [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) when you report your research using this plugin.
-
-If you have any questions, please post them on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues).
-
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs) in a trial.
 - You can present visual stimuli (e.g., [gabor patches](gabor.md), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of milliseconds and frames. You can also present moving objects and play sound files.
@@ -103,10 +99,13 @@ In addition, the other applications and the tabs in a web browser should be clos
 [The jspsych-psychophysics package includes a lot of demonstration files.](demo_explanation.md)
 
 ## FAQ
-Before asking a question, please read [the FAQ page](faq.md).
+Before asking a question, please read [the FAQ page](faq.md). When your question remains, please post it on [the issuues of the GitHub](https://github.com/kurokida/jspsych-psychophysics/issues).
 
 ## Open Science Framework
 The data and materials of my paper are available at [Open Science Framework](https://doi.org/10.17605/OSF.IO/PJ4SB).
+
+## Citation
+I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) as well as [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) when you report your research using this plugin.
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)

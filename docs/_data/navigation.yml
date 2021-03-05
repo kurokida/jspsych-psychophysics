@@ -1,12 +1,12 @@
 docs:
-  - title: Getting Started
+  - title: Table of contents
     children:
-      - title: "Quick-Start Guide"
-        url: /docs/quick-start-guide/
-      - title: "Structure"
-        url: /docs/structure/
-      - title: "Installation"
-        url: /docs/installation/
+      - title: "Top page"
+        url: index.html
+      - title: "Parameters of the plugin"
+        url: /pluginParams/
+      - title: "Properties of stimulus"
+        url: /objectProperties/
       - title: "Upgrading"
         url: /docs/upgrading/
 
