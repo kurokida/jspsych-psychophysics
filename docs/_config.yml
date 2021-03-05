@@ -82,7 +82,8 @@ defaults:
   # _docs
   - scope:
       path: ""
-      type: docs
+      #type: docs
+      type: pages
     values:
       sidebar:
         nav: "docs"
