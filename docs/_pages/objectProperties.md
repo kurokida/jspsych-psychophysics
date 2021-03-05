@@ -19,7 +19,7 @@ var rect_object = {
 
 This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. But, if you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
 
-# Common properties among objects
+# Common properties among stimuli
 
 |Property name|Type|Default Value|Description|
 |---|---|---|---|
