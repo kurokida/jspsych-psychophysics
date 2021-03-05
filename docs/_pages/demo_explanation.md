@@ -1,6 +1,6 @@
 # Demonsrations of the jspsych-psychophysics plugin.
 
-This list is in alphabetical order
+This list is in alphabetical order!
 
 ## [cross.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/cross.html)
 
