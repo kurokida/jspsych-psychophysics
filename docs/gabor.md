@@ -1,5 +1,6 @@
 ---
 layout: single
+classes: wide
 ---
 
 # Presenting gabor patches in online/web experiments.

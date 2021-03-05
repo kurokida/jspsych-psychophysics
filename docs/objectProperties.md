@@ -1,5 +1,5 @@
 ---
-layout: posts
+layout: single
 toc: true
 toc_label: "Table of contents"
 toc_icon: "bicycle"

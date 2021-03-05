@@ -1,6 +1,8 @@
 ---
 layout: single
-author_profile: false
+author_profile: true
+sidebar:
+  nav: "docs"
 toc: true
 toc_label: "Table of contents"
 toc_icon: "bicycle"
