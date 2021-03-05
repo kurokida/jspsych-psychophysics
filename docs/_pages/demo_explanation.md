@@ -1,3 +1,7 @@
+---
+permalink: /demo_explanation/
+title: "Psychophysics Demo"
+---
 # Demonsrations of the jspsych-psychophysics plugin.
 
 This list is in alphabetical order!
