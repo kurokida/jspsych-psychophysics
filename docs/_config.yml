@@ -80,13 +80,13 @@ footer:
 
 defaults:
   # _docs
-  - scope:
-      path: ""
+  #- scope:
+  #    path: ""
       #type: docs
-      type: pages
-    values:
-      sidebar:
-        nav: "docs"
+  #    type: pages
+  #  values:
+  #    sidebar:
+  #      nav: "docs"
   # _posts
   - scope:
       path: ""
@@ -100,11 +100,14 @@ defaults:
       related: true
   # _pages
   - scope:
-      path: "_pages"
-      type: pages
+      path: ""
+      #type: pages
     values:
       layout: single
       author_profile: true
+      sidebar:
+        nav: "docs"
+  
 
 category_archive:
   type: liquid
