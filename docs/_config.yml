@@ -107,7 +107,10 @@ defaults:
       author_profile: true
       sidebar:
         nav: "docs"
-  
+      toc: true
+      toc_label: "Navigation"
+      toc_icon: "bicycle"
+      toc_sticky: true
 
 category_archive:
   type: liquid

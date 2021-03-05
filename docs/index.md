@@ -1,13 +1,3 @@
----
-layout: single
-author_profile: true
-sidebar:
-  nav: "docs"
-toc: true
-toc_label: "Table of contents"
-toc_icon: "bicycle"
-toc_sticky: true
----
 The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
 This plugin can be used free of charge under the MIT license.
 
