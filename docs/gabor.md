@@ -1,6 +1,11 @@
+---
+layout: single
+---
+
 # Presenting gabor patches in online/web experiments.
 
 You can present gabor patches using the jspsych-psychophysics plugin.
+![gabor](./images/gabor.png)
 
 The calculation method for drawing is almost the same as the one used by [the Psychtoolbox](http://psychtoolbox.org/), although my plugin doesn't use the procedural texture mapping and WebGL. I also have referenced [the gaborgen-js code](https://github.com/jtth/gaborgen-js).
 
