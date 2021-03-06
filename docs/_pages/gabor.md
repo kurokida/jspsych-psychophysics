@@ -4,15 +4,16 @@ title: "Presenting gabor patches in online/web experiments"
 ---
 
 You can present gabor patches using the jspsych-psychophysics plugin.
+
 ![gabor](/images/gabor.png)
 
 The calculation method for drawing is almost the same as the one used by [the Psychtoolbox](http://psychtoolbox.org/), although my plugin doesn't use the procedural texture mapping and WebGL. I also have referenced [the gaborgen-js code](https://github.com/jtth/gaborgen-js).
 
 You can choose either [the numeric.js](https://github.com/sloisel/numeric) or [the math.js](https://mathjs.org/) for the calculation library. The numeric.js is considerably faster than the math.js, but the latter is being developed more aggressively than the former. The default is the numeric.js.
 
-There is still the issue of display calibration. Unfortunately, my plugin does not provide a solution to this problem.
+There are still the issues of display calibration and luminance resolution. Unfortunately, my plugin does not provide a solution to this problem.
 
-See the Gabor section of [the page on object properties](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) to learn how to draw the gabor patches.
+See the Gabor section of [parameters of stimuli](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) to learn how to draw the gabor patches.
 
 # The drifting gabor patch
 
