@@ -88,7 +88,9 @@ This file demonstrates how to present objects using a coordinate with the center
 
 This file demonstrates how to play the sound by pressing a key. This program doesn't use the Web Audio API.
 
-## [play_webaudio_sound_by_key.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/play_webaudio_sound_by_key.html)
+## play_webaudio_sound_by_key.html
+
+I'm sorry, but this program will not work with jsPsych 6.3.0 and above. Please use the play_html5_sound_by_key.html instead.
 
 This file demonstrates how to play the sound by pressing a key. This program uses the Web Audio API. The Web Audio API should be used for time-accurate presentation, but the code would be a bit more complex compared with *the play_html5_sound_by_key.html.*
 
