@@ -13,7 +13,7 @@ You can choose either [the numeric.js](https://github.com/sloisel/numeric) or [t
 
 There are still the issues of display calibration and luminance resolution. Unfortunately, my plugin does not provide a solution to this problem.
 
-See the Gabor section of [parameters of stimuli](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) to learn how to draw the gabor patches.
+See the Gabor section of [Parameters of stimuli](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) to learn how to draw the gabor patches.
 
 # The drifting gabor patch
 
@@ -25,7 +25,7 @@ The avg_frame_time is the value of an elapsed time divided by the number of time
 
 Using the avg_frame_time, it is possible to roughly calculate the speed of the drifting patch. For example, if the avg_frame_time was 30 ms and the drift property was specified as 10, the gabor patch drifted by the angular velocity of 10 degrees during 30 ms.
 
-# Demonstration
+# Demonstrations
 
 ## [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)
 

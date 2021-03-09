@@ -18,10 +18,10 @@ This plugin can be used free of charge under the MIT license.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
-- You can apply masking/filtering to image files.
+- [You can apply masking/filtering to image files](/mask_filter/).
 
 ## How to use the jspsych-psychophysics plugin
-This is a brief explanation how to use the plugin. Please refer to [the parameters of the plugin](/pluginParams/) and [the properties of objects](/objectProperties/) in detail.
+This is a brief explanation how to use the plugin. Please refer to [Parameters of the plugin](/pluginParams/) and [Parameters of stimuli](/objectProperties/) in detail.
 
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)
@@ -40,7 +40,7 @@ The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw
 ```
 This procedure is the same as other plugins are used with the jsPsych. Note the location of the plugin file.
 
-### 3. Specify all the stimuli used in the program as a JavaScript object
+### 3. Specify all stimuli used in the program as JavaScript objects
 
 ```javascript
 var rect_object = {
@@ -71,7 +71,7 @@ The color can be specified using the HTML color names, hexadecimal (HEX) colors,
 
 The **show_start_time** property is one of the most notable properties, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
-### 4. Specify a trial object including the stimuli in the jsPsych's timeline
+### 4. Specify a trial object including all the stimuli in the jsPsych's timeline
 
 ```javascript
 var trial = {
