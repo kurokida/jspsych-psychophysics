@@ -14,10 +14,11 @@ This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs) in a trial.
-- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of milliseconds and frames. You can also present moving objects and play sound files.
+- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of milliseconds and frames. You can also move these stimuli, and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
+- You can apply masking/filtering to image files.
 
 ## How to use the jspsych-psychophysics plugin
 This is a brief explanation how to use the plugin. Please refer to [the parameters of the plugin](/pluginParams/) and [the properties of objects](/objectProperties/) in detail.
@@ -107,6 +108,11 @@ The data and materials of my paper are available at [Open Science Framework](htt
 
 ## Citation
 I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) as well as [de Leeuw (2015)](https://link.springer.com/article/10.3758/s13428-014-0458-y) when you report your research using this plugin.
+
+- de Leeuw, J.R. jsPsych: A JavaScript library for creating behavioral experiments in a Web browser. Behav Res 47, 1–12 (2015). https://doi.org/10.3758/s13428-014-0458-y
+- Kuroki, D. A new jsPsych plugin for psychophysics, providing accurate display duration and stimulus onset asynchrony. Behav Res 53, 301–310 (2021). https://doi.org/10.3758/s13428-020-01445-w
+
+***
 
 Copyright (c) 2019 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)

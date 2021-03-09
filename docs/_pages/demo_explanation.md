@@ -49,6 +49,10 @@ This file demonstrates how to respond using a mouse. This can be made by specify
 
 A visuals timulus graduated from white to black moves from left to right. This program uses the `drawFunc` function.
 
+## [mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html)
+
+This file demonstrates how to apply masking and filtering to the image file.
+
 ## [mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)
 
 This file demonstrates how to specify the mouse-event functions. This demo is like a drawing application. Note that the `clear_canvas` property is set to false.

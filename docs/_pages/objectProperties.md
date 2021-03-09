@@ -77,7 +77,7 @@ jsPsych.init({
 |width (circle/rect)|numeric|undefined| The width of the masking circle/rect.|
 |height (circle/rect)|numeric|undefined| The height of the masking circle/rect.|
 |center_x/y|numeric|undefined| The x/y-coordinate of the center of the masking circle/rect.|
-|mask_func(canvas)|function|null|You can mask the image manually. Don't forget to specify the mask property as 'manual'. An argument is the canvas on which the image is drawn. See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).| 
+|mask_func(canvas)|function|null|You can mask the image manually. Don't forget to specify the mask property as 'manual'. This function must retrun an ImageData object containing the array of pixel values. An argument of the function is the canvas on which the image is drawn. See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).| 
 
 # obj_type: 'sound'
 
