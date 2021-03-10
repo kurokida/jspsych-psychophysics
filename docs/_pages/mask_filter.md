@@ -1,6 +1,6 @@
 ---
 permalink: /mask_filter/
-title: "Masking and filtering the images using the jspsych-psychophysics plugin"
+title: "Masking and filtering images using the jspsych-psychophysics plugin"
 toc: false
 ---
 
