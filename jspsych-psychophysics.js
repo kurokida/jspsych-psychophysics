@@ -15,7 +15,7 @@
 
 jsPsych.plugins["psychophysics"] = (function() {
   console.log(`jsPsych Version ${jsPsych.version()}`)
-  console.log('jspsych-psychophysics Version 2.3')
+  console.log('jspsych-psychophysics Version 2.3.1')
 
   let plugin = {};
 
