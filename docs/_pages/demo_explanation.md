@@ -19,33 +19,33 @@ This file demonstrates how to present a drifting gabor patch. See [the descripti
 
 # Images
 
-## [draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
+[draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
 
 This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like the change blindness.
 
-## [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
+[randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
 
 This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
 
-## [mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html)
+[mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html)
 
 This file demonstrates how to apply masking and filtering to the image file.
 
-## [twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
+[twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
 
 This file demonstrates how to present two images with the 500-ms SOA.
 
-## [twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
+[twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
 
 This file is nearly same as the twoImagesWithSOA.html except for that the display durations are specified in frames not in ms.
 
 The first image is presented for 5 frames (about 83 ms in a 60 Hz monitor), and the second image is presented for 20 frames (about 333 ms in a 60 Hz monitor) with a 60-frame SOA.
 
-## [draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)
+[draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)
 
 This file demonstrates how to use the `drawFunc` with the image object. You need not to use the drawFunc when you present intact images. But if you want to modify the images, for example, if you want to present a part of the image, the drawFunc is useful.
 
-# Souncs
+# Sounds
 
 ## [twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html)
 
