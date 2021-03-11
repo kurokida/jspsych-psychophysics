@@ -21,7 +21,7 @@ This plugin can be used free of charge under the MIT license.
 - [You can apply masking/filtering to image files](/mask_filter/).
 
 ## How to use the jspsych-psychophysics plugin
-This is a brief explanation how to use the plugin. Please refer to [Parameters of the plugin](/pluginParams/) and [Parameters of stimuli](/objectProperties/) in detail.
+This is a brief explanation how to use the plugin. Please refer to [Plugin parameters](/pluginParams/) and [Stimulus parameters](/objectProperties/) in detail.
 
 This figure illustrates a trial flow to be made by this tutorial.
 ![tutorial](./images/tutorial.png)

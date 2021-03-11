@@ -3,9 +3,9 @@ docs:
     children:
       - title: "Top page"
         url: /
-      - title: "Parameters of the plugin"
+      - title: "Plugin parameters"
         url: /pluginParams/
-      - title: "Parameters of stimuli"
+      - title: "Stimulus parameters"
         url: /objectProperties/
       - title: "Demonstrations"
         url: /demo_explanation/
