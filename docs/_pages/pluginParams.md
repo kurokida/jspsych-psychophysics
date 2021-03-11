@@ -1,6 +1,6 @@
 ---
 permalink: /pluginParams/
-title: "Parameters of the plugin"
+title: "Plugin properties"
 ---
 
 Only the 'stimuli' parameter is required; Other parameters can be left unspecified if the default value is acceptable. Note that the prameter of *choices*, *prompt*, *trial_duration*, and *response_ends_trial* is the same as that of the plugins included in the jsPsych.

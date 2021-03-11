@@ -3,7 +3,7 @@ permalink: /objectProperties/
 title: "Stimulus properties"
 ---
 
-All the stimuli used in the program with the jspsych-psychophysics plugin must be specified as a JavaScript object as follows:
+All stimuli used in a program with the jspsych-psychophysics plugin must be specified as JavaScript objects as follows:
 ```javascript
 var rect_object = {
     obj_type: 'rect', // means a rectangle
@@ -17,7 +17,7 @@ var rect_object = {
 }
 ```
 
-This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. But, if you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
+This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
 
 # Common properties among stimuli
 
@@ -47,7 +47,9 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
-CAUTION: [The image and sound files must be preloaded manually](https://www.jspsych.org/overview/media-preloading/). The method has changed since jspsych 6.3.0.
+# Preloading media files
+
+The image and sound files must be preloaded manually. [The method has changed since jspsych 6.3.0](https://www.jspsych.org/overview/media-preloading/).
 
 ```javascript
 const images = ['img/file1.png', 'img/file2.png'];
