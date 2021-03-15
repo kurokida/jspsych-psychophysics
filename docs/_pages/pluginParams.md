@@ -1,6 +1,6 @@
 ---
 permalink: /pluginParams/
-title: "Plugin properties"
+title: "Plugin parameters"
 ---
 
 Only the 'stimuli' parameter is required; Other parameters can be left unspecified if the default value is acceptable. Note that the prameter of *choices*, *prompt*, *trial_duration*, and *response_ends_trial* is the same as that of the plugins included in the jsPsych.
@@ -9,7 +9,7 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
-|stimuli|array|undefined|An array of objects, each object represents a stimulus to be presented in the trial. The properties of each object are depend on the type of the object. See [Properties of stimuli](objectProperties.md).|
+|stimuli|array|undefined|An array of objects, each object represents a stimulus to be presented in the trial. The properties (parameters) of each object are depend on the type of the object. See [Stimulus parameters](objectProperties.md).|
 |response_type|string|'key'|How participants will respond. You can specify 'key', 'mouse', or 'button'.|
 |response_start_time|numeric|0|The defalut value (0) means that the participant can respond to the stimuli from the start of the trial, and the reaction time is the time from the start of the trial until the participant's response. If the response_start_time is set to 1000, the participant can respond to the stimuli 1000 ms after from the start of the trial, and the reaction time is the time from 1000 ms after the start of the trial until the participant's response.|
 |response_ends_trial|boolean|true|If true, then the trial will end whenever the participant makes a response (assuming they make their response before the cutoff specified by the trial_duration parameter). If false, then the trial will continue until the value for trial_duration is reached. You can use this parameter to force the participant to view a stimulus for a fixed amount of time, even if they respond before the time is complete.|

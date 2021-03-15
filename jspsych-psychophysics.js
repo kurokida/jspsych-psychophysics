@@ -966,8 +966,9 @@ jsPsych.plugins["psychophysics"] = (function() {
             if (char == "\n") {    
                 line++;
                 column[line] = '';
+            } else {
+              column[line] += char;
             }
-            column[line] += char;
         }
 
         for (let i = 0; i < column.length; i++) {

@@ -3,9 +3,9 @@ docs:
     children:
       - title: "Top page"
         url: /
-      - title: "Plugin properties"
+      - title: "Plugin parameters"
         url: /pluginParams/
-      - title: "Stimulus properties"
+      - title: "Stimulus parameters"
         url: /objectProperties/
       - title: "Demonstrations"
         url: /demo_explanation/

@@ -1,6 +1,6 @@
 ---
 permalink: /objectProperties/
-title: "Stimulus properties"
+title: "Stimulus parameters"
 ---
 
 All stimuli used in a program with the jspsych-psychophysics plugin must be specified as JavaScript objects as follows:
@@ -19,9 +19,9 @@ var rect_object = {
 
 This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
 
-# Common properties among stimuli
+# Common parameters among stimuli
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |obj_type|string|undefined|The type of the object (e.g., rect, image, or sound). Refer to the individual explanation below in detail.|
 |startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window using the `origin_center` property. The unit is the pixel. If the startX/startY is specified as `'center'`, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
@@ -70,7 +70,7 @@ jsPsych.init({
 
 See also [Masking and filtering images using the jspsych-psychophysics plugin](/mask_filter/)"
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the image.|
 |scale|numeric|1 (original size)|Image scaling. Note that scaling will not work simultaneously with masking and filtering.|
@@ -85,7 +85,7 @@ See also [Masking and filtering images using the jspsych-psychophysics plugin](/
 
 # obj_type: 'sound'
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |file|string|undefined|The file name of the sound.|
 |trial_ends_after_audio|boolean|false|If true, then the trial will end as soon as the audio file finishes playing.|
@@ -95,7 +95,7 @@ See also [Masking and filtering images using the jspsych-psychophysics plugin](/
 For this line object, the startX/Y property means the center position of the line.
 There are two ways to define a line. See, `demos/lines.html`.
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |x1, y1|numeric|undefined| The start position of static line drawing. This property can't be used for the moving line. And it can't be used both with the line_length and angle property.|
 |x2, y2|numeric|undefined| The end position of static line drawing. This property can't be used for the moving line. And it can't be used both with the line_length and angle property.|
@@ -105,7 +105,7 @@ There are two ways to define a line. See, `demos/lines.html`.
 
 # obj_type: 'rect'
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |width|numeric|undefined| The width of the rectangle.|
 |height|numeric|undefined| The height of the rectangle.|
@@ -114,7 +114,7 @@ There are two ways to define a line. See, `demos/lines.html`.
 
 # obj_type: 'circle'
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |radius|numeric|undefined|The radius of the circle.|
 |line_color|string|undefined|The color of the contour.|
@@ -122,7 +122,7 @@ There are two ways to define a line. See, `demos/lines.html`.
 
 # obj_type: 'text'
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |content|string|undefined|The content of the text. It can include `\n` to start a new line.|
 |font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element.](https://www.w3schools.com/tags/canvas_font.asp)|
@@ -133,7 +133,7 @@ There are two ways to define a line. See, `demos/lines.html`.
 
 This object would be used as the fixation point.
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |line_length|numeric|undefined| The length of the line.|
 |line_color|string|#000000 (black)|The color of the line.|
@@ -142,7 +142,7 @@ This object would be used as the fixation point.
 
 See also [Presenting gabor patches in online/web experiments](/gabor/).
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |width|numeric|undefined| The size (width x width) of the area where the gabor patch is drawn. |
 |tilt|numeric|0| The tilt of the gabor patch. The unit is the degree relative to the horizontal axis.|
@@ -156,7 +156,7 @@ See also [Presenting gabor patches in online/web experiments](/gabor/).
 
 # obj_type: 'manual' 
 
-|Property name|Type|Default Value|Description|
+|Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |drawFunc|function|null|You can draw whatever the `<canvas>` supports.| 
 
