@@ -19,6 +19,25 @@ var rect_object = {
 
 This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
 
+# Preloading media files
+
+The image and sound files must be preloaded manually. [The method has changed since jspsych 6.3.0](https://www.jspsych.org/overview/media-preloading/).
+
+```javascript
+const images = ['img/file1.png', 'img/file2.png'];
+const audio = ['audio/file1.mp3', 'audio/file2.mp3'];
+
+const preload = {
+    type: 'preload',
+    images: images,
+    audio: audio
+}
+
+jsPsych.init({
+    timeline: [preload, trial],
+});
+```
+
 # Common parameters among stimuli
 
 |Parameter|Type|Default Value|Description|
@@ -46,25 +65,6 @@ This code means that a white rectangle is presented at coordinates (200, 150) in
 |change_attr|function|null|You can change [some the attributes of the object](/change_attr/) dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html).| 
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
-
-# Preloading media files
-
-The image and sound files must be preloaded manually. [The method has changed since jspsych 6.3.0](https://www.jspsych.org/overview/media-preloading/).
-
-```javascript
-const images = ['img/file1.png', 'img/file2.png'];
-const audio = ['audio/file1.mp3', 'audio/file2.mp3'];
-
-const preload = {
-    type: 'preload',
-    images: images,
-    audio: audio
-}
-
-jsPsych.init({
-    timeline: [preload, trial],
-});
-```
 
 # obj_type: 'image'
 
