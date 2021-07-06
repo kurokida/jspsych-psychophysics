@@ -57,7 +57,7 @@ There are two ways for changing properties of the stimulus: one is using the `st
 
 Please use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See the [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html).
 
-Please use the `stim_array` when you want to change properties of the stimulus during the trial. See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
+Please use the `stim_array` when you want to change properties of the stimulus during the trial (e.g. using the event handlers or the requestAnimationFrame methods). See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
 
 ## 10. What is the avg_frame_time?
 
