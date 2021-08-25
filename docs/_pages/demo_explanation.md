@@ -3,7 +3,7 @@ permalink: /demo_explanation/
 title: "Demonsrations of the jspsych-psychophysics plugin"
 ---
 
-# You can view and edit the source code on the CodePen page.
+## You can view and edit the source code on the CodePen page.
 
 [tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
 
@@ -48,6 +48,12 @@ The first image is presented for 5 frames (about 83 ms in a 60 Hz monitor), and 
 [draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)
 
 This file demonstrates how to use the `drawFunc` with the image object. You need not to use the drawFunc when you present intact images. But if you want to modify the images, for example, if you want to present a part of the image, the drawFunc is useful.
+
+[rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html)
+
+[CodePen](https://codepen.io/kurokida/pen/KKqwzyE)
+
+This file demonstrates how to present multiple images in random order in succession. That is, rapid serial visual presentation (RSVP).
 
 # Sounds
 
