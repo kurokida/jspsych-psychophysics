@@ -3,7 +3,11 @@ permalink: /demo_explanation/
 title: "Demonsrations of the jspsych-psychophysics plugin"
 ---
 
+# You can view and edit the source code on the CodePen page.
+
 [tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)
+
+[CodePen](https://codepen.io/kurokida/pen/JjJoXWG)
 
 The detailed tutorial is written at [the top page](http://jspsychophysics.hes.kyushu-u.ac.jp/)
 
@@ -94,7 +98,8 @@ You can directly access the canvas (of which the context) using the raf_func. Yo
 # Other stimuli
 
 [cross.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/cross.html)
-[cross.html](https://codepen.io/kurokida/pen/rNwaxRP)
+
+[CodePen](https://codepen.io/kurokida/pen/rNwaxRP)
 
 The cross object can be used to present a fixation point. In this demo, moving two cross are presented. 
 
