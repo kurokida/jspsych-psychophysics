@@ -15,7 +15,7 @@
 
 jsPsych.plugins["psychophysics"] = (function() {
   console.log(`jsPsych Version ${jsPsych.version()}`)
-  console.log('jspsych-psychophysics Version 2.3.1')
+  console.log('jspsych-psychophysics Version 2.3.2')
 
   let plugin = {};
 
@@ -204,14 +204,26 @@ jsPsych.plugins["psychophysics"] = (function() {
       canvas_width: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Canvas width',
-        default: window.innerWidth,
+        default: null,
         description: 'The width of the canvas.'
       },
       canvas_height: {
         type: jsPsych.plugins.parameterType.INT,
         pretty_name: 'Canvas height',
-        default: window.innerHeight,
+        default: null,
         description: 'The height of the canvas.'
+      },
+      canvas_offsetX: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Canvas offset X',
+        default: 0,
+        description: 'This value is subtracted from the width of the canvas.'
+      },
+      canvas_offsetY: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Canvas offset Y',
+        default: 8,
+        description: 'This value is subtracted from the height of the canvas.'
       },
       trial_duration: {
         type: jsPsych.plugins.parameterType.INT,
@@ -1057,6 +1069,8 @@ jsPsych.plugins["psychophysics"] = (function() {
     const default_maxWidth = style_jspsych_content.maxWidth;
     elm_jspsych_content.style.maxWidth = 'none'; // The default value is '95%'. To fit the window.
 
+    if (trial.canvas_width === null) trial.canvas_width = window.innerWidth - trial.canvas_offsetX;
+    if (trial.canvas_height === null) trial.canvas_height = window.innerHeight - trial.canvas_offsetY;
     let new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
 
     const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.

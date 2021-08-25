@@ -24,7 +24,9 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |---|---|---|---|
 |background_color|string|'grey'|The background color of the canvas.The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. |
 |canvas_width|numeric|window.innerWidth|The width of the canvas in which stimuli are drawn. If it is not specified, the width of the canvas is identical to that of the window.|
-|canvas_height|numeric|window.innerHeight|The height of the canvas in which stimuli are drawn. If it is not specified, the height of the canvas is identical to that of the window.|
+|canvas_height|numeric|window.innerHeight|The height of the canvas in which stimuli are drawn. If it is not specified, the height of the canvas is identical to that of the window, but see the canvas_offsetY property.|
+|canvas_offsetX|numeric|0|This value is subtracted from the width of the canvas in full-screen mode. However, since the default value is 0, it basically has no effect on the window size.|
+|canvas_offsetY|numeric|8|This value is subtracted from the height of the canvas in full-screen mode to prevent the vertical scroll bar from being displayed.|
 |clear_canvas|boolean|true|If true, the canvas is cleared every frame. There are not many cases where this should be false, but if you want to draw the trajectory of the mouse, for example, you need to set it false. Note that in that case, the show_end_time property can not be used.  See the [mouse drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)|
 
 # Parameters related to a key response
