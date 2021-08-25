@@ -94,6 +94,7 @@ You can directly access the canvas (of which the context) using the raf_func. Yo
 # Other stimuli
 
 [cross.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/cross.html)
+[cross.html](https://codepen.io/kurokida/pen/rNwaxRP)
 
 The cross object can be used to present a fixation point. In this demo, moving two cross are presented. 
 
