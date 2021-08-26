@@ -14,13 +14,7 @@ You can view and edit the source code on the CodePen page.
 
 # Images
 
-[draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
-
-This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like the change blindness.
-
-[randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)
-
-This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
+- [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)-[CodePen](https://codepen.io/kurokida/pen/jOwEowv) This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
 
 [mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html)
 
@@ -89,6 +83,9 @@ A circle moves on a virtual circumference.
 This file demonstrates how to use the raf_func which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
 
 You can directly access the canvas (of which the context) using the raf_func. You can draw complex visual stimuli.
+
+- Advanced! [draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)-[CodePen](https://codepen.io/kurokida/pen/KKqwLax) This file demonstrates how to present two images repeatedly until a participant responds to them. This demonstration can be applied to the study on like the change blindness.
+
 
 # Other stimuli
 
