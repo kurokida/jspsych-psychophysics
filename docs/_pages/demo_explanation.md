@@ -5,19 +5,12 @@ title: "Demonsrations of the jspsych-psychophysics plugin"
 
 You can view and edit the source code on the CodePen page.
 
-[tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)-[CodePen](https://codepen.io/kurokida/pen/JjJoXWG)
-
-The detailed tutorial is written at [the top page](http://jspsychophysics.hes.kyushu-u.ac.jp/)
+- [tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)-[CodePen](https://codepen.io/kurokida/pen/JjJoXWG) The detailed tutorial is written at [the top page](http://jspsychophysics.hes.kyushu-u.ac.jp/)
 
 # Gabor patches
 
-[draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)
-
-This file demonstrates how to present gabor patches. See [the description](gabor.md).
-
-[drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)
-
-This file demonstrates how to present a drifting gabor patch. See [the description](gabor.md).
+- [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)-[CodePen](https://codepen.io/kurokida/pen/NWgPVxX) This file demonstrates how to present gabor patches. See [the description](gabor.md).
+- [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch. See [the description](gabor.md).
 
 # Images
 
