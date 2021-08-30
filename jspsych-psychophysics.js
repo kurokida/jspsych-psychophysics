@@ -1155,13 +1155,20 @@ jsPsych.plugins["psychophysics"] = (function() {
       alert('This browser does not support the canvas element.');
       return;
     }
+    canvas.style.width = trial.canvas_width + "px";
+    canvas.style.height = trial.canvas_height + "px";
+    const canvas_scale = window.devicePixelRatio; // This will be 2 in a retina display.
+    canvas.width = trial.canvas_width * canvas_scale;
+    canvas.height = trial.canvas_height * canvas_scale;
+
     const ctx = canvas.getContext('2d');
+    ctx.scale(canvas_scale, canvas_scale)
 
     trial.canvas = canvas;
     trial.context = ctx;
     
-    const centerX = canvas.width/2;
-    const centerY = canvas.height/2;
+    const centerX = canvas.width/2/canvas_scale;
+    const centerY = canvas.height/2/canvas_scale;
     trial.centerX = centerX;
     trial.centerY = centerY;
     
