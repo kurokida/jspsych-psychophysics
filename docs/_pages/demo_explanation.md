@@ -9,34 +9,24 @@ You can view and edit the source code on the CodePen page.
 
 # Gabor patches
 
-- [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)-[CodePen](https://codepen.io/kurokida/pen/NWgPVxX) This file demonstrates how to present gabor patches. See [the description](gabor.md).
-- [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch. See [the description](gabor.md).
+Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
+
+- [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)-[CodePen](https://codepen.io/kurokida/pen/NWgPVxX) This file demonstrates how to present gabor patches.
+- [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch.
 
 # Images
 
 - [randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html)-[CodePen](https://codepen.io/kurokida/pen/jOwEowv) This file demonstrates how to present a fixation point and an image in a randomized order in the center of the display.
 
-[mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html)
+- [twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)-[CodePen](https://codepen.io/kurokida/pen/BaZjxov) This file demonstrates how to present two images with the 500-ms SOA.
 
-This file demonstrates how to apply masking and filtering to the image file.
+- [twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)-[CodePen](https://codepen.io/kurokida/pen/NWgxMNV) This file is nearly same as the twoImagesWithSOA.html except for that the display durations are specified in frames not in ms. The first image is presented for 5 frames (about 83 ms in a 60 Hz monitor), and the second image is presented for 20 frames (about 333 ms in a 60 Hz monitor) with a 60-frame SOA.
 
-[twoImagesWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOA.html)
+- [mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html) This file demonstrates how to apply masking and filtering to the image file.
 
-This file demonstrates how to present two images with the 500-ms SOA.
+- [draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)-[CodePen](https://codepen.io/kurokida/pen/OJgMZRd) This file demonstrates how to use the `drawFunc` with the image object. You need not to use the drawFunc when you present intact images. But if you want to modify the images, for example, if you want to present a part of the image, the drawFunc is useful.
 
-[twoImagesWithSOAinFrames](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoImagesWithSOAinFrames.html)
-
-This file is nearly same as the twoImagesWithSOA.html except for that the display durations are specified in frames not in ms.
-
-The first image is presented for 5 frames (about 83 ms in a 60 Hz monitor), and the second image is presented for 20 frames (about 333 ms in a 60 Hz monitor) with a 60-frame SOA.
-
-[draw_part_of_image.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image.html)
-
-This file demonstrates how to use the `drawFunc` with the image object. You need not to use the drawFunc when you present intact images. But if you want to modify the images, for example, if you want to present a part of the image, the drawFunc is useful.
-
-[rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html)-[CodePen](https://codepen.io/kurokida/pen/KKqwzyE)
-
-This file demonstrates how to present multiple images in random order in succession. That is, rapid serial visual presentation (RSVP).
+- [rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html)-[CodePen](https://codepen.io/kurokida/pen/KKqwzyE) This file demonstrates how to present multiple images in random order in succession. That is, rapid serial visual presentation (RSVP).
 
 # Sounds
 
