@@ -51,13 +51,15 @@ Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/
 
 See the [demos/how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html) and [demos/response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html)
 
-## 9. How can I change properties of the stimulus in other functions?
+## 9. How can I change properties of the stimulus dynamically?
 
-There are two ways for changing properties of the stimulus: one is using the `stimuli` and the other is using the `stim_array`. Sorry for the confusion.
+There are three ways to do that. 
 
-Please use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See the [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html).
+First, you can specify the property using a function. See the [Nested parameters](https://www.jspsych.org/overview/dynamic-parameters/#nested-parameters) and [demos/function_test.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/function_test.html)
 
-Please use the `stim_array` when you want to change properties of the stimulus during the trial (e.g. using the event handlers or the requestAnimationFrame methods). See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
+Second, you can use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html) and [demos/rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html).
+
+Third, you can use the `stim_array` when you want to change properties of the stimulus during the trial (e.g. using the event handlers or the requestAnimationFrame methods). See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
 
 ## 10. What is the avg_frame_time?
 
