@@ -55,7 +55,7 @@ See the [demos/how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~k
 
 There are three ways to do that. 
 
-First, you can specify the property using a function. See the [Nested parameters](https://www.jspsych.org/overview/dynamic-parameters/#nested-parameters) and [demos/function_test.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/function_test.html)
+First, you can specify the property using a function. See the [Nested parameters](https://www.jspsych.org/overview/dynamic-parameters/#nested-parameters) and [demos/dynamically_change.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/dynamically_change.html)
 
 Second, you can use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html) and [demos/rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html).
 

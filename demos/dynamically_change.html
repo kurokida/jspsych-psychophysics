@@ -7,6 +7,7 @@
 </head>
 <body></body>
 <script>
+    // This file demonstrates to change dynamically properties of an object.
     // Each time the window is refreshed, a red or blue light dot is drawn on the circumference.
 
     const radius = 200
@@ -46,10 +47,21 @@
     var trial = {
         type: 'psychophysics',
         stimuli: [dot_object, circle_object],
+        response_type: 'button',
+        canvas_height: 500,
+        prompt: `Each time you press the "Next" button, the position and color of the circle will change.`
+    }
+
+    var loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            theta_in_radian = 2 * Math.PI * Math.random()
+            return true
+        }
     }
 
     jsPsych.init({
-        timeline: [trial],
+        timeline: [loop_node],
         on_finish: function(){jsPsych.data.displayData();}
     });
 </script>

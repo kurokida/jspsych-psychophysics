@@ -79,13 +79,9 @@ You can directly access the canvas (of which the context) using the raf_func. Yo
 
 # Other stimuli
 
-[cross.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/cross.html)-[CodePen](https://codepen.io/kurokida/pen/rNwaxRP)
+- [cross.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/cross.html)-[CodePen](https://codepen.io/kurokida/pen/rNwaxRP) The cross object can be used to present a fixation point. In this demo, moving two cross are presented. 
 
-The cross object can be used to present a fixation point. In this demo, moving two cross are presented. 
-
-[lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)
-
-This file demonstrates how to present lines. There are two ways to define a line; one is to specify the `angle` and `line_length`, the other is to specify the start (x1, y1) and end (x2, y2) positions of the line. Note that you can not specify both the angle and positions for the same object.
+- [lines.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/lines.html)-[CodePen](https://codepen.io/kurokida/pen/JjJxWwK) This file demonstrates how to present lines. There are two ways to define a line; one is to specify the `angle` and `line_length`, the other is to specify the start (x1, y1) and end (x2, y2) positions of the line. Note that you can not specify both the angle and positions for the same object.
 
 [rectangles.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rectangles.html)
 
@@ -147,3 +143,5 @@ If you are using a Mac which has a retina display, the resolution may not match 
 [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html)
 
 This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.
+
+[dynamically_change.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/dynamically_change.html)-[CodePen](https://codepen.io/kurokida/pen/VwWgbwz) This file demonstrates to change dynamically properties of an object.
