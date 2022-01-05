@@ -74,8 +74,8 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 
 |Parameter|Description|
 |---|---|
-|canvas|You can access the element of the canvas via the `jsPsych.currentTrial().canvas`.|
-|context|You can access the context of the canvas via the `jsPsych.currentTrial().context`.|
-|centerX|You can access the horizontal center of the canvas via the `jsPsych.currentTrial().centerX`.|
-|centerY|You can access the vertical center of the canvas via the `jsPsych.currentTrial().centerY`.|
-|stim_array|You can access the stimuli via the `jsPsych.currentTrial().stim_array`.|
+|canvas|You can access the element of the canvas via the `jsPsych.getCurrentTrial().canvas`.|
+|context|You can access the context of the canvas via the `jsPsych.getCurrentTrial().context`.|
+|centerX|You can access the horizontal center of the canvas via the `jsPsych.getCurrentTrial().centerX`.|
+|centerY|You can access the vertical center of the canvas via the `jsPsych.getCurrentTrial().centerY`.|
+|stim_array|You can access the stimuli via the `jsPsych.getCurrentTrial().stim_array`.|

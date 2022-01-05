@@ -13,8 +13,8 @@ The jspsych-psychophysics plugin is developed for the purpose of conducting onli
 This plugin can be used free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
-- You can present multiple stimuli asynchronously, that is, you can set stimulus onset asynchronies (SOAs) in a trial.
-- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of milliseconds and frames. You can also move these stimuli, and play sound files.
+- You can present multiple stimuli asynchronously. In other words, you can set stimulus onset asynchronies (SOAs) in a single trial.
+- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of both milliseconds and frames. You can also move these stimuli, and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
@@ -65,7 +65,7 @@ var circle_object = {
 }
 ```
 
-The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) by specifying the `origin_center` property as true. The unit is the pixel. 
+The default origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) by specifying the `origin_center` property as true. The unit is the pixel. 
 
 The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
 
@@ -74,8 +74,11 @@ The **show_start_time** property is one of the most notable properties, which en
 ### 4. Specify a trial object including all the stimuli in the jsPsych's timeline
 
 ```javascript
-var trial = {
-    type: 'psychophysics',
+
+const jsPsych = initJsPsych()
+
+const trial = {
+    type: jsPsychPsychophysics,
     stimuli: [rect_object, circle_object],
     choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
     canvas_width: 1000,
@@ -83,19 +86,19 @@ var trial = {
     background_color: '#008000', // The HEX color means green.
 }
 
-jsPsych.init({
-    timeline: [trial],
-    on_finish: function(){jsPsych.data.displayData();}
-});
+jsPsych.run([trial])
+
 ```
 
-The **stimuli** property must include all the objects to be presented in the trial.
+Note that since jsPsych V7, you need to specify type: jsPsychPsychophysics.
 
-This trial object must be included as the **timeline** property of the jsPsych.init which is a core function of the jsPsych.
+The **stimuli** array must include all the stimulus objects to be presented in the trial.
 
-Note that if you use image and audio files in a trial, please preload them using the preload_images and preload_audio methods in the jsPsych.init. See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
+This trial object must be passed as an argument to the `jsPsych.run` function.
 
-In addition, the other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
+If you use image and audio files in a trial, please preload them at the begging of the program using [the preload plugin](https://www.jspsych.org/7.1/plugins/preload/). See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
+
+The other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
 
 ## Demonstrations
 [The jspsych-psychophysics package includes a lot of demonstration files.](/demo_explanation/)
