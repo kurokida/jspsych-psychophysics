@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present moving circles.
+    // There are three ways to define motion.
+    // Note: You can not specify the speed, distance, and time at the same time.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    // The circle_object1 defines motion using the distance and time.
+    const circle_object1 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        endX: 600,
+        endY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+        motion_end_time: 4000,
+    }
+
+    // The circle_object2 defines motion using the distance and speed.
+    // This blue circle moves from right to left (600-200=400 pixel) at 80 pixel/sec, so it takes 5 seconds.
+    const circle_object2 = {
+        obj_type: 'circle',
+        startX: 600, // location in the canvas
+        startY: 400,
+        endX: 200,
+        endY: 400,
+        radius: 50,
+        line_color: 'blue', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'blue',
+        horiz_pix_sec: -80, // The circle moves from right to left.
+        vert_pix_sec: 0,
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+    }
+
+    // The circle_object3 defines motion using the time and speed.
+    const circle_object3 = {
+        obj_type: 'circle',
+        startX: 600, // location in the canvas
+        startY: 400,
+        radius: 50,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        horiz_pix_sec: -80, // The circle moves from right to left.
+        vert_pix_sec: 60,
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1000,
+        motion_end_time: 6000,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [circle_object1, circle_object2, circle_object3],
+    }
+
+    jsPsych.run([instruction, trial])
+    
+</script>
+
+</html>

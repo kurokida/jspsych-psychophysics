@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+      </head>
+    <body></body>
+    <script>
+      // This file demonstrates how to specify the mouse-event functions.
+      // This demo is like a drawing application.
+      // Note that the clear_canvas property is set to false.
+
+      const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+      })
+
+      console.log(`jsPsych Version ${jsPsych.version()}`)
+
+      const instruction = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: 'Click on the Start button.',
+          choices: ['Start'],
+          prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+      }
+
+
+      let isDrawing;
+      let x;
+      let y;
+
+      const img_file_name = ['./img/pen.png']
+      const img_obj = {
+          obj_type: 'image',
+          file: img_file_name,
+      }
+
+          
+      // Preloading files are needed to present the stimuli accurately.
+      const preload = {
+          type: jsPsychPreload,
+          images: [img_file_name],
+      }
+
+      
+      function drawLine(context, x1, y1, x2, y2) {
+        context.beginPath();
+        context.strokeStyle = 'black';
+        context.lineWidth = 1;
+        context.moveTo(x1, y1);
+        context.lineTo(x2, y2);
+        context.stroke();
+        context.closePath();
+      }
+
+      const trial = {
+          type: jsPsychPsychophysics,
+          canvas_height: 500,
+          button_choices: ['YES', 'NO'],
+          prompt: '<p>Click and move the mouse for drawing.</p>',
+          // If you don't want to present any stimuli, comment out the stimuli line and enable the empty stepFunc.
+          stimuli: [img_obj],
+          // stepFunc: function(){},
+          response_type: 'button',
+          horiz_button_margin: '50px',
+          clear_canvas: false,
+          on_load: function(){
+            isDrawing = false;
+            x = 0;
+            y = 0;
+          },
+          mouse_down_func: function(e){
+              x = e.offsetX;
+              y = e.offsetY;
+              isDrawing = true;
+          },
+          mouse_move_func: function(e){
+              if (isDrawing === true) {
+                  const context = jsPsych.getCurrentTrial().context;
+                  drawLine(context, x, y, e.offsetX, e.offsetY);
+                  x = e.offsetX;
+                  y = e.offsetY;
+              }
+          },
+          mouse_up_func: function(e){
+              if (isDrawing === true) {
+                  drawLine(jsPsych.getCurrentTrial().context, x, y, e.offsetX, e.offsetY);
+                  x = 0;
+                  y = 0;
+                  isDrawing = false;
+              }
+          },
+      }
+
+      /* start the experiment */
+      jsPsych.run([preload, instruction, trial])
+
+  </script>
+</html>

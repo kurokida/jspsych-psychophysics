@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use the stepFunc which is called by the requestAnimationFrame method, and excuted synchronized with the refresh of the display.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const rotation = {
+        type: jsPsychPsychophysics,
+        stimuli: [], // This is needed.
+        // Note: The properties which depend on objects like show_start_time can not be written here.
+        raf_func: function(trial, elapsedTime){
+            const velocity = 45/180 * Math.PI; // radians per sec
+            const theta = velocity * elapsedTime/1000;
+            const radius = 100;
+
+            trial.context.beginPath();
+            trial.context.arc(
+                trial.centerX + radius * Math.cos(theta), 
+                trial.centerY + radius * Math.sin(theta), 
+                radius, 0, Math.PI*2, false);
+            trial.context.fill();
+        }
+    }
+
+    jsPsych.run([instruction, rotation])
+
+</script>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates to change dynamically properties of an object.
+    // Each time the window is refreshed, a red or blue light dot is drawn on the circumference.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const radius = 200
+    let theta_in_radian = 2 * Math.PI * Math.random()
+
+    const dot_object = {
+        obj_type: 'circle',
+        radius: 20, // radius of the dot
+        origin_center: true,
+        startX : function(){
+            return radius * Math.cos(theta_in_radian)
+        },
+        startY : function(){
+            return radius * Math.sin(theta_in_radian)
+        },    
+        width: 200,
+        height: 50,
+        fill_color: function(){
+            if (Math.random() < 0.5){
+                return 'blue'
+            } else {
+                return 'red'
+            }
+        },
+        show_start_time: function(){
+            const min = 700
+            return min + Math.random()*500
+        }
+    }
+
+    const circle_object = {
+        obj_type: 'circle',
+        radius: radius,
+        line_color: 'black'
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [dot_object, circle_object],
+        response_type: 'button',
+        canvas_height: 500,
+        prompt: `Each time you press the "Next" button, the position and color of the circle will change.`
+    }
+
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            theta_in_radian = 2 * Math.PI * Math.random()
+            return true
+        }
+    }
+
+    jsPsych.run([instruction, loop_node])
+
+</script>
+
+</html>

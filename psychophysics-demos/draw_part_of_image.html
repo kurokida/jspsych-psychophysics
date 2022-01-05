@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use the drawFunc.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const img_file_name = './img/tape.png'
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: [img_file_name],
+    }
+
+
+    const part_of_image = {
+        obj_type: 'image',
+        file: img_file_name,
+        horiz_pix_sec: 30,
+        show_start_time: 500,
+        motion_start_time: 1000,
+        startX: 100,
+        startY: 100,
+        drawFunc: function(stimulus, canvas, context){
+            context.drawImage(stimulus.img, 0, 0, stimulus.img.width/2, stimulus.img.height/2, stimulus.currentX, stimulus.currentY, stimulus.img.width/2, stimulus.img.height/2); 
+        }
+    }
+    
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [part_of_image],
+    }
+
+    jsPsych.run([preload, instruction, trial])
+</script>
+
+</html>

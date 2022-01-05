@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present images in a randomized order.
+    // The image will be presented one by one at a time.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png'
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+
+    const trial = {
+        timeline: [
+            {
+                type: jsPsychPsychophysics,
+                stimuli: [
+                    {
+                        obj_type: 'cross', // fixation
+                        line_length: 20, // pixels
+                        line_width: 4
+                    },
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('fileName'),
+                        show_start_time: 500 // ms after the start of the trial
+                    }
+                ],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                data: {'file_name': jsPsych.timelineVariable('fileName')} // for identification
+            }
+        ],
+        timeline_variables: [
+            {fileName: images[0]},
+            {fileName: images[1]},
+            {fileName: images[2]}
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.run([preload, instruction, trial])
+
+</script>
+
+</html>

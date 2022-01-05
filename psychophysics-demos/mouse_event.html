@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+        </head>
+    <body></body>
+    <script>
+      // This file demonstrates how to specify the mouse-event functions.
+      // As you move the mouse, the slope of the line segment changes. 
+      // By changing the direction of the mouse in motion,  the direction of rotation of the line changes.
+
+      const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+      })
+      console.log(`jsPsych Version ${jsPsych.version()}`)
+
+      const instruction = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: 'Click on the Start button.',
+          choices: ['Start'],
+          prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+      }
+
+      const circle_obj = {
+          obj_type: 'circle',
+          startX: 'center',
+          startY: 'center',
+          radius: 150,
+          line_color: 'white',
+          line_width: 5,
+      };
+
+      let prev_mouseX = null;
+      let mouse_move_start = false;
+      
+      const line_obj = {
+          obj_type: 'line',
+          line_length: 300,
+          line_color: 'white',
+          line_width: 5,
+          angle: 0
+      }
+
+      const trial = {
+          type: jsPsychPsychophysics,
+          canvas_height: 500,
+          button_choices: ['YES', 'NO'],
+          prompt: '<p>Click and move the mouse.</p>',
+          stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stim_array array.
+          response_type: 'button',
+          vert_button_margin: '50px',
+          horiz_button_margin: '50px',
+          mouse_down_func: function(event){
+            mouse_move_start = !mouse_move_start;
+          },                
+          // mouse_up_func: function(event){ // This also works, but, please comment out the mouse_down_function.
+          //   mouse_move_start = !mouse_move_start;
+          // },
+          mouse_move_func: function(event){ // This function will be automatically added as the event listener of the canvas.
+            if (mouse_move_start === false) return;
+
+            if (prev_mouseX === null){
+              prev_mouseX = event.offsetX;
+              return
+            }
+
+            // stim_array[0] means a circle, and stim_array[1] means a line.
+            if (event.offsetX > prev_mouseX){
+              jsPsych.getCurrentTrial().stim_array[1].angle += 5; // The angle changes by 5 degrees.
+            } else {
+              jsPsych.getCurrentTrial().stim_array[1].angle -= 5;
+            }
+            prev_mouseX = event.offsetX;
+          },
+      }
+
+      /* start the experiment */
+
+      jsPsych.run([
+          instruction,
+          {
+            timeline: [trial],
+            repetitions: 3
+          }
+        ])
+
+  </script>
+</html>

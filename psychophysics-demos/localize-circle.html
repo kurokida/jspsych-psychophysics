@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to respond using a mouse, and how to use the response_type and response_start_time.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const text_object = {
+      obj_type: 'text',
+      content: 'A black circle will appear for a short time. Please click the position.\nIf you are ready, please press the space key.',
+      font: "22px 'Arial'",
+      text_color: 'white',
+      text_space: 100,
+    }
+
+    const instruction = {
+        type: jsPsychPsychophysics,
+        stimuli: [text_object],
+        choices: [' '],
+    }
+    
+    const trial = {
+        timeline: [
+            {
+                type: jsPsychPsychophysics,
+                stimuli: [
+                    {
+                        obj_type: 'circle',
+                        startX: jsPsych.timelineVariable('posX'), // location in the canvas
+                        startY: jsPsych.timelineVariable('posY'),
+                        radius: 10,
+                        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+                        fill_color: 'black',
+                        show_start_time: 500, // ms after the start of the trial
+                        show_end_time: 550
+                    }
+                ],
+                response_type: 'mouse', // The default of the response_type is 'key'.
+                response_start_time: 550, // When the response_start_time is the same as the show_end_time of the circle_object, the RT is the time from disappearing of the circle until the participant’s response.
+            }
+        ],
+        timeline_variables: [
+            {posX: 100, posY: 300},
+            {posX: 300, posY: 200},
+            {posX: 500, posY: 400},
+        ],
+        repetitions: 3
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

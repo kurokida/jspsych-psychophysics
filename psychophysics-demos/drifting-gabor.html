@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="../js/numeric.min.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present a drifting gabor patch.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const gabor1 = {
+        obj_type: 'gabor',
+        tilt: 30,
+        sf: 0.05,
+        phase: 90,
+        width: 300,
+        sc: 30,
+        contrast: 20,
+        drift: 10,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [gabor1],
+        canvas_height: 500,
+        prompt: 'Press any key to proceed.',
+    }
+
+    jsPsych.run([instruction, trial])
+</script>
+
+</html>

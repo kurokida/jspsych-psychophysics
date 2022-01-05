@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-dist/dist/plugin-fullscreen.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present multiple images in random order in succession.
+    // That is, Rapid serial visual presentation (RSVP) 
+    // This demo can run with the jspsych-fullscreen plugin.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const fullscreen_trial = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true
+    }
+
+    const fullscreen_trial_exit = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: false
+    }
+
+    const images = [
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/1.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/2.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/3.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/4.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/5.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/6.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/7.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/8.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/9.gif']
+
+    const preload_trial = {
+        type: jsPsychPreload,
+        images: images
+    }
+
+    const stimulus_object = []
+
+    for (let i = 0; i < images.length; i++) {
+        const temporal_object = {
+            obj_type: 'image',
+            file: 'This will be overwritten later.'
+        }
+        stimulus_object.push(temporal_object)
+    }
+
+    const viewing_time = 200 // ms
+    const isi = 50 // ms
+
+    const instruction = {
+        obj_type: 'text',
+        content: 'Press the spacebar to continue, or any other key to abort.',
+        font: "22px 'Arial'",
+        text_color: 'white',
+        show_start_time: (viewing_time + isi) * images.length
+    }
+    stimulus_object.push(instruction)
+
+    const rsvp_trial = {
+        type: jsPsychPsychophysics,
+        stimuli: stimulus_object, // Note that the last element of the stimulus_object is the instruction.
+        response_start_time: (viewing_time + isi) * images.length - isi, // not to respond until all images are presented.
+        on_start: function(trial){
+            // Set parameters for each image dynamically.
+
+            const rand_images = jsPsych.randomization.shuffle(images)
+
+            for (let i = 0; i < images.length; i++) {
+                trial.stimuli[i].file = rand_images[i]
+                const start = (viewing_time + isi)  * i;
+                trial.stimuli[i].show_start_time = start;
+                trial.stimuli[i].show_end_time = start  + viewing_time 
+            }
+            console.log(trial.stimuli)
+        }
+    }
+
+    const loop_node = {
+        timeline: [rsvp_trial],
+        loop_function: function(data){
+            if(jsPsych.pluginAPI.compareKeys(data.values()[0].response, ' ')){
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    jsPsych.run([fullscreen_trial, preload_trial, loop_node, fullscreen_trial_exit])
+
+</script>
+
+</html>

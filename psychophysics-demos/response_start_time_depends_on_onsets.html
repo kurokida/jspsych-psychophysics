@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This demo explains how to set a different time to start presenting images for each trial, 
+    // and how to get the reaction time based on that time.
+    // Note that the response_start_time property needs to be specified in terms of ms. 
+    // In other words, if you are using the start_frame property instead of the start_time property, 
+    // you need to convert it to ms.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+    const trial = {
+        timeline: [
+            {
+                type: jsPsychPsychophysics,
+                response_start_time: jsPsych.timelineVariable('start_time'),
+                stimuli: [
+                    {
+                        obj_type: 'image',
+                        file: jsPsych.timelineVariable('stim'),
+                        show_start_time: jsPsych.timelineVariable('start_time'), // ms after the start of the trial
+                    }
+                ],
+                canvas_height: 500,
+                prompt: 'The image stimulus will be presented after one to three seconds. <br>Press any key to respond.',
+                data: {
+                    'image_name': jsPsych.timelineVariable('stim'),
+                    'start_time': jsPsych.timelineVariable('start_time')
+                }
+            }
+        ],
+        timeline_variables: [
+            {stim: images[0], start_time: 1000},
+            {stim: images[1], start_time: 2000},
+            {stim: images[2], start_time: 3000},
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.run([preload, instruction, trial])
+
+
+</script>
+
+</html>

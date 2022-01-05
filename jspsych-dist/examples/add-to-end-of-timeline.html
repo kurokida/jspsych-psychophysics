@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../dist/jspsych.js"></script>
+    <script src="../dist/plugin-html-keyboard-response.js"></script>
+    <script src="../dist/plugin-image-keyboard-response.js"></script>
+    <script src="../dist/plugin-preload.js"></script>
+    <link rel="stylesheet" href="../packages/jspsych/css/jspsych.css">
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var preload = {
+      type: jsPsychPreload,
+      images: ['img/happy_face_4.jpg']
+    };
+
+    var first = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: 'First trial; new trial added when on_finish is called.',
+      on_finish: function(){
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [{
+            type: jsPsychImageKeyboardResponse,
+            stimulus: 'img/happy_face_4.jpg',
+            stimulus_width: 300,
+            prompt: '<p>New trial.</p>'
+          }]
+        });
+      }
+    };
+
+    jsPsych.run([preload, first]);
+
+  </script>
+</html>

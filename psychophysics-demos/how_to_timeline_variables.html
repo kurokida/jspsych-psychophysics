@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file works as the same as the twoImagesWithSOA.html, but the use of the jsPsych.timelineVariable function is slightly different.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+        './img/pin.png',
+        './img/tape.png',
+        './img/clip.png'
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+    const image1 = {
+        obj_type: 'image',
+        file: jsPsych.timelineVariable('firstImage'),
+        show_start_time: 500, // ms after the start of the trial
+        startX: 300,
+    }
+
+    const image2 =  {
+        obj_type: 'image',
+        file: jsPsych.timelineVariable('secondImage'),
+        show_start_time: 1000, // ms after the start of the trial
+        startX: 600
+    }
+
+    const trial = {
+        timeline: [
+            {
+                type: jsPsychPsychophysics,
+                stimuli: [image1, image2],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                data: {'firstImage': jsPsych.timelineVariable('firstImage'),
+                'secondImage': jsPsych.timelineVariable('secondImage')} // for identification
+            }
+        ],
+        timeline_variables: [
+            {firstImage: images[0], secondImage: images[1]},
+            {firstImage: images[2], secondImage: images[3]},
+            {firstImage: images[4], secondImage: images[5]}
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.run([preload, instruction, trial])
+
+</script>
+
+</html>

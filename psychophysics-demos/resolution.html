@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const text = {
+        obj_type: 'text',
+        content: 'Hello!',
+        font: "22px 'Arial'",        
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [text],
+        raf_func: function(trial, elapsedTime){
+            trial.stim_array[0].content = `The width of the canvas is ${trial.canvas_width} and the height is ${trial.canvas_height}.`
+            trial.stim_array[0].show()
+        }
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

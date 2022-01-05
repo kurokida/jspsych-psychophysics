@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../dist/jspsych.js"></script>
+    <script src="../../dist/plugin-instructions.js"></script>
+    <script src="../../dist/plugin-preload.js"></script>
+    <link rel="stylesheet" href="../../packages/jspsych/css/jspsych.css">
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var preload = {
+      type: jsPsychPreload,
+      images: ["../img/age/of2.jpg"]
+    };
+
+    var trial = {       
+      type: jsPsychInstructions,     
+      pages: [      
+        'Welcome to the experiment. Click next to begin.',      
+        'In this experiment, you will view a ' +       
+        'series of images and answer questions.<br>' +      
+        'Answer with the keys "y" or "n". ',     
+        'Here is an example:<br><br>' +        
+        '<img src="../img/age/of2.jpg" /><br><br>' +       
+        'Is this person YOUNG?'      
+      ],        
+      show_clickable_nav: true      
+    };       
+
+    jsPsych.run([preload, trial]);
+
+  </script>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // The detailed tutorial is written at http://jspsychophysics.hes.kyushu-u.ac.jp/
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const rect_object = {
+        obj_type: 'rect', // means a rectangle
+        startX: 200, // location in the canvas
+        startY: 150,
+        width: 300, // of the rectangle
+        height: 200,
+        line_color: '#ffffff',
+        fill_color: '#ffffff',
+        show_start_time: 500 // from the trial start (ms)
+    }
+
+    const circle_object = {
+        obj_type: 'circle',
+        startX: 500, // location in the canvas
+        startY: 300,
+        radius: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        show_start_time: 1000 // from the trial start (ms)
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [rect_object, circle_object],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        canvas_width: 1000,
+        canvas_height: 800,
+        background_color: '#008000', // The HEX color means green.
+    }
+
+    jsPsych.run([instruction, trial])
+    
+</script>
+
+</html>

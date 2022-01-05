@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="js/snap.svg-min.js"></script>
+    <script src="../dist/jspsych.js"></script>
+    <script src="../dist/plugin-vsl-animate-occlusion.js"></script>
+    <script src="../dist/plugin-preload.js"></script>
+    <link rel="stylesheet" href="../packages/jspsych/css/jspsych.css">
+  </head>
+  <body></body>
+  <script>
+
+    var jsPsych = initJsPsych({
+      on_finish: function() {
+        jsPsych.data.displayData();
+      }
+    });
+
+    var images = ["img/1.gif", "img/2.gif", "img/3.gif", "img/4.gif", "img/5.gif", "img/6.gif", "img/7.gif", "img/8.gif", "img/9.gif", "img/10.gif"];
+
+    var preload = {
+      type: jsPsychPreload,
+      auto_preload: true
+    };
+
+    var block = {
+      type: jsPsychVslAnimateOcclusion,
+      stimuli: images
+    };
+
+    jsPsych.run([preload, block]);
+
+  </script>
+</html>

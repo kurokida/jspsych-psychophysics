@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../dist/jspsych.js"></script>
+  <script src="../dist/plugin-initialize-microphone.js"></script>
+  <script src="../dist/plugin-html-audio-response.js"></script>
+  <link rel="stylesheet" href="../packages/jspsych/css/jspsych.css">
+</head>
+<body></body>
+<script>
+
+  var jsPsych = initJsPsych();
+
+  let init_mic = {
+    type: jsPsychInitializeMicrophone,
+  }
+
+  let ar = {
+    type: jsPsychHtmlAudioResponse,
+    stimulus: '<div style="width:400px; height: 400px; background-color: red;"></div>',
+    allow_playback: true,
+    on_finish: (data) => {
+      console.log(data);
+    }
+  }
+
+  jsPsych.run([init_mic, ar]);
+
+</script>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present lines.
+    // There are two ways to define a line.
+    // Note: You can not specify both the angle and positions for the same object.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    // The line_object1 defines a line using the angle and line_length.
+    const line_object1 = {
+        obj_type: 'line',        
+        startX: 200, // location in the canvas
+        startY: 400,
+        angle: 45,
+        line_length: 200,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        show_start_time: 500, // ms after the start of the trial
+        endX: 300,
+        endY: 400,
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    // The line_object2 defines a line using the start and end positions.
+    const line_object2 = {
+        obj_type: 'line',
+        x1: 300,
+        y1: 200,
+        x2: 200,
+        y2: 400,        
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        show_start_time: 1000, // ms after the start of the trial
+        vert_pix_frame: 5,
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [line_object1, line_object2],
+    }
+
+    jsPsych.run([instruction, trial])
+</script>
+
+</html>

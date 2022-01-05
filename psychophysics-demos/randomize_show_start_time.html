@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to randomize the duration of the fixation cross.
+    // The stimulus image is presented from 500 to 3000 ms after the fixation point.
+    // The duration of the stimulus image is 1000 ms.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+
+    const fixation =  {
+        obj_type: 'cross',
+        line_length: 20,
+        line_width: 2,
+    }
+
+    const stim_img = {
+        obj_type: 'image',
+        file: jsPsych.timelineVariable('stim'),
+    }
+
+    const trial = {
+        timeline: [
+            {
+                type: jsPsychPsychophysics,
+                stimuli: [fixation, stim_img],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.',
+                on_start: function(trial){
+                    const min = 500; // ms
+                    const max = 3000; // ms
+
+                    const image_duration = 1000; // ms
+                        
+                    // The rand_time variable is a duration of the fixation cross in the range of min to max,
+                    // but note that the actual duration time also depends on the refresh rate of the display.
+                    const rand_time = min + Math.floor(Math.random() * (max - min));
+
+                    // The index of the stimuli depends on the order in which they are declared (Line 48)
+                    //   trial.stimuli[0] means the fixation
+                    //   trial.stimuli[1] means the image
+                    trial.stimuli[0].show_start_time = 0 // fixation start time
+                    trial.stimuli[0].show_end_time = rand_time // fixation end time
+                    trial.stimuli[1].show_start_time = rand_time // image start time
+                    trial.stimuli[1].show_end_time = trial.stimuli[1].show_start_time + image_duration // image end time
+
+                    // After the image disappears, the participant can respond to it.
+                    trial.response_start_time = trial.stimuli[1].show_end_time
+
+                    // Save the duration of the fixation and the image file name.
+                    trial.data = {
+                        fixation_duration: rand_time,
+                        image_name: jsPsych.timelineVariable('stim'),
+                    }
+                }
+            }
+        ],
+        timeline_variables: [
+            {stim: images[0]},
+            {stim: images[1]},
+            {stim: images[2]},
+        ],
+        randomize_order: true,
+        repetitions: 2,
+    }
+
+    jsPsych.run([preload, instruction, trial])
+
+</script>
+
+</html>

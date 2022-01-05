@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="../js/numeric.min.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+  </head>
+<body></body>
+<script>
+    // This file demonstrates how to present gabor patches.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const gabor1 = {
+        obj_type: 'gabor',
+        tilt: 30,
+        sf: 0.05,
+        phase: 90,
+        width: 300,
+        sc: 20,
+        contrast: 10,
+        startX: 100,
+        startY:100,
+    }
+
+    const gabor2 = {
+        obj_type: 'gabor',
+        tilt: 60,
+        sf: 0.05,
+        phase: 90,
+        width: 200,
+        sc: 10,
+        contrast: 0.5,
+        disableNorm: true,
+        startX: 500,
+        startY:100,
+    }
+
+    const gabor3 = {
+        obj_type: 'gabor',
+        tilt: 0,
+        sf: 0.1,
+        phase: 90,
+        width: 300,
+        sc: 20,
+        contrast: 20,
+        startX: 100,
+        startY:500,
+        show_start_time: 500,
+    }
+
+    const gabor4 = {
+        obj_type: 'gabor',
+        tilt: -45,
+        sf: 0.02,
+        phase: 90,
+        width: 400,
+        sc: 50,
+        contrast: 50,
+        startX: 500,
+        startY:500,
+        show_start_time: 1000,
+        motion_start_time: 1000,
+        horiz_pix_frame: 5,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [gabor1, gabor2, gabor3, gabor4],
+        canvas_height: 700,
+        prompt: 'Press any key to proceed.',
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

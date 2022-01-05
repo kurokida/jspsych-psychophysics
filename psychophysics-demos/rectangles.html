@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present rectangles.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const rect_object1 = {
+        obj_type: 'rect',        
+        startX: 200, // location of the rectangle's center in the canvas
+        startY: 400,
+        width: 200,
+        height: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        line_width: 3,
+        show_start_time: 500, // ms after the start of the trial
+        // endX: 400,
+        // endY: 400,
+        endX: 'center',
+        endY: 'center',
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    const rect_object2 = {
+        obj_type: 'rect',        
+        startX: 400, // location of the rectangle's center in the canvas
+        startY: 400,
+        width: 100,
+        height: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'white',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+        vert_pix_frame: -2,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [rect_object1, rect_object2],
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

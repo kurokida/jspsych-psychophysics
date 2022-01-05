@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present objects using a coordinate with the center of the window as the origin.
+    // Set the origin_center property to true.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const cross_object = {
+        obj_type: 'cross',        
+        startX: 0, // location of the cross's center in the canvas
+        startY: 0,
+        origin_center: true, // Change the coordinate origin to the center of the window
+        line_length: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+    }
+
+    const circle_object = {
+        obj_type: 'circle',        
+        startX: 200, // location of the circle's center in the canvas
+        startY: 100,
+        radius: 50,
+        origin_center: true, // Change the coordinate origin to the center of the window
+        fill_color: 'red'
+    }
+
+    const rect_object = {
+        obj_type: 'rect',        
+        startX: -200, // location of the rectngle's center in the canvas
+        startY: -100,
+        width: 80,
+        height: 40,
+        origin_center: true, // Change the coordinate origin to the center of the window
+        fill_color: 'blue'
+    }
+
+    const line_object = {
+        obj_type: 'line',
+        x1: -200,
+        y1: 100,
+        x2: 200,
+        y2: -100,
+        line_color: 'green',
+        origin_center: true // Change the coordinate origin to the center of the window
+    }
+
+    const moving_circle = {
+        obj_type: 'circle',        
+        startX: -300, // location of the circle's center in the canvas
+        startY: 0,
+        endX: 300,
+        endY: 0,
+        radius: 30,
+        origin_center: true, // Change the coordinate origin to the center of the window
+        fill_color: 'black',
+        motion_start_time: 1000,
+        horiz_pix_frame: 10,
+    }
+
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [cross_object, circle_object, rect_object, line_object, moving_circle],
+    }
+
+    jsPsych.run([instruction, trial])
+    
+</script>
+
+</html>

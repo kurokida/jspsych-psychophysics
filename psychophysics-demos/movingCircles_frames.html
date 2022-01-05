@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present moving circles in frames.
+    // Note: You can not specify the speed, distance, and time at the same time.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    // The circle_object1 defines motion using the time and speed.
+    // If you defined the time in frames, you have to also define the speed in frames.
+    // The `is_frame` property should be true.
+    const circle_object1 = {
+        obj_type: 'circle',
+        startX: 'center', // location in the canvas
+        startY: 'center',
+        radius: 50,
+        line_color: 'blue', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'blue',
+        show_start_frame: 60, // frames after the start of the trial
+        motion_start_frame: 120,
+        motion_end_frame: 240,
+        show_end_frame: 300,
+        is_frame: true, // required
+        horiz_pix_frame: -5, // speed in frames
+        vert_pix_frame: 0, // The circle does not move vertically.
+    }
+
+    // The circle_object2 defines motion using the distance and speed.
+    const circle_object2 = {
+        obj_type: 'circle',
+        startX: 600, // location in the canvas
+        startY: 300,
+        endX: 200,
+        endY: 500,
+        radius: 50,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        horiz_pix_frame: -5, // The circle moves from right to left.
+        vert_pix_frame: 3,
+        show_start_frame: 60, // ms after the start of the trial
+        motion_start_frame: 120,
+        is_frame: true, // required
+    }
+
+    // If you specify the distance and time, the velocity can be calculated automatically.
+    // But, in this case, you have to define the time in milliseconds not in frames.
+    const circle_object3 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        endX: 600,
+        endY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        show_start_time: 500, // milliseconds!
+        motion_start_time: 1000, // milliseconds!
+        motion_end_time: 3000, // milliseconds!
+        show_end_time: 3500 // milliseconds!
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [circle_object1, circle_object2, circle_object3],
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

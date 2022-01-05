@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This demo confirms that the stimuli are presented properly on retina display.
+    // The canvas size is set to 600x600
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const text_object1 = {
+        obj_type: 'text',
+        content: 'Hello, world!',
+        font: "50px sans",
+    }
+
+    const text_object2 = {
+        obj_type: 'text',
+        startY: 60,
+        content: `devicePixelRatio:${window.devicePixelRatio}`,
+        font: "50px sans",
+    }
+
+    const rect_object1 = {
+        obj_type: 'rect',        
+        startX: 300, // location of the rectangle's center in the canvas
+        startY: 300,
+        width: 300,
+        height: 300,
+        line_color: 'blue', // You can use the HTML color name instead of the HEX color.
+    }
+
+    const circle_object1 = {
+        obj_type: 'circle',
+        startX: 50, // location in the canvas
+        startY: 400,
+        endX: 550,
+        endY: 400,
+        radius: 50,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'red',
+        show_start_time: 1000, // ms after the start of the trial
+        motion_start_time: 2000,
+        motion_end_time: 5000,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [rect_object1, text_object1, text_object2, circle_object1],
+        canvas_width: 600,
+        canvas_height: 600
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

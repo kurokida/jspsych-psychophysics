@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="../js/numeric.min.js"></script>
+    <script src="../js/math.js"></script>  
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to apply masking and filtering to the image file.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const img_file_name = './img/personA.png'
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: [img_file_name],
+    }
+
+    const person_original = {
+        obj_type: 'image',
+        file: img_file_name,
+        startX: 200,
+        startY: 300,
+    }
+
+    const mask_circle = {
+        obj_type: 'image',
+        file: img_file_name,
+        mask: 'circle',
+        width: 170,
+        height: 200,
+        center_x: 155,
+        center_y: 190,
+        startX: 500,
+        startY: 300,
+    }
+
+    const mask_circle_blur = {
+        obj_type: 'image',
+        file: img_file_name,
+        mask: 'circle',
+        filter: 'blur(4px)',
+        width: 170,
+        height: 200,
+        center_x: 155,
+        center_y: 190,
+        startX: 800,
+        startY: 300,
+    }
+
+    const mask_gauss = {
+        obj_type: 'image',
+        file: img_file_name,
+        mask: 'gauss',
+        width: 200,
+        sc: 30,
+        startX: 200,
+        startY: 600,
+    }
+
+    const mask_rect = {
+        obj_type: 'image',
+        file: img_file_name,
+        mask: 'rect',
+        width: 170,
+        height: 200,
+        center_x: 155,
+        center_y: 190,
+        startX: 500,
+        startY: 600,
+    }
+
+    const mask_manual = {
+        obj_type: 'image',
+        file: img_file_name,
+        mask: 'manual',
+        startX: 800,
+        startY: 600,
+        mask_func: function(canvas){
+            // An argument is the canvas on which the image is drawn. 
+            // The top-left coordinate of the canvas is identical to the top-left coordinate of the image.
+            const contexture = canvas.getContext('2d');
+            const img = contexture.getImageData(100, 100, 50, 100);
+            return img
+        }
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [person_original, mask_circle, mask_circle_blur, mask_gauss, mask_rect, mask_manual],
+    }
+
+    jsPsych.run([preload, instruction, trial])
+    
+</script>
+
+</html>
