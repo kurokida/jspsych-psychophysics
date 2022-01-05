@@ -12,6 +12,7 @@
         // This file demonstrates how to play the HTML5 sound by pressing a key.
 
         const jsPsych = initJsPsych({
+            use_webaudio: false, // required for this demo to run properly.
             on_finish: function() {
                 jsPsych.data.displayData();
             }
