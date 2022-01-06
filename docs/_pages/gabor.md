@@ -35,6 +35,6 @@ This file demonstrates how to present gabor patches.
 
 This file demonstrates how to present a drifting gabor patch. 
 
-## [gabor-tilt.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/gabor-tilt.html)
+## [gabor_tilt.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/gabor_tilt.html)
 
 This file demonstrates how to change the tilt of the gabor by pressing keys.
