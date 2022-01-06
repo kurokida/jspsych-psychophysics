@@ -13,6 +13,7 @@ Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 
 - [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)-[CodePen](https://codepen.io/kurokida/pen/NWgPVxX) This file demonstrates how to present gabor patches.
 - [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch.
+- [gabor-tilt.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/gabor-tilt.html)-[CodePen](https://codepen.io/kurokida/pen/YzrvjvV) This file demonstrates how to change the tilt of the gabor by pressing keys.
 
 # Images
 

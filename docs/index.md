@@ -16,7 +16,7 @@ This plugin can be used free of charge under the MIT license.
 - You can present multiple stimuli asynchronously. In other words, you can set stimulus onset asynchronies (SOAs) in a single trial.
 - You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of both milliseconds and frames. You can also move these stimuli, and play sound files.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
-- You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/).
+- You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/) and [this issue](https://github.com/kurokida/jspsych-psychophysics/issues/27).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
 - [You can apply masking/filtering to image files](/mask_filter/).
 
@@ -43,7 +43,7 @@ This procedure is the same as other plugins are used with the jsPsych. Note the 
 ### 3. Specify all stimuli used in the program as JavaScript objects
 
 ```javascript
-var rect_object = {
+const rect_object = {
     obj_type: 'rect', // means a rectangle
     startX: 200, // location in the canvas
     startY: 150,
@@ -54,7 +54,7 @@ var rect_object = {
     show_start_time: 500 // from the trial start (ms)
 }
 
-var circle_object = {
+const circle_object = {
     obj_type: 'circle',
     startX: 500, // location in the canvas
     startY: 300,

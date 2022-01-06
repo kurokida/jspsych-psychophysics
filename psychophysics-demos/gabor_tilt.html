@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="../js/numeric.min.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+    </head>
+    <body></body>
+    <script>
+    // This file demonstrates how to specify the keyboard-event functions.
+
+    const nTrials = 30
+    let trial_num = 1
+    let angle = 90;
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        canvas_height: 500,
+        prompt: `<p>Press the ArrowLeft/ArrowRight key to change the tilt of the gabor.</p>
+          <p>You can press the key ${nTrials} times.</p>`,
+        stimuli: function(){
+          const gabor_obj = {
+              obj_type: 'gabor',
+              tilt: angle,
+              sf: 0.05,
+              phase: 90,
+              width: 150,
+              sc: 10,
+              contrast: 0.5,
+              disableNorm: true
+          };
+
+          return [gabor_obj]
+        },
+        response_type: 'key',
+        choices: [' ', 'ArrowLeft', 'ArrowRight'],
+    }
+
+    // https://www.jspsych.org/7.1/overview/timeline/#looping-timelines
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            if (trial_num < nTrials){
+                trial_num++
+
+                if (data.values()[0].response === 'arrowleft'){
+                  angle += 2
+                } else { // arrowdown
+                  angle -= 2
+                }
+
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    /* start the experiment */
+    jsPsych.run([instruction, loop_node])
+
+  </script>
+</html>
