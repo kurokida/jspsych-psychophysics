@@ -33,7 +33,7 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
-|choices|array of keycodes|jsPsych.ALL_KEYS|This array contains the keys that the participant is allowed to press in order to respond to the stimulus. Keys can be specified as their [numeric key code](https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes) or as characters (e.g., 'a', 'q'). The default value of jsPsych.ALL_KEYS means that all keys will be accepted as valid responses. Specifying jsPsych.NO_KEYS will mean that no responses are allowed.|
+|choices|array of keycodes|"ALL_KEYS"|This array contains the keys that the participant is allowed to press in order to respond to the stimulus. Keys can be specified as their [numeric key code](https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes) or as characters (e.g., 'a', 'q'). The default value of "ALL_KEYS" means that all keys will be accepted as valid responses. Specifying "NO_KEYS" will mean that no responses are allowed.|
 
 # Parameters related to a button response
 
@@ -64,7 +64,8 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |---|---|---|
 |rt|numeric|The response time in milliseconds for the participant to make a response. The start time of the measurement depends on the 'response_start_time'.|
 |response_type|string|'key', 'mouse', or 'button'|
-|key_press|numeric|Indicates which key the participant pressed. The value is the [numeric key code](https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes) corresponding to the participant's response. '-1' means thant the participant respond using a mouse.|
+|key_press|string|Indicates which key the participant pressed. '-1' means thant the participant respond using a mouse.|
+|response|string|Indicates which key the participant pressed. This is the same as the key_press.|
 |avg_frame_time|numeric|Averaged interframe interval.|
 |click_x/click_y|numeric|Horizontal/Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
 |center_x/center_y|numeric|Horizontal/Vertical position of the center of the window. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
@@ -78,4 +79,9 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |context|You can access the context of the canvas via the `jsPsych.getCurrentTrial().context`.|
 |centerX|You can access the horizontal center of the canvas via the `jsPsych.getCurrentTrial().centerX`.|
 |centerY|You can access the vertical center of the canvas via the `jsPsych.getCurrentTrial().centerY`.|
-|stim_array|You can access the stimuli via the `jsPsych.getCurrentTrial().stim_array`.|
+
+# Stimuli
+|Parameter|Description|
+|---|---|
+|stimuli|You can access the stimuli via the `jsPsych.getCurrentTrial().stimuli`. This is useful if you want to change the stimulus in the on_start function.|
+|stim_array|You can access the stimuli via the `jsPsych.getCurrentTrial().stim_array`. This is useful if you want to change the stimulus in the event handlers or the raf_func.|
