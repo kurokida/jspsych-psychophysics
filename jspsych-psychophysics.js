@@ -673,7 +673,16 @@
             // Note that filtering is done to the invisible_ctx.
             ctx.putImageData(this.masking_img, this.currentX - this.masking_img.width/2, this.currentY - this.masking_img.height/2);
           } else {
-            const scale = typeof this.scale === 'undefined' ? 1:this.scale;
+            if (typeof this.scale !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the scale and image_width at the same time.')
+            if (typeof this.scale !== 'undefined' && typeof this.image_height !== 'undefined') alert('You can not specify the scale and image_height at the same time.')
+            if (typeof this.image_height !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the image_height and image_width at the same time.')
+
+            let scale = 1
+
+            if (typeof this.scale !== 'undefined') scale = this.scale
+            if (typeof this.image_width !== 'undefined') scale = this.image_width/this.img.width
+            if (typeof this.image_height !== 'undefined') scale = this.image_height/this.img.height
+
             const tmpW = this.img.width * scale;
             const tmpH = this.img.height * scale;              
             ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   

@@ -74,6 +74,8 @@ See also [Masking and filtering images using the jspsych-psychophysics plugin](/
 |---|---|---|---|
 |file|string|undefined|The file name of the image.|
 |scale|numeric|1 (original size)|Image scaling. Note that scaling will not work simultaneously with masking and filtering.|
+|image_width|numeric|undefined| The width of the image. You can't specify this property with the scale or image_height property. Note that scaling will not work simultaneously with masking and filtering.|
+|image_height|numeric|undefined| The height of the image. You can't specify this property with the scale or image_width property. Note that scaling will not work simultaneously with masking and filtering.|
 |filter|string|undefined|Read [this page](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter) carefully.| 
 |mask|string|undefined|'gauss', 'circle', 'rect', or 'manual' See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).|
 |width (gauss)|numeric|undefined| The size (width x width) of the area where the gaussian mask is applied.|
