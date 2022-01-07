@@ -155,6 +155,7 @@ See also [Presenting gabor patches in online/web experiments](/gabor/).
 |drift|numeric|0| The velocity of the drifting gabor patch. The angular velocity per frame. The unit is the degree.|
 |method|text|numeric| The method of drawing the gabor patch. 'numeric' or 'math' [The numeric.js](https://github.com/sloisel/numeric) is considerably faster than [the math.js](https://mathjs.org/).|
 |disableNorm|boolean|false| Disable normalization of the gaussian function. That is, coefficient: 1/(sqrt(2*pi) * sc) will not be multiplied. If this property is specified as true, the contrast value should be relatively small.|
+|contrastPreMultiplicator|numeric|1| This value is multiplied as a scaling factor to the requested contrast value. For the meaning of this variable, see [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor).|
 
 # obj_type: 'manual' 
 

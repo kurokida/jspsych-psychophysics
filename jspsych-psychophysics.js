@@ -162,6 +162,12 @@
             default: 20,
             description: 'The contrast of the gabor patch.'
           },
+          contrastPreMultiplicator: {
+            type: jspsych.ParameterType.FLOAT,
+            pretty_name: 'contrastPreMultiplicator',
+            default: 1,
+            description: 'A scaling factor'
+          },
           drift: {
             type: jspsych.ParameterType.FLOAT,
             pretty_name: 'drift',
@@ -755,7 +761,7 @@
             const exp_value = math.exp(tmp2)
             const tmp3 = math.dotMultiply(exp_value, sinWave)
             const tmp4 = math.multiply(multConst, tmp3)
-            const tmp5 = math.multiply(this.contrast, tmp4)
+            const tmp5 = math.multiply(this.contrast, math.multiply(tmp4, this.contrastPreMultiplicator))
             const m = math.multiply(256, math.add(0.5, tmp5))
             gabor_data = m._data
           } else { // numeric
@@ -770,7 +776,7 @@
             const exp_value = numeric.exp(tmp2)
             const tmp3 = numeric.mul(exp_value, sinWave)
             const tmp4 = numeric.mul(multConst, tmp3)
-            const tmp5 = numeric.mul(this.contrast, tmp4)
+            const tmp5 = numeric.mul(this.contrast, numeric.mul(tmp4, this.contrastPreMultiplicator))
             const m = numeric.mul(256, numeric.add(0.5, tmp5))
             gabor_data = m
           }
