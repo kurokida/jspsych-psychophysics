@@ -18,7 +18,7 @@
   // console.log(jspsych)
 
   // console.log(`jsPsych Version ${jspsych.version()}`)
-  console.log('Psychophysics Version 3.0')
+  console.log('Psychophysics Version 3.1.0')
 
   const info = {
     name: 'psychophysics',
