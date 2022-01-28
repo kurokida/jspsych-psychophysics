@@ -197,6 +197,12 @@
 
         }
       },
+      pixi: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: 'Enable Pixi',
+        default: false,
+        description: 'If true, this plugin will use PixiJS'
+      },
       choices: {
         type: jspsych.ParameterType.KEYS,
         array: true,
