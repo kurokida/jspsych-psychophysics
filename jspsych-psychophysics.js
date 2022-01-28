@@ -194,7 +194,36 @@
             default: null,
             description: 'Masking the image manually.'
           },
-
+          text_color: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: 'text color',
+            default: '#000000',
+            description: 'The color of the text.'
+          },
+          fontStyle: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: 'font style',
+            default: 'normal',
+            description: 'Font style'
+          },
+          fontWeight: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: 'font weight',
+            default: 'normal',
+            description: 'Font weight'
+          },
+          fontSize: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: 'font size',
+            default: '20px',
+            description: 'Font size'
+          },
+          fontFamily: {
+            type: jspsych.ParameterType.STRING,
+            pretty_name: 'font family',
+            default: 'Verdana, Arial, Helvetica, sans-serif',
+            description: 'Font family'
+          }
         }
       },
       pixi: {
@@ -982,47 +1011,71 @@
           super(stim)
   
           if (typeof this.content === 'undefined') alert('You have to specify the content of texts.');
-          if (typeof this.text_color === 'undefined') this.text_color = '#000000';
-          if (typeof this.text_space === 'undefined') this.text_space = 20;
+          
+          if (trial.pixi){
+            if (typeof this.text_space !== 'undefined') alert(`You can't specify the text_space in Pixi mode.`);
+            this.pixi_obj = new PIXI.Text(this.content)
+            init_pixi_obj(this.pixi_obj)
+            this.pixi_obj.style.align = 'center'
+            this.pixi_obj.style.fontFamily = this.fontFamily
+            this.pixi_obj.style.fontSize = this.fontSize
+            this.pixi_obj.style.fontStyle = this.fontStyle
+            this.pixi_obj.style.fontWeight = this.fontWeight
+            this.pixi_obj.style.fill = this.text_color
+            this.pixi_obj.style.lineJoin = this.lineJoin;
+            this.pixi_obj.style.miterLimit = this.miterLimit;
+          } else {
+            if (typeof this.text_space === 'undefined') this.text_space = 20;
+            let font_info = ''
+            // Note the order specified.
+            font_info = font_info + ' ' + this.fontStyle
+            font_info = font_info + ' ' + this.fontWeight
+            font_info = font_info + ' ' + this.fontSize
+            font_info = font_info + ' ' + this.fontFamily
+            if (typeof this.font === 'undefined') this.font = font_info
+          }
     
         }
   
         show(){
-          if (typeof this.filter === 'undefined') {
-            ctx.filter = 'none'
+          if (trial.pixi) {
+            this.pixi_obj.x = this.currentX
+            this.pixi_obj.y = this.currentY
           } else {
-            ctx.filter = this.filter
+
+            if (typeof this.filter === 'undefined') {
+              ctx.filter = 'none'
+            } else {
+              ctx.filter = this.filter
+            }
+    
+            // common
+            // ctx.beginPath();            
+            ctx.lineWidth = this.line_width;
+            ctx.lineJoin = this.lineJoin;
+            ctx.miterLimit = this.miterLimit;
+            ctx.font = this.font;   
+            ctx.fillStyle = this.text_color;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle"
+    
+            let column = [''];
+            let line = 0;
+            for (let i = 0; i < this.content.length; i++) {
+                let char = this.content.charAt(i);
+    
+                if (char == "\n") {    
+                    line++;
+                    column[line] = '';
+                } else {
+                  column[line] += char;
+                }
+            }
+    
+            for (let i = 0; i < column.length; i++) {
+                ctx.fillText(column[i], this.currentX, this.currentY - this.text_space * (column.length-1) / 2 + this.text_space * i);
+            }
           }
-  
-          // common
-          // ctx.beginPath();            
-          ctx.lineWidth = this.line_width;
-          ctx.lineJoin = this.lineJoin;
-          ctx.miterLimit = this.miterLimit;
-          //
-          if (typeof this.font !== 'undefined') ctx.font = this.font;
-  
-          ctx.fillStyle = this.text_color;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle"
-  
-          let column = [''];
-          let line = 0;
-          for (let i = 0; i < this.content.length; i++) {
-              let char = this.content.charAt(i);
-  
-              if (char == "\n") {    
-                  line++;
-                  column[line] = '';
-              } else {
-                column[line] += char;
-              }
-          }
-  
-          for (let i = 0; i < column.length; i++) {
-              ctx.fillText(column[i], this.currentX, this.currentY - this.text_space * (column.length-1) / 2 + this.text_space * i);
-          }
-  
         }
       }
   
