@@ -11,7 +11,9 @@
  *
  **/
 
- /* global jsPsych, math, numeric */
+ /* global jsPsych, math, numeric, PIXI, jsPsychModule */
+
+ /* exported jsPsychPsychophysics */
 
  var jsPsychPsychophysics = (function (jspsych) {
   "use strict";
@@ -1099,7 +1101,21 @@
   
       if (trial.canvas_width === null) trial.canvas_width = window.innerWidth - trial.canvas_offsetX;
       if (trial.canvas_height === null) trial.canvas_height = window.innerHeight - trial.canvas_offsetY;
-      let new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
+
+      let pixi_app
+      let new_html = ''
+      if (trial.pixi) {
+        pixi_app = new PIXI.Application({
+          width: trial.canvas_width,
+          height: trial.canvas_height, 
+          backgroundColor: trial.background_color, 
+          resolution: window.devicePixelRatio || 1,
+        });
+
+        display_element.appendChild(pixi_app.view);
+      } else {
+        new_html = '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + ' height=' + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
+      }
   
       const motion_rt_method = 'performance'; // 'date' or 'performance'. 'performance' is better.
       let start_time; // used for mouse and button responses.
@@ -1167,36 +1183,40 @@
         new_html += '</div>';
     
       }
-      
   
+
       // add prompt
       if(trial.prompt !== null){
         new_html += trial.prompt;
       }
+      display_element.insertAdjacentHTML('beforeend', new_html)
   
-      // draw
-      display_element.innerHTML = new_html;
-  
-  
-      const canvas = document.getElementById('myCanvas');
+      const canvas = (trial.pixi === true) ? pixi_app.view : document.getElementById('myCanvas');
       if ( ! canvas || ! canvas.getContext ) {
         alert('This browser does not support the canvas element.');
         return;
       }
-      canvas.style.width = trial.canvas_width + "px";
-      canvas.style.height = trial.canvas_height + "px";
-      const canvas_scale = window.devicePixelRatio; // This will be 2 in a retina display.
-      canvas.width = trial.canvas_width * canvas_scale;
-      canvas.height = trial.canvas_height * canvas_scale;
-  
-      const ctx = canvas.getContext('2d');
-      ctx.scale(canvas_scale, canvas_scale)
-  
+
+      let centerX
+      let centerY
+      let ctx
+
+      if (trial.pixi){
+        centerX = pixi_app.screen.width / 2
+        centerY = pixi_app.screen.height / 2
+      } else {
+        const canvas_scale = window.devicePixelRatio; // This will be 2 in a retina display.
+        canvas.style.width = trial.canvas_width + "px";
+        canvas.style.height = trial.canvas_height + "px";
+        canvas.width = trial.canvas_width * canvas_scale;
+        canvas.height = trial.canvas_height * canvas_scale;
+        centerX = canvas.width/2/canvas_scale;
+        centerY = canvas.height/2/canvas_scale;  
+        ctx = canvas.getContext('2d');
+        ctx.scale(canvas_scale, canvas_scale)  
+        trial.context = ctx;  
+      }
       trial.canvas = canvas;
-      trial.context = ctx;
-      
-      const centerX = canvas.width/2/canvas_scale;
-      const centerY = canvas.height/2/canvas_scale;
       trial.centerX = centerX;
       trial.centerY = centerY;
       
@@ -1291,7 +1311,7 @@
         }
         elapsedTime = timestamp - startStep; // unit is ms. This can be used within the raf_func().
   
-        if (trial.clear_canvas)
+        if (trial.clear_canvas && !trial.pixi)
           ctx.clearRect(0, 0, canvas.width, canvas.height);
   
         if (trial.raf_func !== null) {        
@@ -1315,10 +1335,24 @@
           }
   
           // visual stimuli
-          if (elapsed < show_start) continue;
-          if (show_end !== null && elapsed >= show_end) continue;
-          if (trial.clear_canvas === false && stim.is_presented) continue;
-  
+          if (trial.pixi) {
+            // PixiJS can be used with the requestAnimationFrame function.
+            // See https://pixijs.download/v5.1.2/docs/PIXI.Ticker.html
+            if (elapsed < show_start) {
+              stim.pixi_obj.visible = false
+              continue
+            }
+            if (show_end !== null && elapsed >= show_end) {
+              stim.pixi_obj.visible = false
+              continue
+            }
+            stim.pixi_obj.visible = true
+          } else {
+            if (elapsed < show_start) continue;
+            if (show_end !== null && elapsed >= show_end) continue;
+            if (trial.clear_canvas === false && stim.is_presented) continue;
+          }
+            
           stim.update_position(elapsed);
   
           if (stim.drawFunc !== null) {
@@ -1381,6 +1415,8 @@
         if (typeof trial.stim_array !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
           for (let i = 0; i < trial.stim_array.length; i++){
             const stim = trial.stim_array[i];
+            if (typeof stim.pixi_obj !== 'undefined') stim.pixi_obj.destroy()
+
             // stim.is_presented = false;
             // if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
             if (stim.obj_type === 'sound') { // If the stimulus is audio data
