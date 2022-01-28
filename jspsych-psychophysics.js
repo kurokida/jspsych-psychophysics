@@ -1033,6 +1033,26 @@
   
         show(){}
       }
+
+      class pixi_stimulus extends visual_stimulus{
+        constructor(stim){
+          super(stim)
+          if (trial.pixi){
+            init_pixi_obj(this.pixi_obj)
+          } else {
+            alert('To use Pixi objects, the pixi property of the psychophysics plugin must be set to true.')
+            return
+          }
+        }
+  
+        show(){}
+      }
+
+      function init_pixi_obj(obj){
+        obj.anchor.set(0.5)
+        obj.visible = false
+        pixi_app.stage.addChild(obj);
+      }
   
       class audio_stimulus extends psychophysics_stimulus{
         constructor(stim){
@@ -1265,7 +1285,8 @@
         text: text_stimulus,
         cross: cross_stimulus,
         manual: manual_stimulus,
-        gabor: gabor_stimulus
+        gabor: gabor_stimulus,
+        pixi: pixi_stimulus
       }
       if (typeof trial.stimuli !== 'undefined') { // The stimuli could be 'undefined' if the raf_func is specified.
         for (let i = 0; i < trial.stimuli.length; i++){
