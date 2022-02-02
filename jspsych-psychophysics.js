@@ -918,31 +918,53 @@
           if (typeof this.height === 'undefined') alert('You have to specify the height of the rectangle.');
           if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of the line_color or fill_color property.');      
     
+          if (trial.pixi){
+            // this.pixi_obj = new PIXI.Circle(30, 50, 20)
+            this.pixi_obj = new PIXI.Graphics()
+
+            this.pixi_obj.lineStyle({
+              width: this.line_width,
+              color: getColorNum(this.line_color),
+              join: this.lineJoin,
+              miterLimit: this.miterLimit
+            })
+
+            this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
+            this.pixi_obj.drawRect(-this.width/2, -this.height/2, this.width, this.height);
+            this.pixi_obj.endFill();
+
+            this.pixi_obj.visible = false
+            pixi_app.stage.addChild(this.pixi_obj);
+          }
         }
   
         show(){
-          if (typeof this.filter === 'undefined') {
-            ctx.filter = 'none'
+          if (trial.pixi) {
+            this.pixi_obj.x = this.currentX
+            this.pixi_obj.y = this.currentY
           } else {
-            ctx.filter = this.filter
+            if (typeof this.filter === 'undefined') {
+              ctx.filter = 'none'
+            } else {
+              ctx.filter = this.filter
+            }
+    
+            // common
+            // ctx.beginPath();            
+            ctx.lineWidth = this.line_width;
+            ctx.lineJoin = this.lineJoin;
+            ctx.miterLimit = this.miterLimit;
+            //
+            // First, draw a filled rectangle, then an edge.
+            if (typeof this.fill_color !== 'undefined') {
+              ctx.fillStyle = this.fill_color;
+              ctx.fillRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height); 
+            } 
+            if (typeof this.line_color !== 'undefined') {
+              ctx.strokeStyle = this.line_color;
+              ctx.strokeRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height);
+            }
           }
-  
-          // common
-          // ctx.beginPath();            
-          ctx.lineWidth = this.line_width;
-          ctx.lineJoin = this.lineJoin;
-          ctx.miterLimit = this.miterLimit;
-          //
-          // First, draw a filled rectangle, then an edge.
-          if (typeof this.fill_color !== 'undefined') {
-            ctx.fillStyle = this.fill_color;
-            ctx.fillRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height); 
-          } 
-          if (typeof this.line_color !== 'undefined') {
-            ctx.strokeStyle = this.line_color;
-            ctx.strokeRect(this.currentX-this.width/2, this.currentY-this.height/2, this.width, this.height);
-          }      
-  
         }
       }
   
