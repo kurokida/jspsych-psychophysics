@@ -389,6 +389,20 @@
       function getNumbering(start_num, count) {
         return [...Array(count)].map((_, i) => i + start_num) 
       }
+
+      const canvas_for_color = document.createElement('canvas');
+      canvas_for_color.id = 'canvas_for_color';
+      canvas_for_color.style.display = 'none'
+      const ctx_for_color = canvas_for_color.getContext('2d');
+
+      // 'blue' -> 255
+      function getColorNum(color_str){
+        ctx_for_color.fillStyle = color_str
+        const col = ctx_for_color.fillStyle
+        const col2 = col[1] + col[2] + col[3] + col[4] + col[5] + col[6] + col[7] + col[8]
+        return parseInt(col2, 16)
+      }
+
   
       // Class for visual and audio stimuli
       class psychophysics_stimulus {
@@ -1187,7 +1201,7 @@
         pixi_app = new PIXI.Application({
           width: trial.canvas_width,
           height: trial.canvas_height, 
-          backgroundColor: trial.background_color, 
+          backgroundColor: getColorNum(trial.background_color), 
           resolution: window.devicePixelRatio || 1,
         });
 
