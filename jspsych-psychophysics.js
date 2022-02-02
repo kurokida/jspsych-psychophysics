@@ -991,32 +991,56 @@
           
           if (typeof this.radius === 'undefined') alert('You have to specify the radius of circles.');
           if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');      
+
+          if (trial.pixi){
+            // this.pixi_obj = new PIXI.Circle(30, 50, 20)
+            this.pixi_obj = new PIXI.Graphics()
+
+            this.pixi_obj.lineStyle({
+              width: this.line_width,
+              color: getColorNum(this.line_color),
+              join: this.lineJoin,
+              miterLimit: this.miterLimit
+            })
+
+            this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
+            this.pixi_obj.drawCircle(0, 0, this.radius);
+            this.pixi_obj.endFill();
+
+            this.pixi_obj.visible = false
+            pixi_app.stage.addChild(this.pixi_obj);
+          }
         }
   
         show(){
-          if (typeof this.filter === 'undefined') {
-            ctx.filter = 'none'
+          if (trial.pixi) {
+            this.pixi_obj.x = this.currentX
+            this.pixi_obj.y = this.currentY
           } else {
-            ctx.filter = this.filter
+
+            if (typeof this.filter === 'undefined') {
+              ctx.filter = 'none'
+            } else {
+              ctx.filter = this.filter
+            }
+    
+            // common
+            ctx.beginPath();            
+            ctx.lineWidth = this.line_width;
+            ctx.lineJoin = this.lineJoin;
+            ctx.miterLimit = this.miterLimit;
+            //
+            if (typeof this.fill_color !== 'undefined') {
+              ctx.fillStyle = this.fill_color;
+              ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
+              ctx.fill();
+            } 
+            if (typeof this.line_color !== 'undefined') {
+              ctx.strokeStyle = this.line_color;
+              ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
+              ctx.stroke();
+            }
           }
-  
-          // common
-          ctx.beginPath();            
-          ctx.lineWidth = this.line_width;
-          ctx.lineJoin = this.lineJoin;
-          ctx.miterLimit = this.miterLimit;
-          //
-          if (typeof this.fill_color !== 'undefined') {
-            ctx.fillStyle = this.fill_color;
-            ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
-            ctx.fill();
-          } 
-          if (typeof this.line_color !== 'undefined') {
-            ctx.strokeStyle = this.line_color;
-            ctx.arc(this.currentX, this.currentY, this.radius, 0, Math.PI*2, false);
-            ctx.stroke();
-          }
-  
         }
       }
       
