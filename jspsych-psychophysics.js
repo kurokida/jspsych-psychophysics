@@ -1528,7 +1528,7 @@
           stim.update_position(elapsed);
   
           if (stim.drawFunc !== null) {
-            stim.drawFunc(stim, canvas, ctx);
+            stim.drawFunc(stim, canvas, ctx, elapsedTime, sumOfStep);
           } else {
             if (stim.change_attr != null) stim.change_attr(stim, elapsedTime, sumOfStep)
             stim.show()
