@@ -1178,14 +1178,19 @@
         constructor(stim){
           super(stim)
           if (trial.pixi){
-            init_pixi_obj(this.pixi_obj)
+            this.pixi_obj.visible = false
+            pixi_app.stage.addChild(this.pixi_obj);    
+            // init_pixi_obj(this.pixi_obj)
           } else {
             alert('To use Pixi objects, the pixi property of the psychophysics plugin must be set to true.')
             return
           }
         }
   
-        show(){}
+        show(){
+          this.pixi_obj.x = this.currentX
+          this.pixi_obj.y = this.currentY
+        }
       }
 
       function init_pixi_obj(obj){
