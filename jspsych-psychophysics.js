@@ -116,6 +116,12 @@
             default: false,
             description: 'If true, time is treated in frames.'
           },
+          prepared: {
+            type: jspsych.ParameterType.BOOL,
+            pretty_name: 'Stimulus prepared flag',
+            default: false,
+            description: 'If true, the stimulus is prepared for presentation'
+          },
           origin_center: {
             type: jspsych.ParameterType.BOOL,
             pretty_name: 'origin_center',
@@ -1039,26 +1045,29 @@
           super(stim);
           
           if (typeof this.radius === 'undefined') alert('You have to specify the radius of circles.');
-          if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');      
+          if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of line_color or fill_color.');
 
-          if (trial.pixi){
-            // this.pixi_obj = new PIXI.Circle(30, 50, 20)
-            this.pixi_obj = new PIXI.Graphics()
-
-            this.pixi_obj.lineStyle({
-              width: this.line_width,
-              color: getColorNum(this.line_color),
-              join: this.lineJoin,
-              miterLimit: this.miterLimit
-            })
-
-            this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
-            this.pixi_obj.drawCircle(0, 0, this.radius);
-            this.pixi_obj.endFill();
-
-            this.pixi_obj.visible = false
-            pixi_app.stage.addChild(this.pixi_obj);
+          if (!trial.pixi) {
+            this.prepared = true
+            return
           }
+
+          this.pixi_obj = new PIXI.Graphics()
+
+          this.pixi_obj.lineStyle({
+            width: this.line_width,
+            color: getColorNum(this.line_color),
+            join: this.lineJoin,
+            miterLimit: this.miterLimit
+          })
+
+          this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
+          this.pixi_obj.drawCircle(0, 0, this.radius);
+          this.pixi_obj.endFill();
+
+          this.pixi_obj.visible = false
+          pixi_app.stage.addChild(this.pixi_obj);
+          this.prepared = true
         }
   
         show(){
