@@ -1235,13 +1235,14 @@
       class pixi_stimulus extends visual_stimulus{
         constructor(stim){
           super(stim)
-          if (trial.pixi){
-            this.pixi_obj.visible = false
-            pixi_app.stage.addChild(this.pixi_obj);
-          } else {
+          if (!trial.pixi){
             alert('To use Pixi objects, the pixi property of the psychophysics plugin must be set to true.')
             return
           }
+
+          this.pixi_obj.visible = false
+          pixi_app.stage.addChild(this.pixi_obj);
+          this.prepared = true
         }
   
         show(){
