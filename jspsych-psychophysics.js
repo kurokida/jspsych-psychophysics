@@ -1337,7 +1337,7 @@
           width: trial.canvas_width,
           height: trial.canvas_height, 
           backgroundColor: getColorNum(trial.background_color), 
-          resolution: window.devicePixelRatio || 1,
+          // resolution: window.devicePixelRatio || 1,
         });
 
         display_element.appendChild(pixi_app.view);
@@ -1429,20 +1429,32 @@
       let centerY
       let ctx
 
+      function set_canvas(canvas, ratio, width, height){
+        const canvas_scale = ratio; // This will be 2 in a retina display, and 1.5 in a microsoft surface laptop.
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        canvas.width = width * canvas_scale;
+        canvas.height = height * canvas_scale;
+        const centerX = canvas.width/2/canvas_scale;
+        const centerY = canvas.height/2/canvas_scale;  
+        const ctx = canvas.getContext('2d');
+        ctx.scale(canvas_scale, canvas_scale)  
+        return {
+          ctx,
+          centerX,
+          centerY
+        }
+      }
+
       if (trial.pixi){
         centerX = pixi_app.screen.width / 2
         centerY = pixi_app.screen.height / 2
       } else {
-        const canvas_scale = window.devicePixelRatio; // This will be 2 in a retina display.
-        canvas.style.width = trial.canvas_width + "px";
-        canvas.style.height = trial.canvas_height + "px";
-        canvas.width = trial.canvas_width * canvas_scale;
-        canvas.height = trial.canvas_height * canvas_scale;
-        centerX = canvas.width/2/canvas_scale;
-        centerY = canvas.height/2/canvas_scale;  
-        ctx = canvas.getContext('2d');
-        ctx.scale(canvas_scale, canvas_scale)  
-        trial.context = ctx;  
+        const canvas_info = set_canvas(canvas, window.devicePixelRatio, trial.canvas_width, trial.canvas_height)
+        centerX = canvas_info.centerX
+        centerY = canvas_info.centerY
+        ctx = canvas_info.ctx
+        trial.context = ctx
       }
       trial.canvas = canvas;
       trial.centerX = centerX;
