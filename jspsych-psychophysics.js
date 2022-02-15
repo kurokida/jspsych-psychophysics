@@ -622,8 +622,6 @@
     
             invisible_ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height);
             if (typeof this.mask === 'undefined'){ // Filtering only
-              // const invisible_img = invisible_ctx.getImageData(0, 0, this.img.width, this.img.height);
-
               const invisible_img = invisible_ctx.getImageData(0, 0, this.img.width * tmpRatio, this.img.height * tmpRatio);
               if (trial.pixi){
                 const filtered_texture = new PIXI.Texture.fromBuffer(invisible_img.data, invisible_img.width, invisible_img.height)
