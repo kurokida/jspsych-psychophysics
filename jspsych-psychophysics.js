@@ -584,12 +584,23 @@
             alert('You have to specify the file property.');
             return;
           }
+
           this.img = new Image();
           this.img.src = this.file;
-  
-          if (typeof this.mask !== 'undefined' || typeof this.filter !== 'undefined') {
-            // For masking and filtering, draw the image on another canvas and get its pixel data using the getImageData function.
-            // In addition, masking does work only online, that is, the javascript and image files must be uploaded on the web server.
+          this.img.onload = () => {
+            const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio
+
+            if (typeof this.mask === 'undefined' && typeof this.filter === 'undefined') {
+              if (trial.pixi){
+                this.pixi_obj = PIXI.Sprite.from(this.file)
+                init_pixi_obj(this.pixi_obj)
+              }
+              this.prepared = true
+              return
+            } 
+
+            // For masking and filtering, draw the image on another invisible canvas and get its pixel data using the getImageData function.
+            // Note that masking can only be applied to image files uploaded to a web server.
   
             if (document.getElementById('invisible_canvas') === null) {
               const canvas_element = document.createElement('canvas');
@@ -599,9 +610,8 @@
             } 
   
             const invisible_canvas = document.getElementById('invisible_canvas');
-            invisible_canvas.width = this.img.width // The width/height of the canvas is not automatically adjusted.
-            invisible_canvas.height = this.img.height
-            const invisible_ctx = invisible_canvas.getContext('2d');
+            const canvas_info = set_canvas(invisible_canvas, tmpRatio, this.img.width, this.img.height)
+            const invisible_ctx = canvas_info.ctx
             invisible_ctx.clearRect(0, 0, invisible_canvas.width, invisible_canvas.height);
   
             if (typeof this.filter === 'undefined') {
@@ -611,10 +621,18 @@
             }
     
             invisible_ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height);
-  
             if (typeof this.mask === 'undefined'){ // Filtering only
-              const invisible_img = invisible_ctx.getImageData(0, 0, this.img.width, this.img.height);
-              this.masking_img = invisible_img;
+              // const invisible_img = invisible_ctx.getImageData(0, 0, this.img.width, this.img.height);
+
+              const invisible_img = invisible_ctx.getImageData(0, 0, this.img.width * tmpRatio, this.img.height * tmpRatio);
+              if (trial.pixi){
+                const filtered_texture = new PIXI.Texture.fromBuffer(invisible_img.data, invisible_img.width, invisible_img.height)
+                this.pixi_obj = new PIXI.Sprite(filtered_texture)
+                init_pixi_obj(this.pixi_obj)
+              } else {
+                this.masking_img = invisible_img;
+              }
+              this.prepared = true
               return
             }
   
@@ -623,7 +641,16 @@
                 alert('You have to specify the mask_func when applying masking manually.');
                 return;
               }
-              this.masking_img = this.mask_func(invisible_canvas);
+
+              const manual_img = this.mask_func(invisible_canvas);
+              if (trial.pixi){
+                const manual_texture = new PIXI.Texture.fromBuffer(manual_img.data, manual_img.width, manual_img.height)
+                this.pixi_obj = new PIXI.Sprite(manual_texture)
+                init_pixi_obj(this.pixi_obj)
+              } else {
+                this.masking_img = manual_img
+              }
+              this.prepared = true
               return
             }
       
@@ -632,11 +659,13 @@
                 alert('You have to specify the width property for the gaussian mask. For example, 200.');
                 return;
               }
-              const gauss_width = this.width
+              const gauss_width = this.width * tmpRatio
               
-              // 画像の全体ではなく、フィルタリングを行う部分だけを取り出す
               // Getting only the areas to be filtered, not the whole image.
-              const invisible_img = invisible_ctx.getImageData(this.img.width/2 - gauss_width/2, this.img.height/2 - gauss_width/2, gauss_width, gauss_width);
+              const invisible_img = invisible_ctx.getImageData(
+                this.img.width * tmpRatio / 2 - gauss_width/2, 
+                this.img.height * tmpRatio / 2 - gauss_width/2, 
+                gauss_width, gauss_width);
   
               let coord_array = getNumbering(Math.round(0 - gauss_width/2), gauss_width)
               let coord_matrix_x = []
@@ -651,12 +680,13 @@
               }
       
               let exp_value;
+              const adjusted_sc = this.sc * tmpRatio
               if (this.method === 'math') {
                 const matrix_x = math.matrix(coord_matrix_x) // Convert to Matrix data
                 const matrix_y = math.transpose(math.matrix(coord_matrix_y))
                 const x_factor = math.multiply(-1, math.square(matrix_x))
                 const y_factor = math.multiply(-1, math.square(matrix_y))
-                const varScale = 2 * math.square(this.sc)
+                const varScale = 2 * math.square(adjusted_sc)
                 const tmp = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
                 exp_value = math.exp(tmp)
               } else { // numeric
@@ -664,7 +694,7 @@
                 const matrix_y = numeric.transpose(coord_matrix_y)
                 const x_factor = numeric.mul(-1, numeric.pow(matrix_x, 2))
                 const y_factor = numeric.mul(-1, numeric.pow(matrix_y, 2))
-                const varScale = 2 * numeric.pow([this.sc], 2)
+                const varScale = 2 * numeric.pow([adjusted_sc], 2)
                 const tmp = numeric.add(numeric.div(x_factor, varScale), numeric.div(y_factor, varScale));
                 exp_value = numeric.exp(tmp)
               }
@@ -676,7 +706,15 @@
                   cnt = cnt + 4;
                 }
               }
-              this.masking_img = invisible_img;
+
+              if (trial.pixi){
+                const gauss_texture = new PIXI.Texture.fromBuffer(invisible_img.data, invisible_img.width, invisible_img.height)
+                this.pixi_obj = new PIXI.Sprite(gauss_texture)
+                init_pixi_obj(this.pixi_obj)
+              } else {
+                this.masking_img = invisible_img;
+              }
+              this.prepared = true
               return
             }
   
@@ -697,19 +735,19 @@
                 alert('You have to specify the center_y property for the circle/rect mask.');
                 return;
               }
-  
-              const oval_width = this.width
-              const oval_height = this.height
-              const oval_cx = this.center_x
-              const oval_cy = this.center_y
-                          
-              // 画像の全体ではなく、フィルタリングを行う部分だけを取り出す
+
+              const oval_width = this.width * tmpRatio
+              const oval_height = this.height * tmpRatio
+              // Note that the center of a circle or rectangle does not necessarily coincide with the center of the image.
+              const oval_cx = this.center_x * tmpRatio
+              const oval_cy = this.center_y * tmpRatio
+
               // Getting only the areas to be filtered, not the whole image.
               const invisible_img = invisible_ctx.getImageData(oval_cx - oval_width/2, oval_cy - oval_height/2, oval_width, oval_height);
-  
               const cx = invisible_img.width/2
               const cy = invisible_img.height/2
   
+              // When this.mask === 'rect', the alpha (transparency) value does not chage at all.
               if (this.mask === 'circle'){
                 let cnt = 3;
                 for (let j = 0; j < oval_height; j++) {
@@ -722,33 +760,45 @@
                   }
                 }
               }
-  
-              // When this.mask === 'rect', the alpha (transparency) value does not chage at all.
-  
-              this.masking_img = invisible_img;
+              
+              if (trial.pixi){
+                const cropped_texture = new PIXI.Texture.fromBuffer(invisible_img.data, invisible_img.width, invisible_img.height)
+                this.pixi_obj = new PIXI.Sprite(cropped_texture)
+                init_pixi_obj(this.pixi_obj)
+              } else {
+                this.masking_img = invisible_img;
+              }
+              this.prepared = true
               return
             }
-          }  
+          }
         }
   
         show(){
-          if (this.mask || this.filter){
-            // Note that filtering is done to the invisible_ctx.
-            ctx.putImageData(this.masking_img, this.currentX - this.masking_img.width/2, this.currentY - this.masking_img.height/2);
+          if (trial.pixi) {
+            this.pixi_obj.x = this.currentX
+            this.pixi_obj.y = this.currentY
           } else {
-            if (typeof this.scale !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the scale and image_width at the same time.')
-            if (typeof this.scale !== 'undefined' && typeof this.image_height !== 'undefined') alert('You can not specify the scale and image_height at the same time.')
-            if (typeof this.image_height !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the image_height and image_width at the same time.')
+            if (this.mask || this.filter){
+              // Note that filtering is done to the invisible_ctx.
+              ctx.putImageData(this.masking_img, 
+                this.currentX * window.devicePixelRatio - this.masking_img.width/2, 
+                this.currentY * window.devicePixelRatio - this.masking_img.height/2);
+            } else {
+              if (typeof this.scale !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the scale and image_width at the same time.')
+              if (typeof this.scale !== 'undefined' && typeof this.image_height !== 'undefined') alert('You can not specify the scale and image_height at the same time.')
+              if (typeof this.image_height !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the image_height and image_width at the same time.')
 
-            let scale = 1
+              let scale = 1
 
-            if (typeof this.scale !== 'undefined') scale = this.scale
-            if (typeof this.image_width !== 'undefined') scale = this.image_width/this.img.width
-            if (typeof this.image_height !== 'undefined') scale = this.image_height/this.img.height
+              if (typeof this.scale !== 'undefined') scale = this.scale
+              if (typeof this.image_width !== 'undefined') scale = this.image_width/this.img.width
+              if (typeof this.image_height !== 'undefined') scale = this.image_height/this.img.height
 
-            const tmpW = this.img.width * scale;
-            const tmpH = this.img.height * scale;              
-            ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
+              const tmpW = this.img.width * scale;
+              const tmpH = this.img.height * scale;              
+              ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.currentX - tmpW / 2, this.currentY - tmpH / 2, tmpW, tmpH);   
+            }
           }
         }
       }
