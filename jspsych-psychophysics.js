@@ -1239,8 +1239,7 @@
           super(stim)
           if (trial.pixi){
             this.pixi_obj.visible = false
-            pixi_app.stage.addChild(this.pixi_obj);    
-            // init_pixi_obj(this.pixi_obj)
+            pixi_app.stage.addChild(this.pixi_obj);
           } else {
             alert('To use Pixi objects, the pixi property of the psychophysics plugin must be set to true.')
             return
