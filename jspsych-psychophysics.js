@@ -1542,8 +1542,20 @@
       let startStep = null;
       let sumOfStep;
       let elapsedTime;
-      //let currentX, currentY;
+      let prepare_check = true;
+
       function step(timestamp){
+        // Wait until all Pixi objects are ready.
+        if (prepare_check) {
+          for (let i = 0; i < trial.stim_array.length; i++){
+            if (!trial.stim_array[i].prepared) {
+              frameRequestID = window.requestAnimationFrame(step);
+              return
+            }
+          } 
+        }
+        prepare_check = false;
+
         if (!startStep) {
           startStep = timestamp;
           sumOfStep = 0;
@@ -1742,7 +1754,7 @@
         }, trial.trial_duration);
       }
   
-        }
+    }
   }
   PsychophysicsPlugin.info = info;
 
