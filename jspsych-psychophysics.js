@@ -848,7 +848,8 @@
           // These values are scalars.
           const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
           const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
-          let multConst = 1 / (Math.sqrt(2*Math.PI) * this.sc) 
+          const adjusted_sc = this.sc * window.devicePixelRatio
+          let multConst = 1 / (Math.sqrt(2*Math.PI) * adjusted_sc) 
           if (this.disableNorm) multConst = 1
   
           
@@ -863,7 +864,7 @@
             const y_factor = math.multiply(-1, math.square(matrix_y))
             const tmp1 = math.add(math.multiply(a, matrix_x), math.multiply(b, matrix_y), phase_rad) // radians
             const sinWave = math.sin(tmp1)
-            const varScale = 2 * math.square(this.sc)
+            const varScale = 2 * math.square(adjusted_sc)
             const tmp2 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
             const exp_value = math.exp(tmp2)
             const tmp3 = math.dotMultiply(exp_value, sinWave)
@@ -878,7 +879,7 @@
             const y_factor = numeric.mul(-1, numeric.pow(matrix_y, 2))
             const tmp1 = numeric.add(numeric.mul(a, matrix_x), numeric.mul(b, matrix_y), phase_rad) // radians
             const sinWave = numeric.sin(tmp1)
-            const varScale = 2 * numeric.pow([this.sc], 2)
+            const varScale = 2 * numeric.pow([adjusted_sc], 2)
             const tmp2 = numeric.add(numeric.div(x_factor, varScale), numeric.div(y_factor, varScale));
             const exp_value = numeric.exp(tmp2)
             const tmp3 = numeric.mul(exp_value, sinWave)
