@@ -1002,7 +1002,6 @@
           if (typeof this.line_color === 'undefined' && typeof this.fill_color === 'undefined') alert('You have to specify the either of the line_color or fill_color property.');      
     
           if (trial.pixi){
-            // this.pixi_obj = new PIXI.Circle(30, 50, 20)
             this.pixi_obj = new PIXI.Graphics()
 
             this.pixi_obj.lineStyle({
@@ -1019,6 +1018,7 @@
             this.pixi_obj.visible = false
             pixi_app.stage.addChild(this.pixi_obj);
           }
+          this.prepared = true
         }
   
         show(){
