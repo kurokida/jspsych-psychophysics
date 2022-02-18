@@ -938,7 +938,6 @@
           if (typeof this.line_color === 'undefined') this.line_color = 'black';
 
           if (trial.pixi){
-            // this.pixi_obj = new PIXI.Circle(30, 50, 20)
             this.pixi_obj = new PIXI.Graphics()
 
             this.pixi_obj.lineStyle({
@@ -959,6 +958,8 @@
             this.pixi_obj.visible = false
             pixi_app.stage.addChild(this.pixi_obj);
           }
+
+          this.prepared = true
     
         }
   
