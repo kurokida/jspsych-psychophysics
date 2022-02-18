@@ -1180,6 +1180,7 @@
             font_info = font_info + ' ' + this.fontFamily
             if (typeof this.font === 'undefined') this.font = font_info
           }
+          this.prepared = true;
     
         }
   
