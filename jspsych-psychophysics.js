@@ -140,11 +140,37 @@
             default: false,
             description: 'If true, then the trial will end as soon as the audio file finishes playing.'
           },
+          modulate_color: {
+            type: jspsych.ParameterType.FLOAT,
+            array: true,
+            pretty_name: 'modulate_color',
+            default: [1.0, 1.0, 1.0, 1.0],
+            description: 'The base RGBA array of the gabor patch.'
+          },
+          offset_color: {
+            type: jspsych.ParameterType.FLOAT,
+            array: true,
+            pretty_name: 'offset_color',
+            default: [0.5, 0.5, 0.5, 0.0],
+            description: 'The offset RGBA array of the gabor patch.'
+          },
+          min_validModulationRange: {
+            type: jspsych.ParameterType.FLOAT,
+            pretty_name: 'min_validModulationRange',
+            default: -2,
+            description: 'The minimum of the validation range of the gabor patch.'
+          },
+          max_validModulationRange: {
+            type: jspsych.ParameterType.FLOAT,
+            pretty_name: 'max_validModulationRange',
+            default: 2,
+            description: 'The maximum of the validation range of the gabor patch.'
+          },
           tilt: {
             type: jspsych.ParameterType.FLOAT,
             pretty_name: 'tilt',
             default: 0,
-            description: 'The tilt of the gabor patch.'
+            description: 'The angle of the gabor patch in degrees.'
           },
           sf: {
             type: jspsych.ParameterType.FLOAT,
@@ -193,6 +219,12 @@
             pretty_name: 'disableNorm',
             default: false,
             description: 'Disable normalization of the gaussian function.'
+          },
+          disableGauss: {
+            type: jspsych.ParameterType.BOOL,
+            pretty_name: 'disableGauss',
+            default: false,
+            description: 'Disable to convolve with a Gaussian.'
           },
           mask_func: {
             type: jspsych.ParameterType.FUNCTION,
@@ -804,14 +836,134 @@
       class gabor_stimulus extends visual_stimulus {
         constructor(stim){
           super(stim);
-          this.update_count = 0;
+
+          if (!trial.pixi){
+            this.update_count = 0;
+            this.prepared = true;
+            return
+          }
+
+          const fragmentSrc = `
+            precision mediump float;
+
+            uniform float Contrast;
+            uniform float Phase;
+            uniform float angle_in_degrees; // tilt
+            uniform float spatial_freq;
+            uniform float SpaceConstant;
+            uniform float disableNorm;
+            uniform float disableGauss;
+            uniform float modulateColor_R;
+            uniform float modulateColor_G;
+            uniform float modulateColor_B;
+            uniform float modulateColor_Alpha;
+            uniform float offset_R;
+            uniform float offset_G;
+            uniform float offset_B;
+            uniform float offset_Alpha;
+            uniform float centerX;
+            uniform float centerY;
+            uniform float contrastPreMultiplicator;
+            uniform float min_validModulationRange;
+            uniform float max_validModulationRange;
+
+            void main() {
+                const float twopi     = 2.0 * 3.141592654;
+                const float sqrtof2pi = 2.5066282746;
+                /* Conversion factor from degrees to radians: */
+                const float deg2rad = 3.141592654 / 180.0;
+                
+                float Angle = deg2rad * angle_in_degrees;
+                float FreqTwoPi = spatial_freq * twopi;
+                float Expmultiplier = -0.5 / (SpaceConstant * SpaceConstant);
+                float mc = disableNorm + (1.0 - disableNorm) * (1.0 / (sqrtof2pi * SpaceConstant));
+
+                vec3 modulateColor = vec3(modulateColor_R, modulateColor_G, modulateColor_B);
+
+                vec3 baseColor = modulateColor * mc * Contrast * contrastPreMultiplicator;
+
+                vec2 pos = gl_FragCoord.xy - vec2(centerX, centerY);
+
+                /* Compute (x,y) distance weighting coefficients, based on rotation angle: */
+                vec2 coeff = vec2(cos(Angle), sin(Angle)) * FreqTwoPi;
+
+                /* Evaluate sine grating at requested position, angle and phase: */
+                float sv = sin(dot(coeff, pos) + Phase);
+
+                /* Compute exponential hull for the gabor: */
+                float ev = disableGauss + (1.0 - disableGauss) * exp(dot(pos, pos) * Expmultiplier);
+
+                /* Multiply/Modulate base color and alpha with calculated sine/gauss      */
+                /* values, add some constant color/alpha Offset, assign as final fragment */
+                /* output color: */
+
+                vec4  Offset = vec4(offset_R, offset_G, offset_B, offset_Alpha);
+                        
+                // Be careful not to change the transparency. Note that the type of the baseColor valuable is vec3 not vec4.
+                gl_FragColor = vec4(baseColor * clamp(ev * sv, min_validModulationRange, max_validModulationRange), modulateColor_Alpha) + Offset;
+
+          }`
+            
+          // const gabor_width = this.width * window.devicePixelRatio; // No need to consider the devicePixelRatio property.
+          const gabor_width = this.width;
+          // create a null image element
+          const img_element = document.createElement('img');
+          img_element.width = gabor_width;
+          img_element.height = gabor_width;
+          const gabor_sprite = PIXI.Sprite.from(img_element)
+
+          // center the sprite's anchor point
+          gabor_sprite.anchor.set(0.5);
+          gabor_sprite.x = pixi_app.screen.width / 2;
+          gabor_sprite.y = pixi_app.screen.height / 2;
+
+          const uniforms = {
+            Contrast: this.contrast,
+            Phase: this.phase,
+            angle_in_degrees: 90 + this.tilt, // Add 90 degrees for compatibility with previous versions.
+            spatial_freq: this.sf,
+            SpaceConstant: this.sc,
+            disableNorm: this.disableNorm ? 1 : 0,
+            disableGauss: this.disableGauss ? 1 : 0,
+            modulateColor_R: this.modulate_color[0],
+            modulateColor_G: this.modulate_color[1],
+            modulateColor_B: this.modulate_color[2],
+            modulateColor_Alpha: this.modulate_color[3],
+            offset_R: this.offset_color[0],
+            offset_G: this.offset_color[1],
+            offset_B: this.offset_color[2],
+            offset_Alpha: this.offset_color[3],
+            centerX: pixi_app.screen.width / 2,
+            centerY: pixi_app.screen.height / 2,
+            contrastPreMultiplicator: this.contrastPreMultiplicator,
+            min_validModulationRange: -2,
+            max_validModulationRange: 2,
+          }
+          const myFilter = new PIXI.Filter(null, fragmentSrc, uniforms)
+      
+          pixi_app.stage.addChild(gabor_sprite);
+      
+          gabor_sprite.filters = [myFilter];
+          this.pixi_obj = gabor_sprite;
+          this.prepared = true
         }
   
         show(){
-          ctx.putImageData(this.img_data, this.currentX - this.img_data.width/2, this.currentY - this.img_data.height/2)
+          if (trial.pixi){
+            this.pixi_obj.filters[0].uniforms.Phase += this.drift
+            this.pixi_obj.x = this.currentX;
+            this.pixi_obj.y = this.currentY;
+            this.pixi_obj.filters[0].uniforms.centerX = this.currentX;
+            this.pixi_obj.filters[0].uniforms.centerY = pixi_app.screen.height - this.currentY;
+          } else {
+            ctx.putImageData(this.img_data, 
+              this.currentX * window.devicePixelRatio - this.img_data.width/2, 
+              this.currentY * window.devicePixelRatio - this.img_data.height/2)
+          }
         }
-  
+
         update_position(elapsed){
+          if (trial.pixi) return
           
           this.currentX = this.calc_current_position ('horiz', elapsed)
           this.currentY = this.calc_current_position ('vert', elapsed)
@@ -829,23 +981,24 @@
           // The numeric.js is considerably faster than the math.js, but the latter is being developed more aggressively than the former.
           // Note that "Math" and "math" are not the same.
   
-          let coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+          const gabor_width = this.width * window.devicePixelRatio;
+          let coord_array = getNumbering(Math.round(0 - gabor_width/2), gabor_width)
           let coord_matrix_x = []
-          for (let i = 0; i< this.width; i++){
+          for (let i = 0; i< gabor_width; i++){
             coord_matrix_x.push(coord_array)
           }
   
-          coord_array = getNumbering(Math.round(0 - this.width/2), this.width)
+          coord_array = getNumbering(Math.round(0 - gabor_width/2), gabor_width)
           let coord_matrix_y = []
-          for (let i = 0; i< this.width; i++){
+          for (let i = 0; i< gabor_width; i++){
             coord_matrix_y.push(coord_array)
           }
   
           const tilt_rad = deg2rad(90 - this.tilt)
   
           // These values are scalars.
-          const a = Math.cos(tilt_rad) * this.sf * (2 * Math.PI) // radians
-          const b = Math.sin(tilt_rad) * this.sf * (2 * Math.PI)
+          const a = Math.cos(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI) // radians
+          const b = Math.sin(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI)
           const adjusted_sc = this.sc * window.devicePixelRatio
           let multConst = 1 / (Math.sqrt(2*Math.PI) * adjusted_sc) 
           if (this.disableNorm) multConst = 1
@@ -864,7 +1017,7 @@
             const sinWave = math.sin(tmp1)
             const varScale = 2 * math.square(adjusted_sc)
             const tmp2 = math.add(math.divide(x_factor, varScale), math.divide(y_factor, varScale));
-            const exp_value = math.exp(tmp2)
+            const exp_value = this.disableGauss ? 1 : math.exp(tmp2)
             const tmp3 = math.dotMultiply(exp_value, sinWave)
             const tmp4 = math.multiply(multConst, tmp3)
             const tmp5 = math.multiply(this.contrast, math.multiply(tmp4, this.contrastPreMultiplicator))
@@ -879,7 +1032,7 @@
             const sinWave = numeric.sin(tmp1)
             const varScale = 2 * numeric.pow([adjusted_sc], 2)
             const tmp2 = numeric.add(numeric.div(x_factor, varScale), numeric.div(y_factor, varScale));
-            const exp_value = numeric.exp(tmp2)
+            const exp_value = this.disableGauss ? 1 : numeric.exp(tmp2)
             const tmp3 = numeric.mul(exp_value, sinWave)
             const tmp4 = numeric.mul(multConst, tmp3)
             const tmp5 = numeric.mul(this.contrast, numeric.mul(tmp4, this.contrastPreMultiplicator))
@@ -887,11 +1040,11 @@
             gabor_data = m
           }
           // console.log(gabor_data)
-          const imageData = ctx.createImageData(this.width, this.width);
+          const imageData = ctx.createImageData(gabor_width, gabor_width);
           let cnt = 0;
           // Iterate through every pixel
-          for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.width; j++) {
+          for (let i = 0; i < gabor_width; i++) {
+            for (let j = 0; j < gabor_width; j++) {
               // Modify pixel data
               imageData.data[cnt] = Math.round(gabor_data[i][j]);  // R value
               cnt++;
