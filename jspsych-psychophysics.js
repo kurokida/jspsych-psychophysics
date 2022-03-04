@@ -1210,36 +1210,72 @@
           
           if (typeof this.line_length === 'undefined') alert('You have to specify the line_length of the fixation cross.');
           if (typeof this.line_color === 'undefined') this.line_color = '#000000';
+
+          if (trial.pixi){
+            this.pixi_obj = new PIXI.Graphics()
+
+            this.pixi_obj.lineStyle({
+              width: this.line_width,
+              color: getColorNum(this.line_color),
+              join: this.lineJoin,
+              miterLimit: this.miterLimit
+            })
+
+            const x1 = -this.line_length/2;
+            const y1 = 0;
+            const x2 = this.line_length/2;
+            const y2 = 0;
+            this.pixi_obj.moveTo(x1, y1);
+            this.pixi_obj.lineTo(x2, y2);
+  
+            const x3 = 0;
+            const y3 = -this.line_length/2;
+            const x4 = 0;
+            const y4 = this.line_length/2;
+            this.pixi_obj.moveTo(x3, y3);
+            this.pixi_obj.lineTo(x4, y4);
+            
+            this.pixi_obj.visible = false
+            pixi_app.stage.addChild(this.pixi_obj);
+          }
+
+          this.prepared = true
+
         }
   
         show(){
-          if (typeof this.filter === 'undefined') {
-            ctx.filter = 'none'
+          if (trial.pixi) {
+            this.pixi_obj.x = this.currentX
+            this.pixi_obj.y = this.currentY
           } else {
-            ctx.filter = this.filter
+            if (typeof this.filter === 'undefined') {
+              ctx.filter = 'none'
+            } else {
+              ctx.filter = this.filter
+            }
+    
+            // common
+            ctx.beginPath();            
+            ctx.lineWidth = this.line_width;
+            ctx.lineJoin = this.lineJoin;
+            ctx.miterLimit = this.miterLimit;
+            //
+            ctx.strokeStyle = this.line_color;
+            const x1 = this.currentX;
+            const y1 = this.currentY - this.line_length/2;
+            const x2 = this.currentX;
+            const y2 = this.currentY + this.line_length/2;                
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            const x3 = this.currentX - this.line_length/2;
+            const y3 = this.currentY;
+            const x4 = this.currentX + this.line_length/2;
+            const y4 = this.currentY;                
+            ctx.moveTo(x3, y3);
+            ctx.lineTo(x4, y4);
+            // ctx.closePath();
+            ctx.stroke();
           }
-  
-          // common
-          ctx.beginPath();            
-          ctx.lineWidth = this.line_width;
-          ctx.lineJoin = this.lineJoin;
-          ctx.miterLimit = this.miterLimit;
-          //
-          ctx.strokeStyle = this.line_color;
-          const x1 = this.currentX;
-          const y1 = this.currentY - this.line_length/2;
-          const x2 = this.currentX;
-          const y2 = this.currentY + this.line_length/2;                
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          const x3 = this.currentX - this.line_length/2;
-          const y3 = this.currentY;
-          const x4 = this.currentX + this.line_length/2;
-          const y4 = this.currentY;                
-          ctx.moveTo(x3, y3);
-          ctx.lineTo(x4, y4);
-          // ctx.closePath();
-          ctx.stroke();
         }
       }
     
