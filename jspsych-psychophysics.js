@@ -440,7 +440,7 @@
         const col2 = col[1] + col[2] + col[3] + col[4] + col[5] + col[6] + col[7] + col[8]
         return parseInt(col2, 16)
       }
-
+      trial.getColorNum = getColorNum;
   
       // Class for visual and audio stimuli
       class psychophysics_stimulus {
@@ -1907,6 +1907,7 @@
         // move on to the next trial
         this.jsPsych.finishTrial(trial_data);
       }
+      trial.end_trial = end_trial;
   
       // function to handle responses by the subject
       // let after_response = function(info) { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial); 
