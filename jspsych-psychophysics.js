@@ -808,6 +808,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
             if (this.mask || this.filter){
               // Note that filtering is done to the invisible_ctx.
@@ -956,6 +957,7 @@
             this.pixi_obj.y = this.currentY;
             this.pixi_obj.filters[0].uniforms.centerX = this.currentX;
             this.pixi_obj.filters[0].uniforms.centerY = pixi_app.screen.height - this.currentY;
+            this.pixi_obj.visible = true
           } else {
             ctx.putImageData(this.img_data, 
               this.currentX * window.devicePixelRatio - this.img_data.width/2, 
@@ -1121,6 +1123,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
             if (typeof this.filter === 'undefined') {
               ctx.filter = 'none'
@@ -1179,6 +1182,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
             if (typeof this.filter === 'undefined') {
               ctx.filter = 'none'
@@ -1248,6 +1252,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
             if (typeof this.filter === 'undefined') {
               ctx.filter = 'none'
@@ -1314,6 +1319,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
 
             if (typeof this.filter === 'undefined') {
@@ -1378,6 +1384,7 @@
           if (trial.pixi) {
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
+            this.pixi_obj.visible = true
           } else {
 
             if (typeof this.filter === 'undefined') {
@@ -1440,6 +1447,7 @@
         show(){
           this.pixi_obj.x = this.currentX
           this.pixi_obj.y = this.currentY
+          this.pixi_obj.visible = true
         }
       }
 
@@ -1792,7 +1800,6 @@
               stim.pixi_obj.visible = false
               continue
             }
-            stim.pixi_obj.visible = true
           } else {
             if (elapsed < show_start) continue;
             if (show_end !== null && elapsed >= show_end) continue;
