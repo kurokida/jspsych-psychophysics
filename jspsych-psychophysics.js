@@ -1738,7 +1738,7 @@
       let prepare_check = true;
 
       function step(timestamp){
-        // Wait until all Pixi objects are ready.
+        // Wait until all the instance of stimuli are ready.
         if (prepare_check) {
           for (let i = 0; i < trial.stim_array.length; i++){
             if (!trial.stim_array[i].prepared) {
