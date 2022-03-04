@@ -910,7 +910,8 @@
           const img_element = document.createElement('img');
           img_element.width = gabor_width;
           img_element.height = gabor_width;
-          const gabor_sprite = PIXI.Sprite.from(img_element)
+          const gabor_sprite = PIXI.Sprite.from(img_element);
+          gabor_sprite.visible = false;
 
           // center the sprite's anchor point
           gabor_sprite.anchor.set(0.5);
