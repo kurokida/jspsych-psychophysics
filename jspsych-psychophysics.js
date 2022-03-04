@@ -965,12 +965,12 @@
           }
         }
 
-        update_position(elapsed){
-          if (trial.pixi) return
-          
+        update_position(elapsed){          
           this.currentX = this.calc_current_position ('horiz', elapsed)
           this.currentY = this.calc_current_position ('vert', elapsed)
   
+          if (trial.pixi) return
+
           if (typeof this.img_data !== 'undefined' && this.drift === 0) return
   
           let gabor_data;
