@@ -20,7 +20,7 @@
   // console.log(jspsych)
 
   // console.log(`jsPsych Version ${jspsych.version()}`)
-  console.log('Psychophysics Version 3.1.0')
+  console.log('Psychophysics Version 3.2.0')
 
   const info = {
     name: 'psychophysics',
@@ -1168,9 +1168,9 @@
               miterLimit: this.miterLimit
             })
 
-            this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
+            if (typeof this.fill_color !== 'undefined') this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
             this.pixi_obj.drawRect(-this.width/2, -this.height/2, this.width, this.height);
-            this.pixi_obj.endFill();
+            if (typeof this.fill_color !== 'undefined') this.pixi_obj.endFill();
 
             this.pixi_obj.visible = false
             pixi_app.stage.addChild(this.pixi_obj);
@@ -1298,6 +1298,7 @@
           }
 
           this.pixi_obj = new PIXI.Graphics()
+          // this.pixi_obj.cacheAsBitmap = true;
 
           this.pixi_obj.lineStyle({
             width: this.line_width,
@@ -1306,9 +1307,9 @@
             miterLimit: this.miterLimit
           })
 
-          this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
+          if (typeof this.fill_color !== 'undefined') this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
           this.pixi_obj.drawCircle(0, 0, this.radius);
-          this.pixi_obj.endFill();
+          if (typeof this.fill_color !== 'undefined') this.pixi_obj.endFill();
 
           this.pixi_obj.visible = false
           pixi_app.stage.addChild(this.pixi_obj);
@@ -1538,6 +1539,7 @@
           width: trial.canvas_width,
           height: trial.canvas_height, 
           backgroundColor: getColorNum(trial.background_color), 
+          // antialias: true,
           // resolution: window.devicePixelRatio || 1,
         });
 
