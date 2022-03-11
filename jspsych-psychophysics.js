@@ -1879,6 +1879,8 @@
             }
           }
         }
+
+        if (trial.pixi) pixi_app.destroy(true, {children: true, texture: true, baseTexture: true})
   
         // kill any remaining setTimeout handlers
         this.jsPsych.pluginAPI.clearAllTimeouts();
