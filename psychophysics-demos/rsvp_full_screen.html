@@ -6,6 +6,7 @@
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
     <script src="../jspsych-dist/dist/plugin-fullscreen.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
 <body></body>
@@ -20,6 +21,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const fullscreen_trial = {
         type: jsPsychFullscreen,
@@ -71,6 +74,7 @@
 
     const rsvp_trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: stimulus_object, // Note that the last element of the stimulus_object is the instruction.
         response_start_time: (viewing_time + isi) * images.length - isi, // not to respond until all images are presented.
         on_start: function(trial){

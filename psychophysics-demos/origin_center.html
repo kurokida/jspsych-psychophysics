@@ -4,6 +4,7 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
 <body></body>
@@ -17,6 +18,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -40,7 +43,8 @@
         startY: 100,
         radius: 50,
         origin_center: true, // Change the coordinate origin to the center of the window
-        fill_color: 'red'
+        fill_color: 'red',
+        line_color: 'red'
     }
 
     const rect_object = {
@@ -50,7 +54,8 @@
         width: 80,
         height: 40,
         origin_center: true, // Change the coordinate origin to the center of the window
-        fill_color: 'blue'
+        fill_color: 'blue',
+        line_color: 'blue'
     }
 
     const line_object = {
@@ -72,6 +77,7 @@
         radius: 30,
         origin_center: true, // Change the coordinate origin to the center of the window
         fill_color: 'black',
+        line_color: 'black',
         motion_start_time: 1000,
         horiz_pix_frame: 10,
     }
@@ -79,6 +85,7 @@
 
     const trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: [cross_object, circle_object, rect_object, line_object, moving_circle],
     }
 

@@ -4,6 +4,7 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
 <body></body>
@@ -14,6 +15,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -29,7 +32,6 @@
       content: 'The white rectangle will be appeared 2 sec later.\nThe red circle will be appeared 4 sec later.',
       font: "22px 'Arial'",
       text_color: 'white',
-      text_space: 100,
       show_end_time: 2000 // disappear this text
     }
 
@@ -56,6 +58,7 @@
 
     const trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: [text_object, rect_object, circle_object],
         choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
         canvas_width: 1000,

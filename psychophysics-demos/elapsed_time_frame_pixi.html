@@ -5,49 +5,43 @@
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <script src="https://pixijs.download/release/pixi.js"></script>
-    <script src="../js/numeric.min.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
 <body></body>
 <script>
-    // This file demonstrates how to present a drifting gabor patch.
-    // This demo will not work properly unless pixi mode is turned on.
+    // This demo explains how to do the same thing as elapsed_time_frame.html in pixi mode.
 
     const jsPsych = initJsPsych({
         on_finish: function() {
             jsPsych.data.displayData();
         }
     })
-
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+    console.log(`jsPsych Version ${jsPsych.version()}`)
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
         stimulus: 'Click on the Start button.',
         choices: ['Start'],
-        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
     }
 
-    const gabor1 = {
-        obj_type: 'gabor',
-        tilt: 30,
-        sf: 0.05,
-        phase: 90,
-        width: 300,
-        sc: 30,
-        contrast: 20,
-        drift: 0.1,
+    const text_object = {
+        obj_type: 'text',
+        content: 'Hello world!',
+        change_attr: function(stim, elapsedTime, elapsedFrame){ // Change the content dynamically
+            const content = `Elapsed Time in seconds\n${Math.round(elapsedTime/1000)}\nElapsed Time in frames\n${elapsedFrame}`;
+            stim.pixi_obj.text = content;
+        } 
     }
 
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
-        stimuli: [gabor1],
-        canvas_height: 500,
-        prompt: 'Press any key to proceed.',
+        pixi: true,
+        stimuli: [text_object],
     }
-
+    
     jsPsych.run([instruction, trial])
+
 </script>
 
 </html>

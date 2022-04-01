@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This demo explains how to do the similar thing as draw_part_of_image.html in pixi mode.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const img_file_name = './img/tape.png'
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: [img_file_name],
+    }
+
+    const container = new PIXI.Container();
+
+    const person_sprite = PIXI.Sprite.from(img_file_name)
+    container.addChild(person_sprite)
+
+    const mask = new PIXI.Graphics();
+    container.addChild(mask)
+    mask.beginFill(0xFF3300); // Any color will work.
+    mask.drawRect(0, 0, 150, 150)
+    mask.endFill();
+
+    person_sprite.mask = mask;
+    
+    const part_of_image = {
+        obj_type: 'pixi',
+        pixi_obj: container,
+        horiz_pix_sec: 30,
+        show_start_time: 500,
+        motion_start_time: 1000,
+        startX: 100,
+        startY: 100,
+    }
+    
+    const trial = {
+        type: jsPsychPsychophysics,
+        pixi: true,
+        stimuli: function(){
+            return [part_of_image]
+        }
+    }
+
+    jsPsych.run([preload, instruction, trial])
+</script>
+
+</html>

@@ -4,9 +4,10 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
-<body></body>
+<body bgcolor="gray"></body>
 <script>
     // This file demonstrates to change dynamically properties of an object.
     // Each time the window is refreshed, a red or blue light dot is drawn on the circumference.
@@ -16,6 +17,8 @@
             jsPsych.data.displayData();
         }
     })
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -60,6 +63,7 @@
 
     const trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: [dot_object, circle_object],
         response_type: 'button',
         canvas_height: 500,

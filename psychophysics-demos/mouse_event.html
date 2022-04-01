@@ -4,6 +4,7 @@
       <script src="../jspsych-dist/dist/jspsych.js"></script>
       <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
       <script src="../jspsych-psychophysics.js"></script>
+      <script src="https://pixijs.download/release/pixi.js"></script>
       <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
         </head>
     <body></body>
@@ -18,6 +19,8 @@
         }
       })
       console.log(`jsPsych Version ${jsPsych.version()}`)
+
+      const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
       const instruction = {
           type: jsPsychHtmlButtonResponse,
@@ -48,6 +51,7 @@
 
       const trial = {
           type: jsPsychPsychophysics,
+          pixi: pixi_flag,
           canvas_height: 500,
           button_choices: ['YES', 'NO'],
           prompt: '<p>Click and move the mouse.</p>',
@@ -70,10 +74,12 @@
             }
 
             // stim_array[0] means a circle, and stim_array[1] means a line.
+            const line = pixi_flag ? jsPsych.getCurrentTrial().stim_array[1].pixi_obj : jsPsych.getCurrentTrial().stim_array[1];
+
             if (event.offsetX > prev_mouseX){
-              jsPsych.getCurrentTrial().stim_array[1].angle += 5; // The angle changes by 5 degrees.
+              line.angle += 5; // The angle changes by 5 degrees.
             } else {
-              jsPsych.getCurrentTrial().stim_array[1].angle -= 5;
+              line.angle -= 5;
             }
             prev_mouseX = event.offsetX;
           },

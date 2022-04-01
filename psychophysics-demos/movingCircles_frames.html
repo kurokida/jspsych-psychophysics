@@ -4,6 +4,7 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
 <body></body>
@@ -17,6 +18,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -80,6 +83,7 @@
 
     const trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: [circle_object1, circle_object2, circle_object3],
     }
 

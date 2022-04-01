@@ -5,6 +5,7 @@
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <script src="../js/numeric.min.js"></script>
     <script src="../js/math.js"></script>  
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
@@ -19,6 +20,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -96,16 +99,19 @@
         startX: 800,
         startY: 600,
         mask_func: function(canvas){
+            const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio
+
             // An argument is the canvas on which the image is drawn. 
             // The top-left coordinate of the canvas is identical to the top-left coordinate of the image.
             const contexture = canvas.getContext('2d');
-            const img = contexture.getImageData(100, 100, 50, 100);
+            const img = contexture.getImageData(100 * tmpRatio, 100 * tmpRatio, 50 * tmpRatio, 100 * tmpRatio);
             return img
         }
     }
 
     const trial = {
         type: jsPsychPsychophysics,
+        pixi: pixi_flag,
         stimuli: [person_original, mask_circle, mask_circle_blur, mask_gauss, mask_rect, mask_manual],
     }
 

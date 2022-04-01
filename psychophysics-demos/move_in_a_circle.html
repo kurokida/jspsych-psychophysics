@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present the same stimulus of the raf_func.html in pixi mode.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const circle = {
+        obj_type: 'circle',
+        radius: 100,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        drawFunc(stim, canvas, ctx, elapsedTime, sumOfStep){ // The change_attr function can't be used because the coordinates of the stimulus will be overwritten.
+            const velocity = 45/180 * Math.PI; // radians per sec
+            const theta = velocity * elapsedTime/1000;
+            const radius = 100;
+
+            stim.pixi_obj.x = jsPsych.getCurrentTrial().centerX + radius * Math.cos(theta);
+            stim.pixi_obj.y = jsPsych.getCurrentTrial().centerY + radius * Math.sin(theta);
+            stim.pixi_obj.visible = true
+        }
+    }
+
+    const rotation = {
+        type: jsPsychPsychophysics,
+        pixi: true,
+        stimuli: [circle]
+    }
+
+    jsPsych.run([instruction, rotation])
+
+</script>
+
+</html>

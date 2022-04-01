@@ -5,9 +5,10 @@
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
-<body></body>
+<body bgcolor="gray"></body>
 <script>
     // This file demonstrates how to present images in a randomized order.
     // The image will be presented one by one at a time.
@@ -18,6 +19,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -43,6 +46,7 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                pixi: pixi_flag,
                 stimuli: [
                     {
                         obj_type: 'cross', // fixation

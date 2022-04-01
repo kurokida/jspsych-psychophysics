@@ -5,9 +5,10 @@
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
-<body></body>
+<body bgcolor="gray"></body>
 <script>
     // This file demonstrates how to present two images repeatedly until a participant responds to them.
     // This demonstration can be applied to the study on like change blindness.
@@ -17,6 +18,8 @@
             jsPsych.data.displayData();
         }
     })
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -44,6 +47,7 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                pixi: pixi_flag,
                 stimuli: [
                     {
                         obj_type: 'image',
@@ -68,11 +72,15 @@
                     if (time_from_first_image_onset > first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
                         const stim = trial.stim_array[0];
                         stim.show();
+                    } else {
+                        if (pixi_flag) trial.stim_array[0].pixi_obj.visible = false;
                     }
 
                     if (time_from_first_image_onset > second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
                         const stim = trial.stim_array[1];
                         stim.show();
+                    } else {
+                        if (pixi_flag) trial.stim_array[1].pixi_obj.visible = false;
                     }
                 }
             },

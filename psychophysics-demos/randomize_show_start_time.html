@@ -5,9 +5,10 @@
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
-<body></body>
+<body bgcolor="gray"></body>
 <script>
     // This file demonstrates how to randomize the duration of the fixation cross.
     // The stimulus image is presented from 500 to 3000 ms after the fixation point.
@@ -19,6 +20,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -55,6 +58,7 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                pixi: pixi_flag,
                 stimuli: [fixation, stim_img],
                 canvas_height: 500,
                 prompt: 'Press any key to proceed.',

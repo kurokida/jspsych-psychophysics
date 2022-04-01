@@ -4,6 +4,7 @@
       <script src="../jspsych-dist/dist/jspsych.js"></script>
       <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
       <script src="../jspsych-psychophysics.js"></script>
+      <script src="https://pixijs.download/release/pixi.js"></script>
       <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
     </head>
     <body></body>
@@ -16,6 +17,8 @@
         }
       })
 
+      const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
       const instruction = {
         type: jsPsychHtmlButtonResponse,
         stimulus: 'Click on the Start button.',
@@ -25,12 +28,13 @@
 
 
       let current_color = 0;
+      const radius = 150;
 
       const circle_obj = {
           obj_type: 'circle',
           startX: 'center',
           startY: 'center',
-          radius: 150,
+          radius: radius,
           line_color: 'white',
           fill_color: `rgb(${current_color}, ${current_color}, ${current_color})`,
           line_width: 5,
@@ -38,6 +42,7 @@
 
       const trial = {
           type: jsPsychPsychophysics,
+          pixi: pixi_flag,
           canvas_height: 500,
           prompt: '<p>Pressing the ArrowUp/ArrowDown key, the color of the circle will change. <br>Press the space key to finish the program.</p>',
           stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
@@ -54,7 +59,18 @@
 
             // Note that when specify the space bar, you need to write event.key === ' ' not event.key === 'space'.
             
-            jsPsych.getCurrentTrial().stim_array[0].fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
+            if (pixi_flag){ 
+              // In this demo, there may be less advantage to using pixi mode because the code is complex and may not improve stimulus presentation accuracy.
+              const col = current_color.toString(16); // Decimal to Hexadecimal
+              const col_16 = col.length === 1 ? `0${col}`: col;
+              const col_RGB = `0x${col_16}${col_16}${col_16}`;
+              const graphics = jsPsych.getCurrentTrial().stim_array[0].pixi_obj;
+              graphics.beginFill(col_RGB, 1);
+              graphics.drawCircle(0, 0, radius);
+              graphics.endFill();
+            } else {
+              jsPsych.getCurrentTrial().stim_array[0].fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
+            }
           },
       }
 

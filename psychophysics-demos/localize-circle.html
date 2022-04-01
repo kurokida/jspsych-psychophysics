@@ -4,9 +4,10 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
-<body></body>
+<body bgcolor="gray"></body>
 <script>
     // This file demonstrates how to respond using a mouse, and how to use the response_type and response_start_time.
     
@@ -16,6 +17,8 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const text_object = {
       obj_type: 'text',
@@ -35,6 +38,7 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                pixi: pixi_flag,
                 stimuli: [
                     {
                         obj_type: 'circle',
