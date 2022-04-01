@@ -1427,6 +1427,7 @@
       class manual_stimulus extends visual_stimulus{
         constructor(stim){
           super(stim)
+          this.prepared = true
         }
   
         show(){}
@@ -1477,10 +1478,12 @@
                 this.audio = this.context.createBufferSource();
                 this.audio.buffer = buffer;
                 this.audio.connect(this.context.destination);
+                this.prepared = true
                 console.log('WebAudio')
               } else {
                 this.audio = buffer;
                 this.audio.currentTime = 0;
+                this.prepared = true
                 console.log('HTML5 audio')
               }
               // setupTrial();

@@ -13,6 +13,7 @@
     // Note that the experimental files (html, js, and audio) must be uploaded in a web-server to run.
 
     const jsPsych = initJsPsych({
+        // use_webaudio: false, // If you don't want to use webaudio
         on_finish: function() {
             jsPsych.data.displayData();
         }
@@ -34,6 +35,7 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                response_start_time: 1600, // To prevent participants from responding before the auditory stimuli are presented
                 stimuli: [
                     {
                         obj_type: 'sound',
