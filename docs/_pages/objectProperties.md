@@ -62,7 +62,7 @@ jsPsych.init({
 |line_width|numeric|1| The width of the line.|
 |lineJoin|string|'miter'|[The type of the corner when two lines meet](https://www.w3schools.com/tags/canvas_linejoin.asp)|
 |miterLimit|numeric|10|[The maximum miter length](https://www.w3schools.com/tags/canvas_miterlimit.asp)|
-|change_attr|function|null|You can change [some the attributes of the object](/change_attr/) dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html).| 
+|change_attr|function|null|You can change [some the attributes of the object](/change_attr/) dynamically. The first argument is the stimulus, the second is the elapsed times in milliseconds, and the third is the elapsed times in frames. See [the demos/change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html). The difference between drawFunc and change_attr is that the drawFunc must specify the code for drawing and setting coordinates of the stimulus.| 
 
 NOTE: The *horiz(vert)_pix_frame(sec)* can be automatically calculated using the *startX(Y)*, *endX(Y)*, *motion_start_time*, and*motion_end_time*.
 
@@ -129,7 +129,7 @@ There are two ways to define a line. See, `demos/lines.html`.
 |content|string|undefined|The content of the text. It can include `\n` to start a new line.|
 |font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element.](https://www.w3schools.com/tags/canvas_font.asp)|
 |text_color|string|#000000 (black)|The color of the text.|
-|text_space|numeric|20|The space between lines.|
+|text_space|numeric|20|The space between lines. Note that this will not work in Pixi mode.|
 
 # obj_type: 'cross' 
 
@@ -156,6 +156,34 @@ See also [Presenting gabor patches in online/web experiments](/gabor/).
 |method|text|numeric| The method of drawing the gabor patch. 'numeric' or 'math' [The numeric.js](https://github.com/sloisel/numeric) is considerably faster than [the math.js](https://mathjs.org/).|
 |disableNorm|boolean|false| Disable normalization of the gaussian function. That is, coefficient: 1/(sqrt(2*pi) * sc) will not be multiplied. If this property is specified as true, the contrast value should be relatively small.|
 |contrastPreMultiplicator|numeric|1| This value is multiplied as a scaling factor to the requested contrast value. For the meaning of this variable, see [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor).|
+|modulate_color|array|[1.0, 1.0, 1.0, 1.0]|This is available in [pixi mode](pixijs.md). For the meaning of this variable, see modulateColor in  [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor). Note that the transparency is different from that of Psychtoolbox. Do not specify any number other than 1.|
+|offset_color|array|[0.5, 0.5, 0.5, 0.0]|This is available in [pixi mode](pixijs.md). For the meaning of this variable, see backgroundColorOffset in [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor). Note that the transparency is different from that of Psychtoolbox. Do not specify any number other than 0.|
+|min_validModulationRange|numeric|-2|This is available in [pixi mode](pixijs.md). For the meaning of this variable, see validModulationRange in [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor).|
+|max_validModulationRange|numeric|2|This is available in [pixi mode](pixijs.md). For the meaning of this variable, see validModulationRange in [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor).|
+
+## Uniforms
+
+The following values are only available in [pixi mode](pixijs.md). If the first data in the stimuli array is a gabor stimulus, it is possible to use uniforms as follows: `jsPsych.getCurrentTrial().stim_array[0].pixi_obj.filters[0].uniforms;` If the second data is a gabor stimulus, change to `stim_array[1]`, and `filters[0]` need not be changed.
+
+|Property of the Uniforms|Description|
+|Contrast|This is the same as contrast above.|
+|Phase|This is the same as phase above.|
+|angle_in_degrees| This is equal to 90 + tilt|
+|spatial_freq|This is the same as sf above.|
+|SpaceConstant|This is the same as sc above.|
+|disableNorm|Specify 1 for true or 0 for false.|
+|disableGauss|Specify 1 for true or 0 for false.|
+|modulateColor_R|Red in modulate color.|
+|modulateColor_G|Green in modulate color.|
+|modulateColor_B|Blue in modulate color.|
+|modulateColor_Alpha|Do not specify any number other than 1.|
+|offset_R|Red in offset color.|
+|offset_G|Green in offset color.|
+|offset_B|Blue in offset color.|
+|offset_Alpha||Do not specify any number other than 0.|
+|contrastPreMultiplicator|This is the same as contrastPreMultiplicator above.|
+|min_validModulationRange|This is the same as min_validModulationRange above.|
+|max_validModulationRange|This is the same as max_validModulationRange above.|
 
 # obj_type: 'manual' 
 

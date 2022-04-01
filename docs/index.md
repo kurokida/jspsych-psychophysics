@@ -9,13 +9,13 @@ toc_icon: "bicycle"
 toc_sticky: true
 ---
 
-The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015).
-This plugin can be used free of charge under the MIT license.
+The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015). [This plugin has been published in Behavior Research Methods](https://link.springer.com/article/10.3758/s13428-020-01445-w). You can use this plugin free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously. In other words, you can set stimulus onset asynchronies (SOAs) in a single trial.
 - You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of both milliseconds and frames. You can also move these stimuli, and play sound files although the time accuracy is not so good.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
+- [Starting with version 3.2, this plugin can present visual stimuli using PixiJS functionality.](/pixijs/)
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/) and [this issue](https://github.com/kurokida/jspsych-psychophysics/issues/27).
 - Participants' responses can be captured using the keyboard, mouse or buttons. The position of the mouse click can be recorded as a response.
 - [You can apply masking/filtering to image files](/mask_filter/).

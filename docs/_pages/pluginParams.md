@@ -22,7 +22,7 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
-|background_color|string|'grey'|The background color of the canvas.The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. |
+|background_color|string|'grey'|The background color of the canvas.The color can be specified using the HTML color names (e.g., `'black'`), hexadecimal (HEX) colors (e.g., `'#ff0000'`), and RGB values (e.g., `'rgb(0, 255, 0)'`) that are often used in a general HTML file. |
 |canvas_width|numeric|window.innerWidth|The width of the canvas in which stimuli are drawn. If it is not specified, the width of the canvas is identical to that of the window.|
 |canvas_height|numeric|window.innerHeight|The height of the canvas in which stimuli are drawn. If it is not specified, the height of the canvas is identical to that of the window, but see the canvas_offsetY property.|
 |canvas_offsetX|numeric|0|This value is subtracted from the width of the canvas in full-screen mode. However, since the default value is 0, it basically has no effect on the window size.|
