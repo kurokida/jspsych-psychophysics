@@ -3,13 +3,13 @@ permalink: /pixijs/
 title: "Psychophysics plugin with PixiJS"
 ---
 
-Starting with version 3.2.0, the psychophysics plugin can present visual stimuli using [PixiJS](https://pixijs.com/) functionality. Pixi mode should be turned on when presenting gabor patches. Note that anti-aliasing does not work in pixi mode. 
+Starting with version 3.2.0, the psychophysics plugin can present visual stimuli using [PixiJS](https://pixijs.com/) functionality. You can turn on and off Pixi mode, but if you present drifting gabor patches Pixi mode should be turned on.
 
-# How to turn on pixi mode
+# How to turn on Pixi mode
 
-## Upload to a web server
+## Upload files to a web server
 
-Basically, to use PixiJS, the program must be uploaded to a web server. However, some programs, such as those that do not include image files, will work on a local PC.
+To use PixiJS, in priciple, the program files must be uploaded to a web server. However, some programs will work on a local PC (e.g., a prgoram presenting rectangles and circles.)
 
 ## Include PixiJS using a script tag
 
@@ -19,7 +19,7 @@ Basically, to use PixiJS, the program must be uploaded to a web server. However,
 
 ## Set the pixi property as true
 
-The pixi property is false by default, i.e., pixi mode is off.
+The pixi property is false by default, i.e., Pixi mode is off.
 
 ```javascript
 
@@ -31,20 +31,20 @@ const trial = {
 
 ```
 
-# How to check if the program is working in pixi mode
+# How to check if the program is working in Pixi mode
 
-Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console. You'll see the following line in the console if the program runs in pixi mode.
+Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console. You'll see the following line in the console if the program runs in Pixi mode.
 
 ![pixi_mode](/images/pixi_mode.png)
 
 
-# Known problems in pixi mode
+# Known problems in Pixi mode
 
 - There may be a way to enable anti-aliasing, but I have yet to find it. You can clearly see the difference between anti-aliasing [on](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=0) and [off]. 
 - You may feel a flash of screen immediately after the trial when the background color is not white. In this case, you can avoid the problem by writing as `<body bgcolor="gray"></body>`.
-- The quality of text seems to be better in non pixi mode. https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=0
+- The quality of text seems to be better in non Pixi mode. https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=0
 
-So, please switch between pixi modes depending on the purpose of the experiment.
+So, please switch between Pixi modes depending on the purpose of the experiment.
 
 |obj_type|attributes|
 |---|---|

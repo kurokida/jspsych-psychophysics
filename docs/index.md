@@ -9,7 +9,7 @@ toc_icon: "bicycle"
 toc_sticky: true
 ---
 
-The jspsych-psychophysics plugin is developed for the purpose of conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015). [This plugin has been published in Behavior Research Methods](https://link.springer.com/article/10.3758/s13428-020-01445-w). You can use this plugin free of charge under the MIT license.
+The jspsych-psychophysics plugin is developed for conducting online/Web-based psychophysical experiments using [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015). [This plugin has been published in Behavior Research Methods](https://link.springer.com/article/10.3758/s13428-020-01445-w). You can use this plugin free of charge under the MIT license.
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously. In other words, you can set stimulus onset asynchronies (SOAs) in a single trial.
