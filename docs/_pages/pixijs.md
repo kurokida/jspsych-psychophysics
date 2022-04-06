@@ -40,25 +40,15 @@ Please open the JavaScript console window in your browser. If you are using Chro
 
 # Known problems in Pixi mode
 
-- There may be a way to enable anti-aliasing, but I have yet to find it. You can clearly see the difference between anti-aliasing [on](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=0) and [off]. 
+- There may be a way to enable anti-aliasing, but I have yet to find it. You can clearly see the difference between anti-aliasing [on](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=0) and [off](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=1). 
 - You may feel a flash of screen immediately after the trial when the background color is not white. In this case, you can avoid the problem by writing as `<body bgcolor="gray"></body>`.
-- The quality of text seems to be better in non Pixi mode. https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=0
+- The quality of text seems to be better in non Pixi mode. For example, [Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=1) and [Non Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=0)
 
 So, please switch between Pixi modes depending on the purpose of the experiment.
 
-|obj_type|attributes|
-|---|---|
-|image|scale|
-|sound|not available|
-|line|line_width, lineJoin, miterLimit, angle, line_length, line_color|
-|rect|line_width, lineJoin, miterLimit, fill_color, line_color, width, height|
-|cross|line_width, lineJoin, miterLimit, line_color, line_length|
-|circle|line_width, lineJoin, miterLimit, fill_color, line_color, radius|
-|text|line_width, lineJoin, miterLimit, font, text_color, content, text_space|
-
 # Advanced usage
 
-Using the PixiJS application's ticker, you can change attributes of the stimulus. See the "Writing an Update Loop" section in [the PixiJS guides](https://pixijs.io/guides/basics/getting-started.html). To do the same thing in the psychophysics plugin, use the change_attr function. See the demos/change_attributes.html and demos/elapsed_time_frame_pixi.html.
+Using the PixiJS application's ticker, you can change attributes of the stimulus. See the "Writing an Update Loop" section in [the PixiJS guides](https://pixijs.io/guides/basics/getting-started.html). To do the same thing in the psychophysics plugin, use the change_attr function. See [demos/change_attributes.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/change_attributes.html) and [demos/elapsed_time_frame_pixi.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/elapsed_time_frame_pixi.html).
 
 If you are familiar with PixiJS, you can make the PixiJS instances and include them in the stimuli property of the psychophysics plugin. See the demos/draw_part_of_image_pixi.html.
 
