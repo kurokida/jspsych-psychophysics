@@ -193,7 +193,9 @@ The following values are only available in [pixi mode](pixijs.md). If the first 
 
 If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 
-The first argument is `stimulus` by which you can access the properties of the object. For example, `stimulus.currentX/Y` can be used to refer the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument. 
+The first argument is `stimulus` by which you can access the properties of the object. For example, `stimulus.currentX/Y` can be used to refer the current position of the object, updated synchronized with the refresh of the display. You can also define and access new properties using this argument.  
+The second and third arguments (`canvas`, `ctx`) are jspsych-psychophysics's canvas and its context.  
+The fourth and fifth arguments (`elapsedTime`, `sumOfStep`) represent respectively the elapsed time in milliseconds and the frames count since the beginning of the trial. Both values correspond to the start of the current frame and thus both of them will have a value of 0 for the first frame. 
 
 The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, `demos/manual-drawFunc.html`.
 
