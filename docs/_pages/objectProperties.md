@@ -189,7 +189,7 @@ The following values are only available in [pixi mode](pixijs.md). If the first 
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
-|drawFunc|function|null|You can draw whatever the `<canvas>` supports.| 
+|drawFunc|function|null|You can draw whatever the `<canvas>` supports. The drawFunc can be specified in other than manual objects.| 
 
 If you want to draw something that the jspsych-psychophysics does not provide the method, you can draw it using the drawFunc function. 
 
@@ -200,8 +200,7 @@ The fourth and fifth arguments (`elapsedTime`, `sumOfStep`) represent respective
 The following code is the sample of the `drawFunc`. This sample draws a rectangle including a gradation from white to black. See, `demos/manual-drawFunc.html`.
 
 ```javascript
-drawFunc: function(stimulus){
-    context = jsPsych.currentTrial().context;
+drawFunc: function(stimulus, canvas, context, elapsedTime, sumOfStep){
     context.beginPath();
 
     const gradLength = 200;
