@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to keep the image changing while the key is pressed.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const first_instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const images = [
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/1.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/2.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/3.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/4.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/5.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/6.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/7.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/8.gif',
+        'https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.3.1/examples/img/9.gif']
+
+    const preload_trial = {
+        type: jsPsychPreload,
+        images: images
+    }
+
+    const stimulus_object = []
+
+    for (let i = 0; i < images.length; i++) {
+        const temporal_object = {
+            obj_type: 'image',
+            file: images[i],
+            drawFunc: function(stimulus, canvas, context){} // This is specified to prevent the image from being presented.
+        }
+        stimulus_object.push(temporal_object)
+    }
+
+    let image_num = 0;
+    let trial_num = 1;
+    const nTrials = 3;
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: stimulus_object,
+        choices: [' '],
+        canvas_height: 600,
+        prompt: `The image will chage while the up or down arrow key is pressed.<br>Press the space key to finish.<br>There are three trials.`,
+        clear_canvas: false, // This is specified to prevent the canvas from being cleared in each frame.
+        key_down_func: function(event){
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
+                const canvas = jsPsych.getCurrentTrial().canvas;
+                const ctx = jsPsych.getCurrentTrial().context;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas manually
+
+                jsPsych.getCurrentTrial().stim_array[image_num].show(); // present the image manually
+                
+                if (event.key === 'ArrowUp'){
+                    image_num++;
+                    if (image_num === images.length) image_num = 0;
+                } else {
+                    image_num--;
+                    if (image_num < 0) image_num = images.length-1;
+                }
+            }
+        },
+    }
+
+    const loop_node = {
+        timeline: [trial],
+        loop_function: function(data){
+            if(trial_num < nTrials){
+                trial_num++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    jsPsych.run([preload_trial, first_instruction, loop_node])
+
+</script>
+
+</html>
