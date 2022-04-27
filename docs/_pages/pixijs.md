@@ -5,6 +5,8 @@ title: "Psychophysics plugin with PixiJS"
 
 Starting with version 3.2.0, the psychophysics plugin can present visual stimuli using [PixiJS](https://pixijs.com/) functionality. You can turn on and off Pixi mode, but if you present drifting gabor patches Pixi mode should be turned on.
 
+If you are interested in Pixi mode, please see [the results of an accuracy test conducted in April 2022](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/AccuracyTest202204/histogram20220421.html) at first. I obtained good results in total, but I am a little concerned about Firefox. Note that I have only checked one laptop.
+
 # How to turn on Pixi mode
 
 ## Upload files to a web server
