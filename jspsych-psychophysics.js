@@ -1913,6 +1913,7 @@
           trial_data['click_y'] = response.clickY;
         } else if (trial.response_type === 'button'){
           trial_data['button_pressed'] = response.button;
+          trial_data['response'] = response.button; // compatible with the jsPsych >= 6.3.0
         }
   
         // clear the display
