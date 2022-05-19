@@ -65,7 +65,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |rt|numeric|The response time in milliseconds for the participant to make a response. The start time of the measurement depends on the 'response_start_time'.|
 |response_type|string|'key', 'mouse', or 'button'|
 |key_press|string|Indicates which key the participant pressed. '-1' means thant the participant respond using a mouse.|
-|response|string|Indicates which key the participant pressed. This is the same as the key_press.|
+|response|string or numeric|If the response_type is 'key', this indicates which key the participant pressed, and is the same as the key_press. If the response_type is 'button', this indicates which button the subject pressed, and is the same as the button_pressed. If the response_type is 'mouse', this value is minus 1, and you should refer to the click_x and click_y properties instead.|
 |avg_frame_time|numeric|Averaged interframe interval.|
 |click_x/click_y|numeric|Horizontal/Vertical clicked position. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
 |center_x/center_y|numeric|Horizontal/Vertical position of the center of the window. The origin of the coordinate is the top left of the canvas, and the unit is the pixel.|
