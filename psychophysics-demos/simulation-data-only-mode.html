@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych-dist/dist/jspsych.js"></script>
+  <script src="../jspsych-dist/dist/plugin-html-keyboard-response.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css">
+</head>
+<body></body>
+<script>
+
+  var jsPsych = initJsPsych({
+    default_ITI: 250, 
+    on_finish: function() {
+      jsPsych.data.displayData();
+    }
+  });
+
+  console.log(jsPsych.version())
+
+  var trial_html_key_resp = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: '<p style="color: red; font-size: 48px; font-weight: bold;">GREEN</p>',
+    choices: ['y', 'n'],
+    prompt: '<p>Does the color match the word? (y or n)</p>',
+  };
+
+  const cross = {
+    obj_type: 'cross',        
+    line_length: 50,
+    line_color: 'black', // You can use the HTML color name instead of the HEX color.
+  }
+
+  // When the rt property was set to 1000 ms in simulation_options, sometimes simulation outputed the rt less than 1000 ms.
+  // This is an intuitively strange result, probably due to the fact that the psychophysics plugin call the getKeyboardResponse function by the setTimeout function.
+  const psychophysics_key = {
+    type: jsPsychPsychophysics,
+    stimuli: [cross],
+    response_type: 'key',
+    choices: ['f', 'j'],
+    simulation_options: {
+      data: {
+        rt: 1000
+      }
+    }
+  }
+
+  const circle = {
+    obj_type: 'circle',
+    radius: 50,
+    line_color: 'red',
+  }
+
+  const psychophysics_button = {
+    type: jsPsychPsychophysics,
+    stimuli: [circle],
+    response_type: 'button',
+    button_choices: ['YES', 'NO', 'Unknown'],
+    canvas_width: 700,
+    canvas_height: 500,
+    simulation_options: {
+      data: {
+        rt: 1500
+      }
+    }
+  }
+
+  const rect = {
+    obj_type: 'rect',
+    width: 100,
+    height: 50,
+    line_color: 'blue',
+  }
+
+  const psychophysics_mouse = {
+    type: jsPsychPsychophysics,
+    stimuli: [rect],
+    response_type: 'mouse',
+    canvas_width: 700,
+    canvas_height: 500,
+    simulation_options: {
+      data: {
+        rt: 1500,
+        click_x: 123, // this.jsPsych.randomization.randomInt
+        click_y: 456,
+      }
+    }
+  }
+
+  var sim_opts = {
+    default: {
+      data: {
+        rt: () => { return jsPsych.randomization.sampleExGaussian(250, 50, 0.02, true) }
+      }
+    },
+    long_trial: {
+      data: {
+        rt: 20000
+      }
+    }
+  }
+
+  jsPsych.simulate([trial_html_key_resp, psychophysics_key, psychophysics_button, psychophysics_mouse], "data-only", sim_opts);
+
+</script>
+</html>

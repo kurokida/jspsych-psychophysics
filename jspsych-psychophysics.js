@@ -20,7 +20,7 @@
   // console.log(jspsych)
 
   // console.log(`jsPsych Version ${jspsych.version()}`)
-  console.log('Psychophysics Version 3.2.0')
+  console.log('Psychophysics Version 3.3.0')
 
   const info = {
     name: 'psychophysics',
@@ -1966,35 +1966,62 @@
     }
     simulate(trial, simulation_mode, simulation_options, load_callback) {
       if (simulation_mode == "data-only") {
-          load_callback();
-          this.simulate_data_only(trial, simulation_options);
+        load_callback();
+        this.simulate_data_only(trial, simulation_options);
       }
       if (simulation_mode == "visual") {
-          this.simulate_visual(trial, simulation_options, load_callback);
+        this.simulate_visual(trial, simulation_options, load_callback);
       }
     }
     create_simulation_data(trial, simulation_options) {
-        const default_data = {
-            stimulus: trial.stimulus,
-            rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
-            response: this.jsPsych.pluginAPI.getValidKey(trial.choices),
-        };
-        const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
-        this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
-        return data;
+      let resp = -1;
+      if (trial.response_type === 'key') {
+        resp = this.jsPsych.pluginAPI.getValidKey(trial.choices)
+      }
+      if (trial.response_type === 'button') {
+        resp = this.jsPsych.randomization.randomInt(0, trial.button_choices.length - 1)
+      }
+      const default_data = {
+        stimulus: trial.stimulus,
+        rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+        response: resp,
+      };
+      const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+      this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+      return data;
     }
     simulate_data_only(trial, simulation_options) {
-        const data = this.create_simulation_data(trial, simulation_options);
-        this.jsPsych.finishTrial(data);
+      const data = this.create_simulation_data(trial, simulation_options);
+      this.jsPsych.finishTrial(data);
     }
     simulate_visual(trial, simulation_options, load_callback) {
-        const data = this.create_simulation_data(trial, simulation_options);
-        const display_element = this.jsPsych.getDisplayElement();
-        this.trial(display_element, trial);
-        load_callback();
-        if (data.rt !== null) {
+      const data = this.create_simulation_data(trial, simulation_options);
+      const display_element = this.jsPsych.getDisplayElement();
+      this.trial(display_element, trial);
+      load_callback();
+      if (data.rt !== null) {
+        switch (trial.response_type) {
+          case 'key':
             this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
+            break;
+          case 'button':
+            this.jsPsych.pluginAPI.clickTarget(display_element.querySelector(`div[data-choice="${data.response}"] button`), data.rt);
+            break;
+          case 'mouse':
+            const client_rect = document.getElementById('myCanvas').getBoundingClientRect();
+            if (typeof data.click_x  === 'undefined') data.click_x = 0;
+            if (typeof data.click_y  === 'undefined') data.click_y = 0;
+            const mouse_event = new MouseEvent('mousedown', {
+              bubbles: true,
+              clientX: data.click_x + client_rect.left, // Note that click_x is offsetX.
+              clientY: data.click_y + client_rect.top,
+            })
+            setTimeout(() => {
+              document.getElementById('myCanvas').dispatchEvent(mouse_event);
+            }, data.rt);
+            break;
         }
+      }
     }
   }
   PsychophysicsPlugin.info = info;
