@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../dist/jspsych.js"></script>
+  <script src="../dist/plugin-initialize-camera.js"></script>
+  <link rel="stylesheet" href="../dist/jspsych.css">
+</head>
+<body></body>
+<script>
+
+  var jsPsych = initJsPsych();
+
+  let init_camera = {
+    type: jsPsychInitializeCamera,
+  }
+
+  jsPsych.run([init_camera]);
+
+</script>
+</html>

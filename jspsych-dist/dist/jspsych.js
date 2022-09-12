@@ -1,7 +1,7 @@
 var jsPsychModule = (function (exports) {
     'use strict';
 
-    /*! *****************************************************************************
+    /******************************************************************************
     Copyright (c) Microsoft Corporation.
 
     Permission to use, copy, modify, and/or distribute this software for any
@@ -70,7 +70,7 @@ var jsPsychModule = (function (exports) {
     	return self;
     };
 
-    var version = "7.2.1";
+    var version = "7.3.0";
 
     class MigrationError extends Error {
         constructor(message = "The global `jsPsych` variable is no longer available in jsPsych v7.") {
@@ -842,8 +842,13 @@ var jsPsychModule = (function (exports) {
             this.img_cache = {};
             this.preloadMap = new Map();
             this.microphone_recorder = null;
+            this.camera_stream = null;
+            this.camera_recorder = null;
         }
         getVideoBuffer(videoID) {
+            if (videoID.startsWith("blob:")) {
+                this.video_buffers[videoID] = videoID;
+            }
             return this.video_buffers[videoID];
         }
         initAudio() {
@@ -1084,6 +1089,17 @@ var jsPsychModule = (function (exports) {
         }
         getMicrophoneRecorder() {
             return this.microphone_recorder;
+        }
+        initializeCameraRecorder(stream, opts) {
+            this.camera_stream = stream;
+            const recorder = new MediaRecorder(stream, opts);
+            this.camera_recorder = recorder;
+        }
+        getCameraStream() {
+            return this.camera_stream;
+        }
+        getCameraRecorder() {
+            return this.camera_recorder;
         }
     }
 
@@ -1630,119 +1646,119 @@ var jsPsychModule = (function (exports) {
     var alea = {exports: {}};
 
     (function (module) {
-    // A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
-    // http://baagoe.com/en/RandomMusings/javascript/
-    // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
-    // Original work is under MIT license -
+    	// A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
+    	// http://baagoe.com/en/RandomMusings/javascript/
+    	// https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
+    	// Original work is under MIT license -
 
-    // Copyright (C) 2010 by Johannes Baagøe <baagoe@baagoe.org>
-    //
-    // Permission is hereby granted, free of charge, to any person obtaining a copy
-    // of this software and associated documentation files (the "Software"), to deal
-    // in the Software without restriction, including without limitation the rights
-    // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    // copies of the Software, and to permit persons to whom the Software is
-    // furnished to do so, subject to the following conditions:
-    //
-    // The above copyright notice and this permission notice shall be included in
-    // all copies or substantial portions of the Software.
-    //
-    // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    // THE SOFTWARE.
-
-
-
-    (function(global, module, define) {
-
-    function Alea(seed) {
-      var me = this, mash = Mash();
-
-      me.next = function() {
-        var t = 2091639 * me.s0 + me.c * 2.3283064365386963e-10; // 2^-32
-        me.s0 = me.s1;
-        me.s1 = me.s2;
-        return me.s2 = t - (me.c = t | 0);
-      };
-
-      // Apply the seeding algorithm from Baagoe.
-      me.c = 1;
-      me.s0 = mash(' ');
-      me.s1 = mash(' ');
-      me.s2 = mash(' ');
-      me.s0 -= mash(seed);
-      if (me.s0 < 0) { me.s0 += 1; }
-      me.s1 -= mash(seed);
-      if (me.s1 < 0) { me.s1 += 1; }
-      me.s2 -= mash(seed);
-      if (me.s2 < 0) { me.s2 += 1; }
-      mash = null;
-    }
-
-    function copy(f, t) {
-      t.c = f.c;
-      t.s0 = f.s0;
-      t.s1 = f.s1;
-      t.s2 = f.s2;
-      return t;
-    }
-
-    function impl(seed, opts) {
-      var xg = new Alea(seed),
-          state = opts && opts.state,
-          prng = xg.next;
-      prng.int32 = function() { return (xg.next() * 0x100000000) | 0; };
-      prng.double = function() {
-        return prng() + (prng() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-      };
-      prng.quick = prng;
-      if (state) {
-        if (typeof(state) == 'object') copy(state, xg);
-        prng.state = function() { return copy(xg, {}); };
-      }
-      return prng;
-    }
-
-    function Mash() {
-      var n = 0xefc8249d;
-
-      var mash = function(data) {
-        data = String(data);
-        for (var i = 0; i < data.length; i++) {
-          n += data.charCodeAt(i);
-          var h = 0.02519603282416938 * n;
-          n = h >>> 0;
-          h -= n;
-          h *= n;
-          n = h >>> 0;
-          h -= n;
-          n += h * 0x100000000; // 2^32
-        }
-        return (n >>> 0) * 2.3283064365386963e-10; // 2^-32
-      };
-
-      return mash;
-    }
+    	// Copyright (C) 2010 by Johannes Baagøe <baagoe@baagoe.org>
+    	//
+    	// Permission is hereby granted, free of charge, to any person obtaining a copy
+    	// of this software and associated documentation files (the "Software"), to deal
+    	// in the Software without restriction, including without limitation the rights
+    	// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    	// copies of the Software, and to permit persons to whom the Software is
+    	// furnished to do so, subject to the following conditions:
+    	//
+    	// The above copyright notice and this permission notice shall be included in
+    	// all copies or substantial portions of the Software.
+    	//
+    	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    	// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    	// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    	// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    	// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    	// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    	// THE SOFTWARE.
 
 
-    if (module && module.exports) {
-      module.exports = impl;
-    } else if (define && define.amd) {
-      define(function() { return impl; });
-    } else {
-      this.alea = impl;
-    }
 
-    })(
-      commonjsGlobal,
-      module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
-    );
-    }(alea));
+    	(function(global, module, define) {
+
+    	function Alea(seed) {
+    	  var me = this, mash = Mash();
+
+    	  me.next = function() {
+    	    var t = 2091639 * me.s0 + me.c * 2.3283064365386963e-10; // 2^-32
+    	    me.s0 = me.s1;
+    	    me.s1 = me.s2;
+    	    return me.s2 = t - (me.c = t | 0);
+    	  };
+
+    	  // Apply the seeding algorithm from Baagoe.
+    	  me.c = 1;
+    	  me.s0 = mash(' ');
+    	  me.s1 = mash(' ');
+    	  me.s2 = mash(' ');
+    	  me.s0 -= mash(seed);
+    	  if (me.s0 < 0) { me.s0 += 1; }
+    	  me.s1 -= mash(seed);
+    	  if (me.s1 < 0) { me.s1 += 1; }
+    	  me.s2 -= mash(seed);
+    	  if (me.s2 < 0) { me.s2 += 1; }
+    	  mash = null;
+    	}
+
+    	function copy(f, t) {
+    	  t.c = f.c;
+    	  t.s0 = f.s0;
+    	  t.s1 = f.s1;
+    	  t.s2 = f.s2;
+    	  return t;
+    	}
+
+    	function impl(seed, opts) {
+    	  var xg = new Alea(seed),
+    	      state = opts && opts.state,
+    	      prng = xg.next;
+    	  prng.int32 = function() { return (xg.next() * 0x100000000) | 0; };
+    	  prng.double = function() {
+    	    return prng() + (prng() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+    	  };
+    	  prng.quick = prng;
+    	  if (state) {
+    	    if (typeof(state) == 'object') copy(state, xg);
+    	    prng.state = function() { return copy(xg, {}); };
+    	  }
+    	  return prng;
+    	}
+
+    	function Mash() {
+    	  var n = 0xefc8249d;
+
+    	  var mash = function(data) {
+    	    data = String(data);
+    	    for (var i = 0; i < data.length; i++) {
+    	      n += data.charCodeAt(i);
+    	      var h = 0.02519603282416938 * n;
+    	      n = h >>> 0;
+    	      h -= n;
+    	      h *= n;
+    	      n = h >>> 0;
+    	      h -= n;
+    	      n += h * 0x100000000; // 2^32
+    	    }
+    	    return (n >>> 0) * 2.3283064365386963e-10; // 2^-32
+    	  };
+
+    	  return mash;
+    	}
+
+
+    	if (module && module.exports) {
+    	  module.exports = impl;
+    	} else if (define && define.amd) {
+    	  define(function() { return impl; });
+    	} else {
+    	  this.alea = impl;
+    	}
+
+    	})(
+    	  commonjsGlobal,
+    	  module,    // present in node.js
+    	  (typeof undefined) == 'function'    // present with an AMD loader
+    	);
+    } (alea));
 
     var seedrandom = alea.exports;
 
@@ -2409,7 +2425,11 @@ var jsPsychModule = (function (exports) {
         // recursive downward search for active trial to extract timeline variable
         timelineVariable(variable_name) {
             if (typeof this.timeline_parameters == "undefined") {
-                return this.findTimelineVariable(variable_name);
+                const val = this.findTimelineVariable(variable_name);
+                if (typeof val === "undefined") {
+                    console.warn("Timeline variable " + variable_name + " not found.");
+                }
+                return val;
             }
             else {
                 // if progress.current_location is -1, then the timeline variable is being evaluated
@@ -2424,7 +2444,11 @@ var jsPsychModule = (function (exports) {
                     loc = loc - 1;
                 }
                 // now find the variable
-                return this.timeline_parameters.timeline[loc].timelineVariable(variable_name);
+                const val = this.timeline_parameters.timeline[loc].timelineVariable(variable_name);
+                if (typeof val === "undefined") {
+                    console.warn("Timeline variable " + variable_name + " not found.");
+                }
+                return val;
             }
         }
         // recursively get all the timeline variables for this trial
@@ -2702,6 +2726,7 @@ var jsPsychModule = (function (exports) {
             return this.DOM_container;
         }
         finishTrial(data = {}) {
+            var _a;
             if (this.current_trial_finished) {
                 return;
             }
@@ -2714,7 +2739,7 @@ var jsPsychModule = (function (exports) {
             // write the data from the trial
             this.data.write(data);
             // get back the data with all of the defaults in
-            const trial_data = this.data.get().filter({ trial_index: this.global_trial_index });
+            const trial_data = this.data.getLastTrialData();
             // for trial-level callbacks, we just want to pass in a reference to the values
             // of the DataCollection, for easy access and editing.
             const trial_data_values = trial_data.values()[0];
@@ -2742,46 +2767,58 @@ var jsPsychModule = (function (exports) {
                 }
             }
             // handle extension callbacks
-            if (Array.isArray(current_trial.extensions)) {
-                for (const extension of current_trial.extensions) {
-                    const ext_data_values = this.extensions[extension.type.info.name].on_finish(extension.params);
-                    Object.assign(trial_data_values, ext_data_values);
+            const extensionCallbackResults = ((_a = current_trial.extensions) !== null && _a !== void 0 ? _a : []).map((extension) => this.extensions[extension.type.info.name].on_finish(extension.params));
+            const onExtensionCallbacksFinished = () => {
+                // about to execute lots of callbacks, so switch context.
+                this.internal.call_immediate = true;
+                // handle callback at plugin level
+                if (typeof current_trial.on_finish === "function") {
+                    current_trial.on_finish(trial_data_values);
                 }
-            }
-            // about to execute lots of callbacks, so switch context.
-            this.internal.call_immediate = true;
-            // handle callback at plugin level
-            if (typeof current_trial.on_finish === "function") {
-                current_trial.on_finish(trial_data_values);
-            }
-            // handle callback at whole-experiment level
-            this.opts.on_trial_finish(trial_data_values);
-            // after the above callbacks are complete, then the data should be finalized
-            // for this trial. call the on_data_update handler, passing in the same
-            // data object that just went through the trial's finish handlers.
-            this.opts.on_data_update(trial_data_values);
-            // done with callbacks
-            this.internal.call_immediate = false;
-            // wait for iti
-            if (this.simulation_mode === "data-only") {
-                this.nextTrial();
-            }
-            else if (typeof current_trial.post_trial_gap === null ||
-                typeof current_trial.post_trial_gap === "undefined") {
-                if (this.opts.default_iti > 0) {
-                    setTimeout(this.nextTrial, this.opts.default_iti);
-                }
-                else {
+                // handle callback at whole-experiment level
+                this.opts.on_trial_finish(trial_data_values);
+                // after the above callbacks are complete, then the data should be finalized
+                // for this trial. call the on_data_update handler, passing in the same
+                // data object that just went through the trial's finish handlers.
+                this.opts.on_data_update(trial_data_values);
+                // done with callbacks
+                this.internal.call_immediate = false;
+                // wait for iti
+                if (this.simulation_mode === "data-only") {
                     this.nextTrial();
                 }
+                else if (typeof current_trial.post_trial_gap === null ||
+                    typeof current_trial.post_trial_gap === "undefined") {
+                    if (this.opts.default_iti > 0) {
+                        setTimeout(this.nextTrial, this.opts.default_iti);
+                    }
+                    else {
+                        this.nextTrial();
+                    }
+                }
+                else {
+                    if (current_trial.post_trial_gap > 0) {
+                        setTimeout(this.nextTrial, current_trial.post_trial_gap);
+                    }
+                    else {
+                        this.nextTrial();
+                    }
+                }
+            };
+            // Strictly using Promise.resolve to turn all values into promises would be cleaner here, but it
+            // would require user test code to make the event loop tick after every simulated key press even
+            // if there are no async `on_finish` methods. Hence, in order to avoid a breaking change, we
+            // only rely on the event loop if at least one `on_finish` method returns a promise.
+            if (extensionCallbackResults.some((result) => typeof result.then === "function")) {
+                Promise.all(extensionCallbackResults.map((result) => Promise.resolve(result).then((ext_data_values) => {
+                    Object.assign(trial_data_values, ext_data_values);
+                }))).then(onExtensionCallbacksFinished);
             }
             else {
-                if (current_trial.post_trial_gap > 0) {
-                    setTimeout(this.nextTrial, current_trial.post_trial_gap);
+                for (const values of extensionCallbackResults) {
+                    Object.assign(trial_data_values, values);
                 }
-                else {
-                    this.nextTrial();
-                }
+                onExtensionCallbacksFinished();
             }
         }
         endExperiment(end_message = "", data = {}) {
@@ -3069,16 +3106,16 @@ var jsPsychModule = (function (exports) {
         }
         evaluateTimelineVariables(trial) {
             for (const key of Object.keys(trial)) {
-                // timeline variables on the root level
                 if (typeof trial[key] === "object" &&
                     trial[key] !== null &&
                     typeof trial[key].timelineVariablePlaceholder !== "undefined") {
-                    /*trial[key].toString().replace(/\s/g, "") ==
-                      "function(){returntimeline.timelineVariable(varname);}"
-                  )*/ trial[key] = trial[key].timelineVariableFunction();
+                    trial[key] = trial[key].timelineVariableFunction();
                 }
                 // timeline variables that are nested in objects
-                if (typeof trial[key] === "object" && trial[key] !== null) {
+                if (typeof trial[key] === "object" &&
+                    trial[key] !== null &&
+                    key !== "timeline" &&
+                    key !== "timeline_variables") {
                     this.evaluateTimelineVariables(trial[key]);
                 }
             }
@@ -3121,9 +3158,11 @@ var jsPsychModule = (function (exports) {
             else if (typeof obj === "object") {
                 if (info === null || !info.nested) {
                     for (const key of Object.keys(obj)) {
-                        if (key === "type") {
+                        if (key === "type" || key === "timeline" || key === "timeline_variables") {
                             // Ignore the object's `type` field because it contains a plugin and we do not want to
-                            // call plugin functions
+                            // call plugin functions. Also ignore `timeline` and `timeline_variables` because they
+                            // are used in the `trials` parameter of the preload plugin and we don't want to actually
+                            // evaluate those in that context.
                             continue;
                         }
                         obj[key] = this.replaceFunctionsWithValues(obj[key], null);
@@ -3253,6 +3292,7 @@ var jsPsychModule = (function (exports) {
         }
     }
 
+    // __rollup-babel-import-regenerator-runtime__
     // temporary patch for Safari
     if (typeof window !== "undefined" &&
         window.hasOwnProperty("webkitAudioContext") &&
