@@ -14,7 +14,7 @@
 console.log("Psychophysics Version 3.3.0");
 
 import { JsPsych, JsPsychPlugin, ParameterType, TrialType } from "jspsych";
-import * as math from "mathjs";
+import { Matrix } from "ml-matrix";
 import numeric from "numeric";
 import * as PIXI from "pixi.js";
 
@@ -812,22 +812,19 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             let exp_value;
             const adjusted_sc = this.sc * tmpRatio;
             if (this.method === "math") {
-              const matrix_x = math.matrix(coord_matrix_x); // Convert to Matrix data
-              const matrix_y = math.transpose(math.matrix(coord_matrix_y));
-              const x_factor = math.multiply(
-                math.map(matrix_x, math.square),
-                -1
-              );
-              const y_factor = math.multiply(
-                math.map(matrix_y, math.square),
-                -1
-              );
-              const varScale = 2 * math.square(adjusted_sc);
-              const tmp = math.add(
-                math.divide(x_factor, varScale),
-                math.divide(y_factor, varScale)
-              ) as math.Matrix;
-              exp_value = math.map(tmp, math.exp);
+              const matrix_x = new Matrix(coord_matrix_x);
+              const matrix_y = new Matrix(coord_matrix_y).transpose();
+
+              const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
+              const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
+
+              const varScale = 2 * Math.pow(adjusted_sc, 2);
+              exp_value = Matrix.add(
+                Matrix.divide(x_factor, varScale),
+                Matrix.divide(y_factor, varScale)
+              )
+                .exp()
+                .to2DArray();
             } else {
               // numeric
               const matrix_x = coord_matrix_x;
@@ -1195,32 +1192,33 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         this.update_count += 1;
 
         if (this.method === "math") {
-          const matrix_x = math.matrix(coord_matrix_x); // Convert to Matrix data
-          const matrix_y = math.transpose(math.matrix(coord_matrix_y));
-          const x_factor = math.multiply(math.map(matrix_x, math.square), -1);
-          const y_factor = math.multiply(math.map(matrix_y, math.square), -1);
-          const tmp1 = math.add(
-            math.multiply(matrix_x, a),
-            math.multiply(matrix_y, b),
-            // @ts-expect-error:
-            phase_rad
-          ); // radians
-          const sinWave = math.map(tmp1, math.sin);
-          const varScale = 2 * math.square(adjusted_sc);
-          const tmp2 = math.add(
-            math.divide(x_factor, varScale),
-            math.divide(y_factor, varScale)
-          ) as math.Matrix;
-          const exp_value = this.disableGauss ? 1 : math.map(tmp2, math.exp);
-          const tmp3 = math.dotMultiply(exp_value, sinWave);
-          const tmp4 = math.multiply(multConst, tmp3);
-          const tmp5 = math.multiply(
-            this.contrast,
-            math.multiply(tmp4, this.contrastPreMultiplicator)
+          const matrix_x = new Matrix(coord_matrix_x);
+          const matrix_y = new Matrix(coord_matrix_y).transpose();
+          const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
+          const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
+          const sinWave = Matrix.add(
+            Matrix.multiply(matrix_x, a),
+            Matrix.multiply(matrix_y, b)
+          )
+            .add(phase_rad)
+            .sin(); // radians
+
+          const varScale = 2 * Math.pow(adjusted_sc, 2);
+          const exp_value = this.disableGauss
+            ? 1
+            : Matrix.add(
+                Matrix.divide(x_factor, varScale),
+                Matrix.divide(y_factor, varScale)
+              ).exp();
+
+          const tmp1 = Matrix.multiply(sinWave, exp_value);
+          const tmp2 = Matrix.multiply(tmp1, multConst);
+          const tmp3 = Matrix.multiply(
+            Matrix.multiply(tmp2, this.contrastPreMultiplicator),
+            this.contrast
           );
-          const m = math.multiply(256, math.add(0.5, tmp5));
-          // @ts-expect-error What's `_data`? TypeScript assumes `m` is a number and doesn't know `m._data`
-          gabor_data = m._data;
+          const m = Matrix.multiply(Matrix.add(tmp3, 0.5), 256);
+          gabor_data = m.to2DArray();
         } else {
           // numeric
           const matrix_x = coord_matrix_x;

@@ -18,7 +18,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "rollup --config && npm run copy",
-    "build:watch": "npm run build -- --watch",
+    "build:watch": "rollup --config --watch",
     "copy": "cp dist/index.browser.js jspsych-psychophysics.js || copy dist\\index.browser.js jspsych-psychophysics.js",
     "prepare": "npm run build"
   },
@@ -44,7 +44,7 @@
     "jspsych": "^7.3.0"
   },
   "dependencies": {
-    "mathjs": "^11.2.1",
+    "ml-matrix": "^6.10.2",
     "numeric": "^1.2.6",
     "pixi.js": "^6.5.5"
   }
