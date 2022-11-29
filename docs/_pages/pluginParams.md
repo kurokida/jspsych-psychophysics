@@ -81,6 +81,7 @@ In addition to the [default data collected by all plugins](https://www.jspsych.o
 |centerY|You can access the vertical center of the canvas via the `jsPsych.getCurrentTrial().centerY`.|
 
 # Stimuli
+
 |Parameter|Description|
 |---|---|
 |stimuli|You can access the stimuli via the `jsPsych.getCurrentTrial().stimuli`. This is useful if you want to change the stimulus in the on_start function.|
