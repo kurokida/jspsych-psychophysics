@@ -22,7 +22,13 @@ var jsPsychCloze = (function (jspsych) {
               pretty_name: "Check answers",
               default: false,
           },
-          /** Function called if check_answers is set to TRUE and there is a difference between the participants answers and the correct solution provided in the text. */
+          /** Boolean value indicating if the participant may leave answers blank. */
+          allow_blanks: {
+              type: jspsych.ParameterType.BOOL,
+              pretty_name: "Allow blanks",
+              default: true,
+          },
+          /** Function called if either the check_answers is set to TRUE or the allow_blanks is set to FALSE and there is a discrepancy between the set answers and the answers provide or if all input fields aren't filled out, respectively. */
           mistake_fn: {
               type: jspsych.ParameterType.FUNCTION,
               pretty_name: "Mistake function",
@@ -44,6 +50,7 @@ var jsPsychCloze = (function (jspsych) {
       }
       trial(display_element, trial) {
           var html = '<div class="cloze">';
+          // odd elements are text, even elements are the blanks
           var elements = trial.text.split("%");
           const solutions = this.getSolutions(trial.text);
           let solution_counter = 0;
@@ -61,6 +68,7 @@ var jsPsychCloze = (function (jspsych) {
           const check = () => {
               var answers = [];
               var answers_correct = true;
+              var answers_filled = true;
               for (var i = 0; i < solutions.length; i++) {
                   var field = document.getElementById("input" + i);
                   answers.push(field.value.trim());
@@ -73,16 +81,21 @@ var jsPsychCloze = (function (jspsych) {
                           field.style.color = "black";
                       }
                   }
+                  if (!trial.allow_blanks) {
+                      if (answers[i] === "") {
+                          answers_filled = false;
+                      }
+                  }
               }
-              if (!trial.check_answers || (trial.check_answers && answers_correct)) {
+              if ((trial.check_answers && !answers_correct) || (!trial.allow_blanks && !answers_filled)) {
+                  trial.mistake_fn();
+              }
+              else {
                   var trial_data = {
                       response: answers,
                   };
                   display_element.innerHTML = "";
                   this.jsPsych.finishTrial(trial_data);
-              }
-              else {
-                  trial.mistake_fn();
               }
           };
           display_element.innerHTML +=
