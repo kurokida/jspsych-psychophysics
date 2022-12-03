@@ -70,7 +70,7 @@ var jsPsychModule = (function (exports) {
     	return self;
     };
 
-    var version = "7.3.0";
+    var version = "7.3.1";
 
     class MigrationError extends Error {
         constructor(message = "The global `jsPsych` variable is no longer available in jsPsych v7.") {
@@ -903,15 +903,15 @@ var jsPsychModule = (function (exports) {
                         callback_error({ source: source, error: e });
                     });
                 };
-                request.onerror = function (e) {
+                request.onerror = (e) => {
                     let err = e;
-                    if (this.status == 404) {
+                    if (request.status == 404) {
                         err = "404";
                     }
                     callback_error({ source: source, error: err });
                 };
-                request.onloadend = function (e) {
-                    if (this.status == 404) {
+                request.onloadend = (e) => {
+                    if (request.status == 404) {
                         callback_error({ source: source, error: "404" });
                     }
                 };
@@ -968,20 +968,21 @@ var jsPsychModule = (function (exports) {
                 callback_complete();
                 return;
             }
-            for (var i = 0; i < images.length; i++) {
-                var img = new Image();
-                img.onload = function () {
+            for (let i = 0; i < images.length; i++) {
+                const img = new Image();
+                const src = images[i];
+                img.onload = () => {
                     n_loaded++;
-                    callback_load(img.src);
+                    callback_load(src);
                     if (n_loaded === images.length) {
                         callback_complete();
                     }
                 };
-                img.onerror = function (e) {
-                    callback_error({ source: img.src, error: e });
+                img.onerror = (e) => {
+                    callback_error({ source: src, error: e });
                 };
-                img.src = images[i];
-                this.img_cache[images[i]] = img;
+                img.src = src;
+                this.img_cache[src] = img;
                 this.preload_requests.push(img);
             }
         }
@@ -999,9 +1000,9 @@ var jsPsychModule = (function (exports) {
                 const request = new XMLHttpRequest();
                 request.open("GET", video, true);
                 request.responseType = "blob";
-                request.onload = function () {
-                    if (this.status === 200 || this.status === 0) {
-                        const videoBlob = this.response;
+                request.onload = () => {
+                    if (request.status === 200 || request.status === 0) {
+                        const videoBlob = request.response;
                         video_buffers[video] = URL.createObjectURL(videoBlob); // IE10+
                         n_loaded++;
                         callback_load(video);
@@ -1010,15 +1011,15 @@ var jsPsychModule = (function (exports) {
                         }
                     }
                 };
-                request.onerror = function (e) {
+                request.onerror = (e) => {
                     let err = e;
-                    if (this.status == 404) {
+                    if (request.status == 404) {
                         err = "404";
                     }
                     callback_error({ source: video, error: err });
                 };
-                request.onloadend = function (e) {
-                    if (this.status == 404) {
+                request.onloadend = (e) => {
+                    if (request.status == 404) {
                         callback_error({ source: video, error: "404" });
                     }
                 };
@@ -1875,7 +1876,8 @@ var jsPsychModule = (function (exports) {
                 // test to make sure the new neighbor isn't equal to the old one
                 while (equalityTest(random_shuffle[i + 1], random_shuffle[random_pick]) ||
                     equalityTest(random_shuffle[i + 1], random_shuffle[random_pick + 1]) ||
-                    equalityTest(random_shuffle[i + 1], random_shuffle[random_pick - 1])) {
+                    equalityTest(random_shuffle[i + 1], random_shuffle[random_pick - 1]) ||
+                    equalityTest(random_shuffle[i], random_shuffle[random_pick])) {
                     random_pick = Math.floor(Math.random() * (random_shuffle.length - 2)) + 1;
                 }
                 const new_neighbor = random_shuffle[random_pick];

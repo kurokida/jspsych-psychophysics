@@ -84,6 +84,11 @@ See also [Masking and filtering images using the jspsych-psychophysics plugin](/
 |height (circle/rect)|numeric|undefined| The height of the masking circle/rect.|
 |center_x/y|numeric|undefined| The x/y-coordinate of the center of the masking circle/rect.|
 |mask_func(canvas)|function|null|You can mask the image manually. Don't forget to specify the mask property as 'manual'. This function must retrun an ImageData object containing the array of pixel values. An argument of the function is the canvas on which the image is drawn. See [the demos/mask_filter.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter.html).| 
+|pixi_mask|PIXI.Graphics()|undefined|See [the pixi example](https://pixijs.io/examples/#/masks/graphics.js).|
+|pixi_filters|array of filters|undefined|See [the pixi example](https://pixijs.io/examples/#/masks/filter.js).|
+|pixi_angle|numeric|undefined|The angle of the image in degrees.|
+|pixi_rotation|numeric|undefined|The angle of the image in radians.|
+
 
 # obj_type: 'sound'
 

@@ -625,6 +625,10 @@
             if (typeof this.mask === 'undefined' && typeof this.filter === 'undefined') {
               if (trial.pixi){
                 this.pixi_obj = PIXI.Sprite.from(this.file)
+
+                if (typeof this.pixi_mask !== 'undefined') this.pixi_obj.mask = this.pixi_mask;
+                if (typeof this.pixi_filters !== 'undefined') this.pixi_obj.filters = this.pixi_filters;
+
                 init_pixi_obj(this.pixi_obj)
               }
               this.prepared = true
@@ -806,6 +810,23 @@
   
         show(){
           if (trial.pixi) {
+            if (typeof this.scale !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the scale and image_width at the same time.')
+            if (typeof this.scale !== 'undefined' && typeof this.image_height !== 'undefined') alert('You can not specify the scale and image_height at the same time.')
+            if (typeof this.image_height !== 'undefined' && typeof this.image_width !== 'undefined') alert('You can not specify the image_height and image_width at the same time.')
+
+            let scale = 1
+
+            if (typeof this.scale !== 'undefined') scale = this.scale
+            if (typeof this.image_width !== 'undefined') scale = this.image_width/this.img.width
+            if (typeof this.image_height !== 'undefined') scale = this.image_height/this.img.height
+
+            this.pixi_obj.scale.x = scale;
+            this.pixi_obj.scale.y = scale;
+
+            if (typeof this.pixi_angle !== 'undefined') this.pixi_obj.angle = this.pixi_angle;
+            if (typeof this.pixi_rotation !== 'undefined') this.pixi_obj.rotation = this.pixi_rotation;
+
+
             this.pixi_obj.x = this.currentX
             this.pixi_obj.y = this.currentY
             this.pixi_obj.visible = true
