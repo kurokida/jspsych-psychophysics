@@ -2007,7 +2007,7 @@
           case 'button':
             this.jsPsych.pluginAPI.clickTarget(display_element.querySelector(`div[data-choice="${data.response}"] button`), data.rt);
             break;
-          case 'mouse':
+          case 'mouse': {
             const client_rect = document.getElementById('myCanvas').getBoundingClientRect();
             if (typeof data.click_x  === 'undefined') data.click_x = 0;
             if (typeof data.click_y  === 'undefined') data.click_y = 0;
@@ -2019,7 +2019,7 @@
             setTimeout(() => {
               document.getElementById('myCanvas').dispatchEvent(mouse_event);
             }, data.rt);
-            break;
+            break;}
         }
       }
     }
