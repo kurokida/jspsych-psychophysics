@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-dist/dist/plugin-survey-text.js"></script>
+    <script src="../jspsych-dist/dist/plugin-survey-likert.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to combine with survey plugins: survey-text, survey-likert, survey-multi-choice etc.
+    // This program stores the data needed for the analysis in the same row.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            // jsPsych.data.get().localSave('csv','mydata.csv'); // save all the data.
+            jsPsych.data.get().filter({trial_type: 'survey-text'}).localSave('csv','mydata.csv'); // save only data of interest
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    // If you are not interested in Pixi.js, ignore this line.
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `This is a sample program for the psychophysics plugin combined with the survey-likert and survey-text plugins.
+            <br>After three trials, a file with the results will be downloaded.
+            <br>Click on the Start button.`,
+        choices: ['Start'],
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png',
+        './img/pin.png',
+        './img/tape.png',
+        './img/clip.png'
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    // This process is very important for time-accurate presentation of the images.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+    // This program presents images at two horizontally separated locations with a time lag (SOA).
+    // The images and locations are randomized among trials.
+    const image1 = {
+        obj_type: 'image',
+        file: jsPsych.timelineVariable('first_image'),
+        show_start_time: 500, // ms after the start of the trial
+        show_end_time: 1000,
+        startX: jsPsych.timelineVariable('first_image_position'),
+        origin_center: true
+    }
+
+    const image2 =  {
+        obj_type: 'image',
+        file: jsPsych.timelineVariable('second_image'),
+        show_start_time: 1000, // ms after the start of the trial
+        show_end_time: 1500,
+        startX: jsPsych.timelineVariable('second_image_position'),
+        origin_center: true
+    }
+
+    const two_consecutive_images = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        stimuli: [image1, image2],
+        trial_duration: 2000, // The trial continues during this duration.
+        choices: "NO_KEYS" // Any participant's responses are not allowed.
+    }
+
+    const likert = {
+        type: jsPsychSurveyLikert,
+        questions: [
+            {prompt: "Which image do you prefer?", name: 'favorite_image', labels: ["Left", "Right"], required: true}
+        ],
+        data: {
+            'first_image': jsPsych.timelineVariable('first_image'),
+            'second_image': jsPsych.timelineVariable('second_image'),
+            'first_image_position': jsPsych.timelineVariable('first_image_position'),
+            'second_image_position': jsPsych.timelineVariable('second_image_position'),
+        }, 
+        on_finish: function(data){
+            jsPsych.data.get().addToLast(data.response); // separate into individual columns in an output CSV file.
+        }
+    };
+    
+    const text_input = {
+        type: jsPsychSurveyText,
+        questions: [
+            {prompt: 'Describe your impressions about the two images.', name: 'impression', rows: 5}
+        ],
+        data: function(){
+            const tmp_object = {
+                'first_image': jsPsych.timelineVariable('first_image'),
+                'second_image': jsPsych.timelineVariable('second_image'),
+                'first_image_position': jsPsych.timelineVariable('first_image_position'),
+                'second_image_position': jsPsych.timelineVariable('second_image_position'),
+            };
+            return Object.assign(tmp_object, jsPsych.data.getLastTrialData().values()[0].response);
+        },
+        on_finish: function(data){
+            jsPsych.data.get().addToLast(data.response); // separate into individual columns in an output CSV file.
+        }
+    }
+
+    const trial = {
+        timeline: [two_consecutive_images, likert, text_input],
+        timeline_variables: [
+            {first_image: images[0], second_image: images[1], first_image_position: -200, second_image_position: 200},
+            {first_image: images[2], second_image: images[3], first_image_position: 200, second_image_position: -200},
+            {first_image: images[4], second_image: images[5], first_image_position: -200, second_image_position: 200}
+        ],
+        randomize_order: true
+    }
+
+    jsPsych.run([preload, instruction, trial])
+
+</script>
+
+</html>

@@ -273,6 +273,13 @@ const info = {
       default: false,
       description: "If true, this plugin will use PixiJS",
     },
+    remain_canvas: {
+      type: ParameterType.BOOL,
+      pretty_name: "Remain canvas",
+      default: false,
+      description: "If true, the main canvas remains for the next trial.",
+    },
+
     choices: {
       type: ParameterType.KEYS,
       array: true,
@@ -681,6 +688,14 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           ) {
             if (trial.pixi) {
               this.pixi_obj = PIXI.Sprite.from(this.file);
+
+              if (typeof this.pixi_mask !== "undefined") {
+                this.pixi_obj.mask = this.pixi_mask;
+              }
+              if (typeof this.pixi_filters !== "undefined") {
+                this.pixi_obj.filters = this.pixi_filters;
+              }
+
               init_pixi_obj(this.pixi_obj);
             }
             this.prepared = true;
@@ -940,6 +955,53 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
       show() {
         if (trial.pixi) {
+          if (
+            typeof this.scale !== "undefined" &&
+            typeof this.image_width !== "undefined"
+          ) {
+            alert(
+              "You can not specify the scale and image_width at the same time."
+            );
+          }
+          if (
+            typeof this.scale !== "undefined" &&
+            typeof this.image_height !== "undefined"
+          ) {
+            alert(
+              "You can not specify the scale and image_height at the same time."
+            );
+          }
+          if (
+            typeof this.image_height !== "undefined" &&
+            typeof this.image_width !== "undefined"
+          ) {
+            alert(
+              "You can not specify the image_height and image_width at the same time."
+            );
+          }
+
+          let scale = 1;
+
+          if (typeof this.scale !== "undefined") {
+            scale = this.scale;
+          }
+          if (typeof this.image_width !== "undefined") {
+            scale = this.image_width / this.img.width;
+          }
+          if (typeof this.image_height !== "undefined") {
+            scale = this.image_height / this.img.height;
+          }
+
+          this.pixi_obj.scale.x = scale;
+          this.pixi_obj.scale.y = scale;
+
+          if (typeof this.pixi_angle !== "undefined") {
+            this.pixi_obj.angle = this.pixi_angle;
+          }
+          if (typeof this.pixi_rotation !== "undefined") {
+            this.pixi_obj.rotation = this.pixi_rotation;
+          }
+
           this.pixi_obj.x = this.currentX;
           this.pixi_obj.y = this.currentY;
           this.pixi_obj.visible = true;
@@ -1821,25 +1883,29 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
     let pixi_app;
     let new_html = "";
-    if (trial.pixi) {
-      pixi_app = new PIXI.Application({
-        width: trial.canvas_width,
-        height: trial.canvas_height,
-        backgroundColor: getColorNum(trial.background_color),
-        // antialias: true,
-        // resolution: window.devicePixelRatio || 1,
-      });
+    const canvas_exist =
+      document.getElementById("myCanvas") === null ? false : true;
+    if (!canvas_exist) {
+      if (trial.pixi) {
+        pixi_app = new PIXI.Application({
+          width: trial.canvas_width,
+          height: trial.canvas_height,
+          backgroundColor: getColorNum(trial.background_color),
+          // antialias: true,
+          // resolution: window.devicePixelRatio || 1,
+        });
 
-      display_element.appendChild(pixi_app.view);
-    } else {
-      new_html =
-        '<canvas id="myCanvas" class="jspsych-canvas" width=' +
-        trial.canvas_width +
-        " height=" +
-        trial.canvas_height +
-        ' style="background-color:' +
-        trial.background_color +
-        ';"></canvas>';
+        display_element.appendChild(pixi_app.view);
+      } else {
+        new_html =
+          '<canvas id="myCanvas" class="jspsych-canvas" width=' +
+          trial.canvas_width +
+          " height=" +
+          trial.canvas_height +
+          ' style="background-color:' +
+          trial.background_color +
+          ';"></canvas>';
+      }
     }
 
     const motion_rt_method = "performance"; // 'date' or 'performance'. 'performance' is better.
@@ -1891,7 +1957,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     }, trial.response_start_time);
 
     //display buttons
-    if (trial.response_type === "button") {
+    if (!canvas_exist && trial.response_type === "button") {
       let buttons = [];
       if (Array.isArray(trial.button_html)) {
         if (trial.button_html.length == trial.button_choices.length) {
@@ -1926,7 +1992,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     }
 
     // add prompt
-    if (trial.prompt !== null) {
+    if (!canvas_exist && trial.prompt !== null) {
       new_html += trial.prompt;
     }
     display_element.insertAdjacentHTML("beforeend", new_html);
@@ -1943,15 +2009,19 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     let ctx;
 
     function set_canvas(canvas, ratio, width, height) {
+      const ctx = canvas.getContext("2d");
       const canvas_scale = ratio; // This will be 2 in a retina display, and 1.5 in a microsoft surface laptop.
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
-      canvas.width = width * canvas_scale;
-      canvas.height = height * canvas_scale;
+
+      if (!canvas_exist) {
+        canvas.width = width * canvas_scale;
+        canvas.height = height * canvas_scale;
+        ctx.scale(canvas_scale, canvas_scale);
+      }
       const centerX = canvas.width / 2 / canvas_scale;
       const centerY = canvas.height / 2 / canvas_scale;
-      const ctx = canvas.getContext("2d");
-      ctx.scale(canvas_scale, canvas_scale);
+
       return {
         ctx,
         centerX,
@@ -2208,7 +2278,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         }
       }
 
-      if (trial.pixi)
+      if (!trial.remain_canvas && trial.pixi)
         pixi_app.destroy(true, {
           children: true,
           texture: true,
@@ -2247,7 +2317,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       }
 
       // clear the display
-      display_element.innerHTML = "";
+      if (!trial.remain_canvas) {
+        display_element.innerHTML = "";
+      }
 
       // move on to the next trial
       this.jsPsych.finishTrial(trial_data);
@@ -2349,7 +2421,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             data.rt
           );
           break;
-        case "mouse":
+        case "mouse": {
           const client_rect = document
             .getElementById("myCanvas")
             .getBoundingClientRect();
@@ -2364,6 +2436,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             document.getElementById("myCanvas").dispatchEvent(mouse_event);
           }, data.rt);
           break;
+        }
       }
     }
   }

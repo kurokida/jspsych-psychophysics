@@ -121,6 +121,10 @@ A visuals timulus graduated from white to black moves from left to right. This p
 
 # TIPS
 
+[combination_with_survey_plugins.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/combination_with_survey_plugins.html)
+
+This file demonstrates how to combine with survey plugins: survey-text, survey-likert, survey-multi-choice etc. This program stores the data needed for the analysis in the same row.
+
 [how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html)
 
 This file works as the same as the twoImagesWithSOA.html, but the use of the jsPsych.timelineVariable function is slightly different. When you want to use the timeline_variables property with the jspsych-psychophysics plugin, see this file first.

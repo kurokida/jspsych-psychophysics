@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to remain the main canvas even after the trials finishes.
+    // This method will be useful when there is a flash between trials.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const circle_object1 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+    }
+
+    const circle_object2 = {
+        obj_type: 'circle',
+        startX: 200, // location in the canvas
+        startY: 400,
+        endX: 600,
+        endY: 400,
+        radius: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'black',
+        motion_start_time: 0,
+        motion_end_time: 3000,
+    }
+
+    const before_key_press = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        stimuli: [circle_object1],
+        canvas_height: 600,
+        prompt: "Press the space key to start the black cirle moving.",
+        remain_canvas: true, // If true, the main canvas remains for the next trial.'
+    }
+
+    const after_key_press = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        stimuli: [circle_object2],
+        canvas_height: 600,
+        prompt: "The black cricle stops after 3 secs.",
+    }
+
+    jsPsych.run([instruction, before_key_press, after_key_press])
+    
+</script>
+
+</html>

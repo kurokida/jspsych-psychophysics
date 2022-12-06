@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This demo explains how to present a pixi's sprite (image) using a mask and fiters.
+    // This program doesn't use a container.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const img_file_name = './img/personA.png'
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: [img_file_name],
+    }
+
+    const image_width = 312;
+    const image_height = 400;
+
+    const mask = new PIXI.Graphics();
+    mask.beginFill(0xFF3300); // Any color will work.
+    mask.drawRect(0, 0, image_width / 2, image_height / 2) // The top left of the screen is the origin.
+    mask.endFill();
+
+    const blurFilter = new PIXI.filters.BlurFilter();
+
+    const part_of_image = {
+        obj_type: 'image',
+        file: img_file_name,
+        pixi_mask: function(){ // You have to specify a function.
+            return mask
+        },
+        pixi_filters: function(){ // You have to specify a function.
+            return [blurFilter] // Note that this should be an array.
+        },
+        startX: image_width / 2,
+        startY: image_height / 2,
+    }
+    
+    const trial = {
+        type: jsPsychPsychophysics,
+        pixi: true,
+        stimuli: function(){
+            return [part_of_image]
+        }
+    }
+
+    jsPsych.run([preload, instruction, trial])
+</script>
+
+</html>
