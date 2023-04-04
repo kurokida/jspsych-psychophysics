@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+      <script src="https://pixijs.download/release/pixi.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+    </head>
+    <body></body>
+    <script>
+      // This file demonstrates how to specify the keyboard-event functions.
+
+      const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+      })
+
+      const images = [
+        './img/scissors.png',
+        './img/pen.png',
+        './img/battery.png'
+      ];
+
+      // Preloading files are needed to present the stimuli accurately.
+      const preload = {
+          type: jsPsychPreload,
+          images: images,
+      }
+
+      const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+      }
+
+      let image_scale = 1;
+
+      const stim_image = {
+        obj_type: 'image',
+        file: images[0] // scissors.png
+      }
+
+      const trial = {
+          type: jsPsychPsychophysics,
+          canvas_height: 500,
+          prompt: '<p>Pressing the ArrowUp/ArrowDown key, the image size will change. <br>Press the space key to finish the program.</p>',
+          stimuli: [stim_image], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+          response_type: 'key',
+          choices: [' '],
+          key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
+            if (event.key === 'ArrowUp'){
+              image_scale += 0.01;
+            } else if (event.key === 'ArrowDown'){
+              image_scale -= 0.01;
+            }
+
+            jsPsych.getCurrentTrial().stim_array[0].scale = image_scale;
+          },
+          on_finish: function(data){ // https://www.jspsych.org/7.3/overview/events/#on_finish-trial
+            data.image_scale = image_scale;
+          }
+      }
+
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+    jsPsych.run([preload, instruction, trial])
+
+</script>
+</html>
