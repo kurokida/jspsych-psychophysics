@@ -14,5 +14,6 @@ docs/config_yml_20210303
 _layouts/default.html
 demos/mask_filter_with_label.html
 .eslintrc.js
-package.json
 js/Staircase.js
+node_modules
+dist/
