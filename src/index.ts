@@ -11,7 +11,7 @@
  *
  **/
 
-console.log("Psychophysics Version 3.3.0");
+console.log("Psychophysics Version 3.6.0");
 
 import { JsPsych, JsPsychPlugin, ParameterType, TrialType } from "jspsych";
 import { Matrix } from "ml-matrix";
@@ -1925,12 +1925,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           });
         }
       } else if (trial.response_type === "mouse") {
-        // @ts-expect-error because of `const motion_rt_method = "performance";` above
-        if (motion_rt_method == "date") {
-          start_time = new Date().getTime();
-        } else {
-          start_time = performance.now();
-        }
+        start_time = performance.now();
 
         canvas.addEventListener("mousedown", mouseDownFunc);
       } else {
@@ -2113,14 +2108,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
     function mouseDownFunc(e) {
       let click_time;
-
-      // @ts-expect-error because of `const motion_rt_method = "performance";` above
-      if (motion_rt_method == "date") {
-        click_time = new Date().getTime();
-      } else {
-        click_time = performance.now();
-      }
-
+      click_time = performance.now();
+      
       e.preventDefault();
 
       after_response({
