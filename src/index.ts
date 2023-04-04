@@ -827,6 +827,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             let exp_value;
             const adjusted_sc = this.sc * tmpRatio;
             if (this.method === "math") {
+              alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.")
+            }
+            if (this.method === "ml-matrix") {
               const matrix_x = new Matrix(coord_matrix_x);
               const matrix_y = new Matrix(coord_matrix_y).transpose();
 
@@ -1254,6 +1257,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         this.update_count += 1;
 
         if (this.method === "math") {
+          alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.")
+        }
+        if (this.method === "ml-matrix") {
           const matrix_x = new Matrix(coord_matrix_x);
           const matrix_y = new Matrix(coord_matrix_y).transpose();
           const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
