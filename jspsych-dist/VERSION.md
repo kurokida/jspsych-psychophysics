@@ -2,7 +2,7 @@ Included in this release:
 
 Package|Version|Documentation
 --- | --- | ---
-jspsych|7.3.1|https://www.jspsych.org/7.3/
+jspsych|7.3.2|https://www.jspsych.org/7.3/
 extension-mouse-tracking|1.0.2|https://www.jspsych.org/7.3/extensions/mouse-tracking
 extension-record-video|1.0.1|https://www.jspsych.org/7.3/extensions/record-video
 extension-webgazer|1.0.2|https://www.jspsych.org/7.3/extensions/webgazer

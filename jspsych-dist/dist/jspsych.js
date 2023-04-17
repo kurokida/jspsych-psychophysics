@@ -70,7 +70,7 @@ var jsPsychModule = (function (exports) {
     	return self;
     };
 
-    var version = "7.3.1";
+    var version = "7.3.2";
 
     class MigrationError extends Error {
         constructor(message = "The global `jsPsych` variable is no longer available in jsPsych v7.") {
@@ -3188,20 +3188,21 @@ var jsPsychModule = (function (exports) {
             for (const param in trial.type.info.parameters) {
                 // check if parameter is complex with nested defaults
                 if (trial.type.info.parameters[param].type === exports.ParameterType.COMPLEX) {
-                    if (trial.type.info.parameters[param].array === true) {
+                    // check if parameter is undefined and has a default value
+                    if (typeof trial[param] === "undefined" && trial.type.info.parameters[param].default) {
+                        trial[param] = trial.type.info.parameters[param].default;
+                    }
+                    // if parameter is an array, iterate over each entry after confirming that there are
+                    // entries to iterate over. this is common when some parameters in a COMPLEX type have
+                    // default values and others do not.
+                    if (trial.type.info.parameters[param].array === true && Array.isArray(trial[param])) {
                         // iterate over each entry in the array
                         trial[param].forEach(function (ip, i) {
                             // check each parameter in the plugin description
                             for (const p in trial.type.info.parameters[param].nested) {
                                 if (typeof trial[param][i][p] === "undefined" || trial[param][i][p] === null) {
                                     if (typeof trial.type.info.parameters[param].nested[p].default === "undefined") {
-                                        console.error("You must specify a value for the " +
-                                            p +
-                                            " parameter (nested in the " +
-                                            param +
-                                            " parameter) in the " +
-                                            trial.type +
-                                            " plugin.");
+                                        console.error(`You must specify a value for the ${p} parameter (nested in the ${param} parameter) in the ${trial.type.info.name} plugin.`);
                                     }
                                     else {
                                         trial[param][i][p] = trial.type.info.parameters[param].nested[p].default;
@@ -3214,11 +3215,7 @@ var jsPsychModule = (function (exports) {
                 // if it's not nested, checking is much easier and do that here:
                 else if (typeof trial[param] === "undefined" || trial[param] === null) {
                     if (typeof trial.type.info.parameters[param].default === "undefined") {
-                        console.error("You must specify a value for the " +
-                            param +
-                            " parameter in the " +
-                            trial.type.info.name +
-                            " plugin.");
+                        console.error(`You must specify a value for the ${param} parameter in the ${trial.type.info.name} plugin.`);
                     }
                     else {
                         trial[param] = trial.type.info.parameters[param].default;
