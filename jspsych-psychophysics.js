@@ -7415,7 +7415,7 @@ ${indent}columns: ${matrix.columns}
      * about how to use this plugin.
      *
      **/
-    console.log("Psychophysics Version 3.3.0");
+    console.log("Psychophysics Version 3.6.0");
     const info = {
         name: "psychophysics",
         description: "A plugin for conducting online/Web-based psychophysical experiments",
@@ -8113,6 +8113,9 @@ ${indent}columns: ${matrix.columns}
                             let exp_value;
                             const adjusted_sc = this.sc * tmpRatio;
                             if (this.method === "math") {
+                                alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.");
+                            }
+                            if (this.method === "ml-matrix") {
                                 const matrix_x = new Matrix(coord_matrix_x);
                                 const matrix_y = new Matrix(coord_matrix_y).transpose();
                                 const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
@@ -8433,6 +8436,9 @@ ${indent}columns: ${matrix.columns}
                     const phase_rad = deg2rad(this.phase + this.drift * this.update_count);
                     this.update_count += 1;
                     if (this.method === "math") {
+                        alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.");
+                    }
+                    if (this.method === "ml-matrix") {
                         const matrix_x = new Matrix(coord_matrix_x);
                         const matrix_y = new Matrix(coord_matrix_y).transpose();
                         const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
@@ -8984,10 +8990,7 @@ ${indent}columns: ${matrix.columns}
                     }
                 }
                 else if (trial.response_type === "mouse") {
-                    // @ts-expect-error because of `const motion_rt_method = "performance";` above
-                    {
-                        start_time = performance.now();
-                    }
+                    start_time = performance.now();
                     canvas.addEventListener("mousedown", mouseDownFunc);
                 }
                 else {
@@ -9143,10 +9146,7 @@ ${indent}columns: ${matrix.columns}
             // }
             function mouseDownFunc(e) {
                 let click_time;
-                // @ts-expect-error because of `const motion_rt_method = "performance";` above
-                {
-                    click_time = performance.now();
-                }
+                click_time = performance.now();
                 e.preventDefault();
                 after_response({
                     key: -1,
