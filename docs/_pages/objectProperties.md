@@ -158,7 +158,7 @@ See also [Presenting gabor patches in online/web experiments](/gabor/).
 |sc|numeric|20| The standard deviation of the gaussian distribution. |
 |contrast|numeric|20| The contrast of the gabor patch. |
 |drift|numeric|0| The velocity of the drifting gabor patch. The angular velocity per frame. The unit is the degree.|
-|method|text|numeric| The method of drawing the gabor patch. 'numeric' or 'math' [The numeric.js](https://github.com/sloisel/numeric) is considerably faster than [the math.js](https://mathjs.org/).|
+|method|text|numeric| The method of drawing the gabor patch. ['numeric'](https://github.com/sloisel/numeric) or ['ml-matrix'](https://www.npmjs.com/package/ml-matrix). The 'math' is no longer supported since v3.6.0.|
 |disableNorm|boolean|false| Disable normalization of the gaussian function. That is, coefficient: 1/(sqrt(2*pi) * sc) will not be multiplied. If this property is specified as true, the contrast value should be relatively small.|
 |contrastPreMultiplicator|numeric|1| This value is multiplied as a scaling factor to the requested contrast value. For the meaning of this variable, see [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor).|
 |modulate_color|array|[1.0, 1.0, 1.0, 1.0]|This is available in [pixi mode](pixijs.md). For the meaning of this variable, see modulateColor in  [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor). Note that the transparency is different from that of Psychtoolbox. Do not specify any number other than 1.|
