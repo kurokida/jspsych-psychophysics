@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body bgcolor="gray"></body>
+<script>
+    // This file demonstrates how to change the color of the part of a SVG file.
+    // See https://github.com/kurokida/jspsych-psychophysics/issues/45
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const timeline = [];
+
+    const images = [
+        './img/rect_circle_poly.svg',
+    ];
+
+    // I'm not sure if preloading is needed for SVG files, but I do it just in case to present the stimuli accurately
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+    timeline.push(preload)
+    
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+    timeline.push(instruction)
+
+    const svg1 = {
+        imagePath: images[0],
+        color: 'green',
+        width: 300,
+        position: [150, 150]
+    }
+
+    const svg2 = {
+        imagePath: images[0],
+        color: 'purple',
+        width: 500,
+        position: [250, 250]
+    }
+
+    function drawImageObject(images) {
+
+        let objectList = [];
+
+        images.forEach((imageObj) => {
+            const { imagePath, color, width, position  } = imageObj;
+
+            var rect_object = {
+                obj_type: 'rect',
+                width: width,
+                height: width,
+                fill_color: color,
+                line_color: color,
+                startX: position[0],
+                startY: position[1]
+            }
+        
+            var img_object = {
+                obj_type: 'image', 
+                file: imagePath,
+                // scale: (width + 3)/SIZE.REAL_IMAGE_SIZE, // the real size of the image is a global variable
+                scale: width/500, // My SVG file is designed to be 500px wide and 500px high.
+                startX: position[0],
+                startY: position[1]
+            }
+
+            objectList.push(rect_object);
+            objectList.push(img_object);
+            
+        });
+
+        return objectList;
+    }
+
+    const svg_list = [svg1, svg2];
+    const stim_data = drawImageObject(svg_list); // Note that since stim_data has a rectangle for each image, its length is twice the length of the svg_list.
+    
+    // Presentation order is fixed here. More ingenuity is needed to present the stimuli in a random order
+    for (let i = 0; i < svg_list.length; i++){
+        timeline.push(
+            {
+                type: jsPsychPsychophysics,
+                stimuli: [stim_data[i*2], stim_data[i*2 + 1]],
+                canvas_height: 500,
+                prompt: 'Press any key to proceed.'
+            }
+        )
+    }
+
+    jsPsych.run(timeline)
+
+</script>
+
+</html>

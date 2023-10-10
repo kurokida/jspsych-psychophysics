@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css">
+  </head>
+  <body></body>
+  <script>
+    // This file demonstrates how to change the color of the part of a SVG file.
+    // See https://github.com/kurokida/jspsych-psychophysics/issues/45
+    // Note that this demo does not use jsPsychophysics plugin at all.
+
+
+  var jsPsych = initJsPsych({
+    on_finish: function() {
+        jsPsych.data.displayData();
+    }
+  });
+
+  var timeline = [];
+
+  const trial = {
+    timeline: [
+        {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: function(){
+                // Open your SVG file in a text editor, and then copy and paste the <svg> element.
+                return `<svg version="1.1" id="mysvg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500px" height="500px" x="0px"
+                    y="0px" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+                <style type="text/css">
+                    .st0{fill: ${jsPsych.timelineVariable('rect_color')};}
+                    .st1{fill: ${jsPsych.timelineVariable('circle_color')};}
+                    .st2{fill: ${jsPsych.timelineVariable('star_color')};}
+                </style>
+                <g>
+                    <rect x="75.5" y="96.5" class="st0" width="87" height="65"/>
+                    <path d="M162,97v64H76V97H162 M163,96H75v66h88V96L163,96z"/>
+                </g>
+                <g>
+                    <ellipse class="st1" cx="300.5" cy="340" rx="62" ry="59.5"/>
+                    <path d="M300.5,281c33.91,0,61.5,26.47,61.5,59s-27.59,59-61.5,59S239,372.53,239,340S266.59,281,300.5,281 M300.5,280
+                        c-34.52,0-62.5,26.86-62.5,60s27.98,60,62.5,60s62.5-26.86,62.5-60S335.02,280,300.5,280L300.5,280z"/>
+                </g>
+                <g>
+                    <polygon class="st2" points="282.03,199.6 239.34,180.06 280.81,158.07 286.2,111.44 319.93,144.08 365.95,134.8 345.33,176.97 
+                        368.38,217.86 321.9,211.28 290.13,245.84 	"/>
+                    <path d="M286.58,112.5l32.82,31.75l0.38,0.37l0.52-0.1l44.76-9.03l-20.06,41.02l-0.23,0.47l0.26,0.46l22.42,39.78l-45.21-6.4
+                        l-0.52-0.07l-0.36,0.39l-30.9,33.62l-7.88-44.98l-0.09-0.52l-0.48-0.22l-41.52-19l40.34-21.4l0.46-0.25l0.06-0.52L286.58,112.5
+                        M285.82,110.38l-5.48,47.37l-42.13,22.35l43.36,19.85l8.23,46.97l32.28-35.11l47.22,6.68l-23.42-41.55l20.95-42.84l-46.75,9.43
+                        L285.82,110.38L285.82,110.38z"/>
+                </g>
+                </svg>
+                `
+            },
+            choices: ['Red', 'Green', 'Blue'],
+        }
+    ],
+    timeline_variables: [ // There are two trials. You can specify the stimulus colors as you like.
+        {rect_color: "red", circle_color: "blue", star_color: "yellow"},
+        {rect_color: "#ff00ff", circle_color: "#98fb98", star_color: "#ffd700"}
+    ],
+  }
+
+  timeline.push(trial)
+
+  jsPsych.run(timeline);
+
+  </script>
+</html>
