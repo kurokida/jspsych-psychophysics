@@ -47,6 +47,8 @@ Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kuroki
 
 Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), and the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
 
+To add event handlers not supported by the plugin, [touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html) will be helpful.
+
 However, there are cases where it is better not to use these event handlers. See [this issue](https://github.com/kurokida/jspsych-psychophysics/issues/27).
 
 ## 8. The jsPsych.timelineVariable function which specified in a stimulus object does not work properly.
