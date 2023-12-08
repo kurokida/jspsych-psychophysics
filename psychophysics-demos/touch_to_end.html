@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to finsh the psychophysics trial by touching the screen.
+    // You can press keys to finsh as well.
+    // This program is inspired by this post https://github.com/kurokida/jspsych-psychophysics/issues/48#issuecomment-1843525852
+    // and is experimental and needs further testing.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const msg = {
+        obj_type: "text",
+        content: "This is a psychophysics trial.\nPress any key or touch the screen to finish this trial."
+    }
+
+    // Consider storing the touched coordinates
+    let touch_x;
+    let touch_y;
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [msg],
+        on_load: function(){ 
+            touch_x = null; // initialize
+            touch_y = null; // initialize
+
+            const canvas = jsPsych.getCurrentTrial().canvas;
+
+            canvas.addEventListener("touchstart", (event) => {
+                console.log(event)
+                const touch = event.touches[0];
+                touch_x = touch.clientX;
+                touch_y = touch.clientY;
+
+                // The end_trial function should be called, not the jsPsych.finishTrial function.
+                jsPsych.getCurrentTrial().end_trial()
+            })
+        },
+        on_finish(data){
+            data.touch_x = touch_x;
+            data.touch_y = touch_y;
+        }
+    }
+
+    const feed_back = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: function(){
+            const last_trial_data = jsPsych.data.getLastTrialData();
+            const resp = last_trial_data.values()[0].response;
+
+            if (resp === null){
+                return "You have touched the screen."
+            } else {
+                return `You have pressed the ${resp} key.`
+            }
+        },
+        choices: ['Next'],
+    }
+    
+    const main_trials = {
+        timeline: [trial, feed_back],
+        repetitions: 3
+    }
+
+    jsPsych.run([instruction, main_trials])
+</script>
+
+</html>
