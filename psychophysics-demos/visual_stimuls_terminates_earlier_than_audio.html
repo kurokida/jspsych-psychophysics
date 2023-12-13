@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="https://pixijs.download/release/pixi.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+    </head>
+    <body></body>
+    <script>
+      // This file demonstrates how to terminate a visual stimulus earlier than an audio stimuls.
+      // When you press the arrow up key the circle will disappar, but the sound continues.
+      // This program is inspired by this post https://github.com/kurokida/jspsych-psychophysics/issues/49
+      // and is experimental and needs further testing.
+
+      const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+      })
+
+      const sounds = [ // All the sound files used in this demo
+        './sound/long_sound.wav',
+      ];
+
+      // Preloading files are needed to present the stimuli accurately.
+      const preload = {
+          type: jsPsychPreload,
+          audio: sounds,
+      }
+
+      const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+      }
+
+      const circle_obj = {
+          obj_type: 'circle',
+          startX: 'center',
+          startY: 'center',
+          radius: 150,
+          line_color: 'white',
+          fill_color: `black`,
+          line_width: 5,
+      };
+
+      const sound_obj = {
+          obj_type: 'sound',
+          file: sounds[0]
+      }
+
+      const trial = {
+          type: jsPsychPsychophysics,
+          canvas_height: 500,
+          prompt: '<p>When you press the arrow up key the circle will disappar, but the sound continues.</p><p>When you press the space key the sound will stop and this trial will finish.</p>',
+          stimuli: [circle_obj, sound_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+          response_type: 'key',
+          choices: [' '], // This is a space key to finish this trial
+          key_down_func: function(event){
+            if (event.key === 'ArrowUp'){
+                const stim = jsPsych.getCurrentTrial().stim_array;
+                stim[0].show_end_time = 0; // This make the circle invisible.
+            }
+          },
+      }
+
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+    jsPsych.run([instruction, trial])
+
+</script>
+</html>

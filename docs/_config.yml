@@ -68,7 +68,7 @@ author:
       url: "https://twitter.com/kurokida1"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/kurokida"
+      url: "https://github.com/kurokida/jspsych-psychophysics"
 
 footer:
   links:
@@ -77,7 +77,7 @@ footer:
       url: "https://twitter.com/kurokida1"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/kurokida"
+      url: "https://github.com/kurokida/jspsych-psychophysics"
 
 defaults:
   # _docs

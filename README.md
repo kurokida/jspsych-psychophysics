@@ -2,6 +2,9 @@
 This is a jsPsych plugin for psychophysics.
 Please refer to the website: https://kurokida.github.io/jspsych-psychophysics/
 
+# Sound files
+Sound files for demonstration were created using [Audacity](https://github.com/kurokida/jspsych-psychophysics).
+
 # For jspsych-builder users
 
 The [jspsych-builder](https://github.com/bjoluc/jspsych-builder) library is a useful tool for users who are familiar with node.js/NPM packages to make a jspsych-based program. This is a brief explanation for the builder users.
