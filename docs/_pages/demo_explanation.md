@@ -39,6 +39,8 @@ Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 - [keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html) This file demonstrates how to specify the keyboard-event functions. Pressing the ArrowUp/ArrowDown key, the luminance of the circle will change. Press the space key to finish the program.
 - [mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html) This file demonstrates how to specify the mouse-event functions. As you move the mouse, the slope of the line segment changes. By changing the direction of the mouse in motion, the direction of rotation of the line changes. This also demonstrates how to use buttons as a response.
 - [mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html) This file demonstrates how to specify the mouse-event functions. This demo is like a drawing application. Note that the `clear_canvas` property is set to false.
+- [visual_stimuls_terminates_earlier_than_audio.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/visual_stimuls_terminates_earlier_than_audio.html) This file demonstrates how to terminate a visual stimulus earlier than an audio stimuls.
+- [touch_to_end.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/touch_to_end.html) This file demonstrates how to finsh the psychophysics trial by touching the screen.
 
 # requestAnimationFrame
 

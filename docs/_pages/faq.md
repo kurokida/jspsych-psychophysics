@@ -45,7 +45,7 @@ Yes. See the [demos/localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kuroki
 
 ## 7. Can I specify the mouse/keyboard event handler?
 
-Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), and the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
+Yes. See the [demos/mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html), the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/visual_stimuls_terminates_earlier_than_audio.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/visual_stimuls_terminates_earlier_than_audio.html). The mousedown, mouseup, and mousemove on the canvas and the keydown and keyup on the document are supported.
 
 To add event handlers not supported by the plugin, [touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html) will be helpful.
 
@@ -63,7 +63,7 @@ First, you can specify the property using a function. See the [Nested parameters
 
 Second, you can use the `stimuli` when you want to change properties of the stimulus at the begging of the trial. See [demos/randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html) and [demos/rsvp.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/rsvp.html).
 
-Third, you can use the `stim_array` when you want to change properties of the stimulus during the trial (e.g. using the event handlers or the requestAnimationFrame methods). See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), and the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html)
+Third, you can use the `stim_array` when you want to change properties of the stimulus during the trial (e.g. using the event handlers or the requestAnimationFrame methods). See the [demos/mouse_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_event.html), the [demos/keyboard_event.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/keyboard_event.html), the [demos/draw_two_images_repeatedly.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_two_images_repeatedly.html), and the [demos/visual_stimuls_terminates_earlier_than_audio.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/visual_stimuls_terminates_earlier_than_audio.html)
 
 ## 10. What is the avg_frame_time?
 
