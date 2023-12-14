@@ -11,7 +11,7 @@
     <body></body>
     <script>
       // This file demonstrates how to terminate a visual stimulus earlier than an audio stimuls.
-      // When you press the arrow up key the circle will disappar, but the sound continues.
+      // When you press the arrow up/down key the circle will disappar, but the sound continues.
       // This program is inspired by this post https://github.com/kurokida/jspsych-psychophysics/issues/49
       // and is experimental and needs further testing.
 
@@ -53,23 +53,52 @@
           file: sounds[0]
       }
 
+      // initialize for the first trial
+      let stim_onset = null;
+      let resp_key = null;
+      let RT = null;
+
       const trial = {
           type: jsPsychPsychophysics,
           canvas_height: 500,
-          prompt: '<p>When you press the arrow up key the circle will disappar, but the sound continues.</p><p>When you press the space key the sound will stop and this trial will finish.</p>',
+          prompt: '<p>When you press the arrow up/down key the circle will disappar, but the sound continues.</p><p>When you press the space key the sound will stop and this trial will finish.</p>',
           stimuli: [circle_obj, sound_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
           response_type: 'key',
           choices: [' '], // This is a space key to finish this trial
           key_down_func: function(event){
-            if (event.key === 'ArrowUp'){
-                const stim = jsPsych.getCurrentTrial().stim_array;
-                stim[0].show_end_time = 0; // This make the circle invisible.
+            // Note that the key_down_func can ignore the settings of choices and receive key input. In addition, the key_down_func doesn't terminate this trial.
+            if (stim_onset === null) return;
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
+              RT = performance.now() - stim_onset;
+
+              if (event.key === 'ArrowUp') resp_key = 'ArrowUp';
+              if (event.key === 'ArrowDown') resp_key = 'ArrowDown';
+
+              const stim = jsPsych.getCurrentTrial().stim_array;
+              stim[0].show_end_time = 0; // This make the circle invisible.
             }
           },
+          on_start: function(trial){
+            stim_onset = performance.now(); // Time the trial started
+          },
+          on_finish: function(data){
+            data.reaction_time = RT;
+            data.resp_key = resp_key;
+            
+            // initialize for the next trial
+            stim_onset = null;
+            resp_key = null;
+            RT = null;
+          }
+      }
+
+      const main_trials = {
+        timeline: [instruction, trial],
+        repetitions: 2
       }
 
     console.log(`jsPsych Version ${jsPsych.version()}`)
-    jsPsych.run([instruction, trial])
+    jsPsych.run([main_trials])
 
 </script>
 </html>
