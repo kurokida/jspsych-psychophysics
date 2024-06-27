@@ -1,6 +1,6 @@
 {
   "name": "@kurokida/jspsych-psychophysics",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "A jsPsych plugin for conducting online/Web-based psychophysical experiments",
   "type": "module",
   "main": "dist/index.cjs",
