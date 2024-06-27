@@ -87,6 +87,12 @@ var jsPsychImageButtonResponse = (function (jspsych) {
               pretty_name: "Render on canvas",
               default: true,
           },
+          /** The delay of enabling button */
+          enable_button_after: {
+              type: jspsych.ParameterType.INT,
+              pretty_name: "Enable button after",
+              default: 0,
+          },
       },
   };
   /**
@@ -321,6 +327,25 @@ var jsPsychImageButtonResponse = (function (jspsych) {
                   end_trial();
               }
           }
+          function enable_buttons() {
+              var btns = document.querySelectorAll(".jspsych-image-button-response-button button");
+              for (var i = 0; i < btns.length; i++) {
+                  btns[i].removeAttribute("disabled");
+              }
+          }
+          function disable_buttons() {
+              var btns = document.querySelectorAll(".jspsych-image-button-response-button button");
+              for (var i = 0; i < btns.length; i++) {
+                  btns[i].setAttribute("disabled", "disabled");
+              }
+          }
+          // set timer of button delay
+          if (trial.enable_button_after > 0) {
+              disable_buttons();
+              this.jsPsych.pluginAPI.setTimeout(() => {
+                  enable_buttons();
+              }, trial.enable_button_after);
+          }
           // hide image if timing is set
           if (trial.stimulus_duration !== null) {
               this.jsPsych.pluginAPI.setTimeout(() => {
@@ -349,7 +374,8 @@ var jsPsychImageButtonResponse = (function (jspsych) {
       create_simulation_data(trial, simulation_options) {
           const default_data = {
               stimulus: trial.stimulus,
-              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) +
+                  trial.enable_button_after,
               response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
           };
           const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);

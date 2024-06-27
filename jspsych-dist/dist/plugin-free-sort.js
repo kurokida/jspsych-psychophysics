@@ -1,6 +1,46 @@
 var jsPsychFreeSort = (function (jspsych) {
   'use strict';
 
+  function shuffle(array) {
+      // define three variables
+      let cur_idx = array.length, tmp_val, rand_idx;
+      // While there remain elements to shuffle...
+      while (0 !== cur_idx) {
+          // Pick a remaining element...
+          rand_idx = Math.floor(Math.random() * cur_idx);
+          cur_idx -= 1;
+          // And swap it with the current element.
+          tmp_val = array[cur_idx];
+          array[cur_idx] = array[rand_idx];
+          array[rand_idx] = tmp_val;
+      }
+      return array;
+  }
+  function make_arr(startValue, stopValue, cardinality) {
+      const step = (stopValue - startValue) / (cardinality - 1);
+      let arr = [];
+      for (let i = 0; i < cardinality; i++) {
+          arr.push(startValue + step * i);
+      }
+      return arr;
+  }
+  function inside_ellipse(x, y, x0, y0, rx, ry, square = false) {
+      if (square) {
+          return Math.abs(x - x0) <= rx && Math.abs(y - y0) <= ry;
+      }
+      else {
+          return (x - x0) * (x - x0) * (ry * ry) + (y - y0) * (y - y0) * (rx * rx) <= rx * rx * (ry * ry);
+      }
+  }
+  function random_coordinate(max_width, max_height) {
+      const rnd_x = Math.floor(Math.random() * (max_width - 1));
+      const rnd_y = Math.floor(Math.random() * (max_height - 1));
+      return {
+          x: rnd_x,
+          y: rnd_y,
+      };
+  }
+
   const info = {
       name: "free-sort",
       parameters: {
@@ -225,18 +265,16 @@ var jsPsychFreeSort = (function (jspsych) {
               for (const x of make_arr(0, trial.sort_area_width - trial.stim_width, num_rows)) {
                   for (const y of make_arr(0, trial.sort_area_height - trial.stim_height, num_rows)) {
                       if (x > (trial.sort_area_width - trial.stim_width) * 0.5) {
-                          //r_coords.push({ x:x, y:y } )
                           r_coords.push({
                               x: x + trial.sort_area_width * (0.5 * trial.column_spread_factor),
-                              y: y,
+                              y,
                           });
                       }
                       else {
                           l_coords.push({
                               x: x - trial.sort_area_width * (0.5 * trial.column_spread_factor),
-                              y: y,
+                              y,
                           });
-                          //l_coords.push({ x:x, y:y } )
                       }
                   }
               }
@@ -250,7 +288,6 @@ var jsPsychFreeSort = (function (jspsych) {
               // shuffle stimuli, so that starting positions are random
               stimuli = shuffle(stimuli);
           }
-          let inside = [];
           for (let i = 0; i < stimuli.length; i++) {
               var coords;
               if (trial.stim_starts_inside) {
@@ -292,19 +329,14 @@ var jsPsychFreeSort = (function (jspsych) {
                   x: coords.x,
                   y: coords.y,
               });
-              if (trial.stim_starts_inside) {
-                  inside.push(true);
-              }
-              else {
-                  inside.push(false);
-              }
           }
+          const inside = stimuli.map(() => trial.stim_starts_inside);
           // moves within a trial
-          let moves = [];
+          const moves = [];
           // are objects currently inside
           let cur_in = false;
           // draggable items
-          const draggables = display_element.querySelectorAll(".jspsych-free-sort-draggable");
+          const draggables = Array.from(display_element.querySelectorAll(".jspsych-free-sort-draggable"));
           // button (will show when all items are inside) and border (will change color)
           const border = display_element.querySelector("#jspsych-free-sort-border");
           const button = display_element.querySelector("#jspsych-free-sort-done-btn");
@@ -320,48 +352,16 @@ var jsPsychFreeSort = (function (jspsych) {
               display_element.querySelector("#jspsych-free-sort-counter").innerHTML =
                   trial.counter_text_finished;
           }
-          let start_event_name = "mousedown";
-          let move_event_name = "mousemove";
-          let end_event_name = "mouseup";
-          if (typeof document.ontouchend !== "undefined") {
-              // for touch devices
-              start_event_name = "touchstart";
-              move_event_name = "touchmove";
-              end_event_name = "touchend";
-          }
-          for (let i = 0; i < draggables.length; i++) {
-              draggables[i].addEventListener(start_event_name, (event) => {
-                  let pageX;
-                  let pageY;
-                  if (event instanceof MouseEvent) {
-                      pageX = event.pageX;
-                      pageY = event.pageY;
-                  }
-                  //if (typeof document.ontouchend !== "undefined") {
-                  if (event instanceof TouchEvent) {
-                      // for touch devices
-                      event.preventDefault();
-                      const touchObject = event.changedTouches[0];
-                      pageX = touchObject.pageX;
-                      pageY = touchObject.pageY;
-                  }
-                  let elem = event.currentTarget;
-                  let x = pageX - elem.offsetLeft;
-                  let y = pageY - elem.offsetTop - window.scrollY;
-                  elem.style.transform = "scale(" + trial.scale_factor + "," + trial.scale_factor + ")";
-                  let move_event = (e) => {
-                      let clientX = e.clientX;
-                      let clientY = e.clientY;
-                      if (typeof document.ontouchend !== "undefined") {
-                          // for touch devices
-                          const touchObject = e.changedTouches[0];
-                          clientX = touchObject.clientX;
-                          clientY = touchObject.clientY;
-                      }
+          for (const draggable of draggables) {
+              draggable.addEventListener("pointerdown", function ({ clientX: pageX, clientY: pageY }) {
+                  let x = pageX - this.offsetLeft;
+                  let y = pageY - this.offsetTop - window.scrollY;
+                  this.style.transform = "scale(" + trial.scale_factor + "," + trial.scale_factor + ")";
+                  const on_pointer_move = ({ clientX, clientY }) => {
                       cur_in = inside_ellipse(clientX - x, clientY - y, trial.sort_area_width * 0.5 - trial.stim_width * 0.5, trial.sort_area_height * 0.5 - trial.stim_height * 0.5, trial.sort_area_width * 0.5, trial.sort_area_height * 0.5, trial.sort_area_shape == "square");
-                      elem.style.top =
+                      this.style.top =
                           Math.min(trial.sort_area_height - trial.stim_height * 0.5, Math.max(-trial.stim_height * 0.5, clientY - y)) + "px";
-                      elem.style.left =
+                      this.style.left =
                           Math.min(trial.sort_area_width * 1.5 - trial.stim_width, Math.max(-trial.sort_area_width * 0.5, clientX - x)) + "px";
                       // modify border while items is being moved
                       if (trial.change_border_background_color) {
@@ -375,7 +375,7 @@ var jsPsychFreeSort = (function (jspsych) {
                           }
                       }
                       // replace in overall array, grab index from item id
-                      var elem_number = parseInt(elem.id.split("jspsych-free-sort-draggable-")[1], 10);
+                      var elem_number = parseInt(this.id.split("jspsych-free-sort-draggable-")[1], 10);
                       inside.splice(elem_number, 1, cur_in);
                       // modify text and background if all items are inside
                       if (inside.every(Boolean)) {
@@ -393,10 +393,10 @@ var jsPsychFreeSort = (function (jspsych) {
                               get_counter_text(inside.length - inside.filter(Boolean).length);
                       }
                   };
-                  document.addEventListener(move_event_name, move_event);
-                  var end_event = (e) => {
-                      document.removeEventListener(move_event_name, move_event);
-                      elem.style.transform = "scale(1, 1)";
+                  document.addEventListener("pointermove", on_pointer_move);
+                  const on_pointer_up = (e) => {
+                      document.removeEventListener("pointermove", on_pointer_move);
+                      this.style.transform = "scale(1, 1)";
                       if (trial.change_border_background_color) {
                           if (inside.every(Boolean)) {
                               border.style.background = trial.border_color_in;
@@ -408,13 +408,13 @@ var jsPsychFreeSort = (function (jspsych) {
                           }
                       }
                       moves.push({
-                          src: elem.dataset.src,
-                          x: elem.offsetLeft,
-                          y: elem.offsetTop,
+                          src: this.dataset.src,
+                          x: this.offsetLeft,
+                          y: this.offsetTop,
                       });
-                      document.removeEventListener(end_event_name, end_event);
+                      document.removeEventListener("pointerup", on_pointer_up);
                   };
-                  document.addEventListener(end_event_name, end_event);
+                  document.addEventListener("pointerup", on_pointer_up);
               });
           }
           display_element.querySelector("#jspsych-free-sort-done-btn").addEventListener("click", () => {
@@ -460,46 +460,6 @@ var jsPsychFreeSort = (function (jspsych) {
                   }
               }
               return text_out;
-          }
-          // helper functions
-          function shuffle(array) {
-              // define three variables
-              let cur_idx = array.length, tmp_val, rand_idx;
-              // While there remain elements to shuffle...
-              while (0 !== cur_idx) {
-                  // Pick a remaining element...
-                  rand_idx = Math.floor(Math.random() * cur_idx);
-                  cur_idx -= 1;
-                  // And swap it with the current element.
-                  tmp_val = array[cur_idx];
-                  array[cur_idx] = array[rand_idx];
-                  array[rand_idx] = tmp_val;
-              }
-              return array;
-          }
-          function make_arr(startValue, stopValue, cardinality) {
-              const step = (stopValue - startValue) / (cardinality - 1);
-              let arr = [];
-              for (let i = 0; i < cardinality; i++) {
-                  arr.push(startValue + step * i);
-              }
-              return arr;
-          }
-          function inside_ellipse(x, y, x0, y0, rx, ry, square = false) {
-              if (square) {
-                  return Math.abs(x - x0) <= rx && Math.abs(y - y0) <= ry;
-              }
-              else {
-                  return ((x - x0) * (x - x0) * (ry * ry) + (y - y0) * (y - y0) * (rx * rx) <= rx * rx * (ry * ry));
-              }
-          }
-          function random_coordinate(max_width, max_height) {
-              const rnd_x = Math.floor(Math.random() * (max_width - 1));
-              const rnd_y = Math.floor(Math.random() * (max_height - 1));
-              return {
-                  x: rnd_x,
-                  y: rnd_y,
-              };
           }
       }
   }

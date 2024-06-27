@@ -222,23 +222,67 @@ var jsPsychInstructions = (function (jspsych) {
           }
       }
       create_simulation_data(trial, simulation_options) {
+          var _a, _b, _c, _d, _e, _f;
           let curr_page = 0;
           let rt = 0;
-          const view_history = [];
-          while (curr_page !== trial.pages.length) {
-              const view_time = this.jsPsych.randomization.sampleExGaussian(3000, 300, 1 / 300);
-              view_history.push({ page_index: curr_page, viewing_time: view_time });
-              rt += view_time;
-              if (curr_page == 0 || !trial.allow_backward) {
-                  curr_page++;
-              }
-              else {
-                  if (this.jsPsych.randomization.sampleBernoulli(0.9) == 1) {
+          let view_history = [];
+          // if there is no view history and no RT, simulate a random walk through the pages
+          if (!((_a = simulation_options.data) === null || _a === void 0 ? void 0 : _a.view_history) && !((_b = simulation_options.data) === null || _b === void 0 ? void 0 : _b.rt)) {
+              while (curr_page !== trial.pages.length) {
+                  const view_time = Math.round(this.jsPsych.randomization.sampleExGaussian(3000, 300, 1 / 300));
+                  view_history.push({ page_index: curr_page, viewing_time: view_time });
+                  rt += view_time;
+                  if (curr_page == 0 || !trial.allow_backward) {
                       curr_page++;
                   }
                   else {
-                      curr_page--;
+                      if (this.jsPsych.randomization.sampleBernoulli(0.9) == 1) {
+                          curr_page++;
+                      }
+                      else {
+                          curr_page--;
+                      }
                   }
+              }
+          }
+          // if there is an RT but no view history, simulate a random walk through the pages
+          // that ends on the final page when the RT is reached
+          if (!((_c = simulation_options.data) === null || _c === void 0 ? void 0 : _c.view_history) && ((_d = simulation_options.data) === null || _d === void 0 ? void 0 : _d.rt)) {
+              rt = simulation_options.data.rt;
+              while (curr_page !== trial.pages.length) {
+                  view_history.push({ page_index: curr_page, viewing_time: null });
+                  if (curr_page == 0 || !trial.allow_backward) {
+                      curr_page++;
+                  }
+                  else {
+                      if (this.jsPsych.randomization.sampleBernoulli(0.9) == 1) {
+                          curr_page++;
+                      }
+                      else {
+                          curr_page--;
+                      }
+                  }
+              }
+              const avg_rt_per_page = simulation_options.data.rt / view_history.length;
+              let total_time = 0;
+              for (const page of view_history) {
+                  const t = Math.round(this.jsPsych.randomization.sampleExGaussian(avg_rt_per_page, avg_rt_per_page / 10, 1 / (avg_rt_per_page / 10)));
+                  page.viewing_time = t;
+                  total_time += t;
+              }
+              const diff = simulation_options.data.rt - total_time;
+              // remove equal diff from each page
+              const diff_per_page = Math.round(diff / view_history.length);
+              for (const page of view_history) {
+                  page.viewing_time += diff_per_page;
+              }
+          }
+          // if there is a view history but no RT, make the RT equal the sum of the view history
+          if (((_e = simulation_options.data) === null || _e === void 0 ? void 0 : _e.view_history) && !((_f = simulation_options.data) === null || _f === void 0 ? void 0 : _f.rt)) {
+              view_history = simulation_options.data.view_history;
+              rt = 0;
+              for (const page of simulation_options.data.view_history) {
+                  rt += page.viewing_time;
               }
           }
           const default_data = {

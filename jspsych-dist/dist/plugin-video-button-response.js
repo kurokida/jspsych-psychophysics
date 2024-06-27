@@ -109,6 +109,12 @@ var jsPsychVideoButtonResponse = (function (jspsych) {
               pretty_name: "Response allowed while playing",
               default: true,
           },
+          /** The delay of enabling button */
+          enable_button_after: {
+              type: jspsych.ParameterType.INT,
+              pretty_name: "Enable button after",
+              default: 0,
+          },
       },
   };
   /**
@@ -251,7 +257,12 @@ var jsPsychVideoButtonResponse = (function (jspsych) {
                   var currenttime = video_element.currentTime;
                   if (currenttime >= trial.stop) {
                       if (!trial.response_allowed_while_playing) {
-                          enable_buttons();
+                          if (trial.enable_button_after > 0) {
+                              enable_buttons_delayed(trial.enable_button_after);
+                          }
+                          else {
+                              enable_buttons();
+                          }
                       }
                       video_element.pause();
                       if (trial.trial_ends_after_video && !stopped) {
@@ -263,8 +274,17 @@ var jsPsychVideoButtonResponse = (function (jspsych) {
                   }
               });
           }
+          const enable_buttons_delayed = (delay) => {
+              this.jsPsych.pluginAPI.setTimeout(enable_buttons, delay);
+          };
           if (trial.response_allowed_while_playing) {
-              enable_buttons();
+              disable_buttons();
+              if (trial.enable_button_after !== null) {
+                  enable_buttons_delayed(trial.enable_button_after);
+              }
+              else {
+                  enable_buttons();
+              }
           }
           else {
               disable_buttons();
@@ -352,7 +372,8 @@ var jsPsychVideoButtonResponse = (function (jspsych) {
       create_simulation_data(trial, simulation_options) {
           const default_data = {
               stimulus: trial.stimulus,
-              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) +
+                  trial.enable_button_after,
               response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
           };
           const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);

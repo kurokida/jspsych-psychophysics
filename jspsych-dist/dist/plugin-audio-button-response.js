@@ -69,6 +69,12 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               pretty_name: "Response allowed while playing",
               default: true,
           },
+          /** The delay of enabling button */
+          enable_button_after: {
+              type: jspsych.ParameterType.INT,
+              pretty_name: "Enable button after",
+              default: 0,
+          },
       },
   };
   /**
@@ -161,6 +167,7 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               }
               display_element.innerHTML = html;
               if (trial.response_allowed_while_playing) {
+                  disable_buttons();
                   enable_buttons();
               }
               else {
@@ -227,6 +234,9 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
               this.jsPsych.finishTrial(trial_data);
               trial_complete();
           };
+          const enable_buttons_with_delay = (delay) => {
+              this.jsPsych.pluginAPI.setTimeout(enable_buttons_without_delay, delay);
+          };
           function button_response(e) {
               var choice = e.currentTarget.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
               after_response(choice);
@@ -241,7 +251,7 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                   btns[i].removeEventListener("click", button_response);
               }
           }
-          function enable_buttons() {
+          function enable_buttons_without_delay() {
               var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
               for (var i = 0; i < btns.length; i++) {
                   var btn_el = btns[i].querySelector("button");
@@ -249,6 +259,14 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
                       btn_el.disabled = false;
                   }
                   btns[i].addEventListener("click", button_response);
+              }
+          }
+          function enable_buttons() {
+              if (trial.enable_button_after > 0) {
+                  enable_buttons_with_delay(trial.enable_button_after);
+              }
+              else {
+                  enable_buttons_without_delay();
               }
           }
           return new Promise((resolve) => {
@@ -267,7 +285,8 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
       create_simulation_data(trial, simulation_options) {
           const default_data = {
               stimulus: trial.stimulus,
-              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) +
+                  trial.enable_button_after,
               response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
           };
           const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);

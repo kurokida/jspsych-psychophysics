@@ -15,6 +15,8 @@ var jsPsychExtensionRecordVideo = (function () {
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
+    /* global Reflect, Promise, SuppressedError, Symbol */
+
 
     function __awaiter(thisArg, _arguments, P, generator) {
         function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -24,6 +26,15 @@ var jsPsychExtensionRecordVideo = (function () {
             function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
+    }
+
+    typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+        var e = new Error(message);
+        return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    };
+
+    function getDefaultExportFromCjs (x) {
+    	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
     }
 
     // Gets all non-builtin properties up the prototype chain
@@ -68,6 +79,8 @@ var jsPsychExtensionRecordVideo = (function () {
     	return self;
     };
 
+    var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
+
     class RecordVideoExtension {
         constructor(jsPsych) {
             this.jsPsych = jsPsych;
@@ -106,7 +119,7 @@ var jsPsychExtensionRecordVideo = (function () {
                     }
                 });
             };
-            autoBind(this);
+            autoBind$1(this);
         }
         handleOnDataAvailable(event) {
             if (event.data.size > 0) {

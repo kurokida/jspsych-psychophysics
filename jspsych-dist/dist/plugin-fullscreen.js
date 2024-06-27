@@ -45,6 +45,8 @@ var jsPsychFullscreen = (function (jspsych) {
   class FullscreenPlugin {
       constructor(jsPsych) {
           this.jsPsych = jsPsych;
+          this.rt = null;
+          this.start_time = 0;
       }
       trial(display_element, trial) {
           // check if keys are allowed in fullscreen mode
@@ -70,15 +72,18 @@ var jsPsychFullscreen = (function (jspsych) {
       <button id="jspsych-fullscreen-btn" class="jspsych-btn">${trial.button_label}</button>
     `;
           display_element.querySelector("#jspsych-fullscreen-btn").addEventListener("click", () => {
+              this.rt = Math.round(performance.now() - this.start_time);
               this.enterFullScreen();
               this.endTrial(display_element, true, trial);
           });
+          this.start_time = performance.now();
       }
       endTrial(display_element, success, trial) {
           display_element.innerHTML = "";
           this.jsPsych.pluginAPI.setTimeout(() => {
               var trial_data = {
                   success: success,
+                  rt: this.rt,
               };
               this.jsPsych.finishTrial(trial_data);
           }, trial.delay_after);
@@ -126,8 +131,10 @@ var jsPsychFullscreen = (function (jspsych) {
           }
       }
       create_simulation_data(trial, simulation_options) {
+          const rt = this.jsPsych.randomization.sampleExGaussian(1000, 100, 1 / 200, true);
           const default_data = {
               success: true,
+              rt: rt,
           };
           const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
           return data;
@@ -145,7 +152,7 @@ var jsPsychFullscreen = (function (jspsych) {
           else {
               this.trial(display_element, trial);
               load_callback();
-              this.jsPsych.pluginAPI.clickTarget(display_element.querySelector("#jspsych-fullscreen-btn"), this.jsPsych.randomization.sampleExGaussian(1000, 100, 1 / 200, true));
+              this.jsPsych.pluginAPI.clickTarget(display_element.querySelector("#jspsych-fullscreen-btn"), data.rt);
           }
       }
   }
