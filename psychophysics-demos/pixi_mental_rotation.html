@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8">
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+    <style>
+        body {
+            background-color: grey;
+        }
+      </style>
+</head>
+<body></body>
+<script>
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            // jsPsych.data.displayData();
+            // jsPsych.data.get().localSave('csv','mydata.csv');
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`) 
+
+    const experiment = [];
+
+    const fixation = {
+        obj_type: 'text',
+        content: "+",
+        fontSize: 60,
+        text_color: 'white',
+        show_start_time: 0,
+        show_end_time: 1000
+    }
+
+    const stim_char = {
+        obj_type: 'text',
+        content: jsPsych.timelineVariable('char'),
+        fontSize: 60,
+        text_color: 'white',
+        pixi_angle: jsPsych.timelineVariable('rotAngle'),
+        show_start_time: 1000,
+    }
+
+    const mr_trial = {
+        type: jsPsychPsychophysics,
+        pixi: true,
+        stimuli: [fixation, stim_char],
+        choices: ['ArrowLeft', 'ArrowRight'],
+        canvas_height: 500,
+        prompt: '<p>Press the left arrow key for "b" and the right arrow key for "d".</p>',
+    }
+
+    const main_trials = {
+        timeline: [mr_trial],
+        timeline_variables: [
+            {char: "b", rotAngle: 0},
+            {char: "b", rotAngle: 60},
+            {char: "b", rotAngle: 120},
+            {char: "b", rotAngle: 180},
+            {char: "b", rotAngle: 240},
+            {char: "b", rotAngle: 300},
+            {char: "d", rotAngle: 0},
+            {char: "d", rotAngle: 60},
+            {char: "d", rotAngle: 120},
+            {char: "d", rotAngle: 180},
+            {char: "d", rotAngle: 240},
+            {char: "d", rotAngle: 300},
+        ],
+        randomize_order: true,
+        repetitions: 2
+    }
+
+    experiment.push(main_trials)
+
+    jsPsych.run(experiment)
+
+</script>
+
+</html>

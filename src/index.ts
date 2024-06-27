@@ -11,12 +11,16 @@
  *
  **/
 
-console.log("Psychophysics Version 3.6.0");
+console.log("Psychophysics Version 3.7.0");
 
 import { JsPsych, JsPsychPlugin, ParameterType, TrialType } from "jspsych";
 import { Matrix } from "ml-matrix";
 import numeric from "numeric";
 import * as PIXI from "pixi.js";
+
+if (typeof PIXI.VERSION !== "undefined"){
+  console.log(`PixiJS Version ${PIXI.VERSION}`)
+};
 
 const info = {
   name: "psychophysics",
@@ -1703,6 +1707,14 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           this.pixi_obj.style.fill = this.text_color;
           this.pixi_obj.style.lineJoin = this.lineJoin;
           this.pixi_obj.style.miterLimit = this.miterLimit;
+
+          if (typeof this.pixi_angle !== "undefined") {
+            this.pixi_obj.angle = this.pixi_angle;
+          }
+          if (typeof this.pixi_rotation !== "undefined") {
+            this.pixi_obj.rotation = this.pixi_rotation;
+          }
+
         } else {
           if (typeof this.text_space === "undefined") this.text_space = 20;
           let font_info = "";
