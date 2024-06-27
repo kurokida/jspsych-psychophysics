@@ -55,9 +55,10 @@ Please see [the documentation](pixijs.md) regarding the pixi mode of the psychop
 - [pixi_container_mask_filters.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_container_mask_filters.html) This demo explains how to present a pixi's container using a mask and fiters.
 - [pixi_image_mask_filters.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_image_mask_filters.html) This demo explains how to present a pixi's sprite (image) using a mask and fiters. This program doesn't use a container.
 - [pixi_scale_rotate.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_scale_rotate.html) This file demonstrates how to present a scaled and rotated image.
-- [draw_part_of_image_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image_pixi.html) This demo explains how to do the similar thing as draw_part_of_image.html in pixi mode.
-- [elapsed_time_frame_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame_pixi.html) This demo explains how to do the same thing as elapsed_time_frame.html in pixi mode.
-- [move_in_a_circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/move_in_a_circle.html) This file demonstrates how to present the same stimulus of the raf_func.html in pixi mode.
+- [draw_part_of_image_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image_pixi.html) This demo explains how to do the similar thing as draw_part_of_image.html in the pixi mode.
+- [elapsed_time_frame_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame_pixi.html) This demo explains how to do the same thing as elapsed_time_frame.html in the pixi mode.
+- [move_in_a_circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/move_in_a_circle.html) This file demonstrates how to present the same stimulus of the raf_func.html in the pixi mode.
+- [pixi_mental_rotation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_mental_rotation.html) This file demonstrates how to rotate the stimulus charactor in the pixi mode. You can also rotate the image in a similar fashion.
 
 # Other stimuli
 

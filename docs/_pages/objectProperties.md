@@ -133,8 +133,14 @@ There are two ways to define a line. See, `demos/lines.html`.
 |---|---|---|---|
 |content|string|undefined|The content of the text. It can include `\n` to start a new line.|
 |font|string|undefined| You can change the size and font. [This is the same as the font property of `<canvas>` element.](https://www.w3schools.com/tags/canvas_font.asp)|
+|fontStyle|string|normal|See [the mdn web docs](https://developer.mozilla.org/ja/docs/Web/CSS/font-style)|
+|fontWeight|string|normal|See [the mdn web docs](https://developer.mozilla.org/ja/docs/Web/CSS/font-weight)|
+|fontSize|string|20px|See [the mdn web docs](https://developer.mozilla.org/ja/docs/Web/CSS/font-size)|
+|fontFamily|string|Verdana, Arial, Helvetica, sans-serif|See [the mdn web docs](https://developer.mozilla.org/ja/docs/Web/CSS/font-family)|
 |text_color|string|#000000 (black)|The color of the text.|
 |text_space|numeric|20|The space between lines. Note that this will not work in Pixi mode.|
+|pixi_angle|numeric|undefined|The angle of the image in degrees.|
+|pixi_rotation|numeric|undefined|The angle of the image in radians.|
 
 # obj_type: 'cross' 
 

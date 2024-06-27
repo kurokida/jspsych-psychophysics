@@ -13,10 +13,21 @@ If you are interested in Pixi mode, please see [the results of an accuracy test 
 
 To use PixiJS, in priciple, the program files must be uploaded to a web server. However, some programs will work on a local PC (e.g., a prgoram presenting rectangles and circles.)
 
+## Donwload PixiJS Version 6.5.8
+
+Although details are not known, I noticed that there might be a flush between the trials except for version 6.5.8. So, I recommend to download the production build file (pixi.min.js) from [the release page](https://github.com/pixijs/pixijs/releases/tag/v6.5.8). Then save the pixi.min.js in the same folder as your program.
+
+See [this page](https://pixijs.download/v6.5.6/docs/index.html) for the documentation of PixiJS V6.
+
+Note that the psychophysics plugin is not compatible with PixiJS V7 or higher.
+
 ## Include PixiJS using a script tag
 
+Note that the pixi.min.js must be loaded before the psychophysics.js.
+
 ```javascript
-<script src="https://pixijs.download/release/pixi.js"></script>
+<script src="./pixi.min.js"></script>
+<script src="./jspsych-psychophysics.js"></script>
 ```
 
 ## Set the pixi property as true
@@ -32,13 +43,6 @@ const trial = {
 }
 
 ```
-
-# How to check if the program is working in Pixi mode
-
-Please open the JavaScript console window in your browser. If you are using Chrome on Windows, press Ctrl + Shift + I to open the console. You'll see the following line in the console if the program runs in Pixi mode.
-
-![pixi_mode](/images/pixi_mode.png)
-
 
 # Known problems in Pixi mode
 
