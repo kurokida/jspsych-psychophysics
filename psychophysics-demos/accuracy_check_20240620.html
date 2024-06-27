@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.1"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+    <script src="../jspsych-psychophysics20240620.js"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+    p {
+        color: white;
+    }
+    body {
+      background-color: black;
+    }
+  </style>
+</head>
+<body></body>
+<script>
+    // The accuracy of the psychophysics plugin was confirmed using this script.
+    // See https://osf.io/pj4sb/
+
+    const jsPsych = initJsPsych({})
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlKeyboardResponse,
+        // stimulus: '<p>This program uses the jspsych-psychophysics plugin.</p><p>Press any key to start.</p>'
+        stimulus: ''
+    }
+
+    const experiment = [];
+
+    const sounds = [
+        './sound/tone100ms.wav'
+    ];
+
+    const preload = {
+        type: jsPsychPreload,
+        audio: sounds,
+    }
+
+    const enter_fullscreen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true,
+    }
+
+    experiment.push(preload)
+    experiment.push(enter_fullscreen)
+    experiment.push(instruction);
+
+    const time_units = ["millisecond", "frame"]
+    const pixi_settings = [false, true]
+
+    pixi_settings.forEach(pixi_flag => {
+        time_units.forEach(units => {
+            let rect1;
+            let rect2;
+            let sound_object;
+
+            if (units === "millisecond") {
+                rect1 = {
+                    obj_type: 'rect',
+                    startX: 300,
+                    startY: 200,
+                    width: 100,
+                    height: 100,
+                    fill_color: 'white',
+                    show_start_time: 0,
+                    show_end_time: 50, // Rect1 is presented for 50 ms. 
+                    is_frame: false,
+                }
+
+                rect2 = {
+                    obj_type: 'rect',
+                    startX: 800,
+                    startY: 600,
+                    width: 100,
+                    height: 100,
+                    fill_color: 'white',
+                    show_start_time: 100,
+                    show_end_time: 150, // Rect2 is presented for 50 ms, 100 ms after Rect1 is presented (i.e., SOA = 100 ms).
+                    is_frame: false,
+                }
+
+                sound_object = {
+                    obj_type: 'sound',
+                    file: sounds[0],
+                    show_start_time: 100, // The sound is presented for 100 ms, 100 ms after Rect1 is presented (i.e., SOA = 100 ms).
+                    // In addition, the sound is presented at the same time of the onset of Rect2.
+                    // Note that the duration of the sound is depend on the audio file.
+                    is_frame: false
+                }
+
+            } else { // in terms of frames
+                rect1 = {
+                    obj_type: 'rect',
+                    startX: 300,
+                    startY: 200,
+                    width: 100,
+                    height: 100,
+                    fill_color: 'white',
+                    show_start_frame: 0,
+                    show_end_frame: 3, // Rect1 is presented for 3 frames (50 ms). 
+                    is_frame: true,
+                }
+
+                rect2 = {
+                    obj_type: 'rect',
+                    startX: 800,
+                    startY: 600,
+                    width: 100,
+                    height: 100,
+                    fill_color: 'white',
+                    show_start_frame: 6,
+                    show_end_frame: 9, // Rect2 is presented for 3 frames (50 ms), 6 frames (100 ms) after Rect1 is presented (i.e., SOA = 100 ms).
+                    is_frame: true,
+                }
+
+                sound_object = {
+                    obj_type: 'sound',
+                    file: sounds[0],
+                    show_start_frame: 6, // The sound is presented for 100 ms, 100 ms after Rect1 is presented (i.e., SOA = 100 ms).
+                    // In addition, the sound is presented at the same time of the onset of Rect2.
+                    // Note that the duration of the sound is depend on the audio file.
+                    is_frame: true
+                }
+            }
+
+
+            for (let repeat = 0; repeat < 100; repeat++){
+                const trial_time = 800;
+
+                const show_rect_sound = {
+                    type: jsPsychPsychophysics,
+                    pixi: pixi_flag,
+                    stimuli: [rect1, rect2, sound_object],
+                    trial_duration: trial_time,
+                    response_ends_trial: false,
+                    background_color: 'black',
+                    // canvas_width: 900,
+                    // canvas_height: 600,
+                }
+
+                experiment.push(show_rect_sound);
+            }        
+        })
+
+    })
+
+    const exit_fullscreen = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: false,
+        delay_after: 0,
+    }
+    experiment.push(exit_fullscreen)
+
+    const end_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        // stimulus: '<p>The program is finished.</p>'
+        stimulus: ''
+    }
+
+    experiment.push(end_trial)
+    jsPsych.run(experiment)
+    
+</script>
+
+</html>
