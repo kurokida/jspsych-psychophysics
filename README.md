@@ -1,6 +1,12 @@
 # jspsych-psychophysics
-This is a jsPsych plugin for psychophysics.
+This is a [jsPsych](https://www.jspsych.org/) plugin for psychophysics.
 Please refer to the website: https://kurokida.github.io/jspsych-psychophysics/
+
+# Dependencies
+
+- [ml-matrix](https://www.npmjs.com/package/ml-matrix)
+- [numeric](https://github.com/sloisel/numeric) by Sébastien Loisel
+- [PixiJS](https://pixijs.com/)
 
 # Sound files
 Sound files for demonstration were created using [Audacity](https://github.com/kurokida/jspsych-psychophysics).
