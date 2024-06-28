@@ -72,6 +72,22 @@ The color can be specified using the HTML color names, hexadecimal (HEX) colors,
 
 The **show_start_time** property is one of the most notable properties, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
+If you mind the increase/decrease by 1 frame (16.7 ms) regarding visual stimuli, presentation times should be specified in terms of frames not milliseconds. See [my recent observation (June 2024)](https://osf.io/pj4sb/wiki/Accuracy%20test%20June%202024/).
+
+You can specify the time in frames as follows:
+
+```javascript
+const rectangle = {
+    obj_type: 'rect',
+    width: 100,
+    height: 100,
+    fill_color: 'white',
+    show_start_frame: 0,
+    show_end_frame: 3, // The rectangle is presented for 3 frames (50 ms). 
+    is_frame: true, // Be careful, it's easy to forget. This is necessary for each stimulus.
+}
+```
+
 ### 4. Specify a trial object including all the stimuli in the jsPsych's timeline
 
 ```javascript

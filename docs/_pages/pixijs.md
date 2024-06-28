@@ -5,7 +5,7 @@ title: "Psychophysics plugin with PixiJS"
 
 Starting with version 3.2.0, the psychophysics plugin can present visual stimuli using [PixiJS](https://pixijs.com/) functionality. You can turn on and off Pixi mode, but if you present drifting gabor patches Pixi mode should be turned on.
 
-If you are interested in Pixi mode, please see [the results of an accuracy test conducted in April 2022](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/AccuracyTest202204/histogram20220421.html) at first. I obtained good results in total, but I am a little concerned about Firefox. Note that I have only checked one laptop.
+If you are interested in Pixi mode, please see [the results of an accuracy test conducted in June 2024](https://osf.io/pj4sb/wiki/Accuracy%20test%20June%202024/) at first.
 
 # How to turn on Pixi mode
 
@@ -48,7 +48,7 @@ const trial = {
 
 - There may be a way to enable anti-aliasing, but I have yet to find it. You can clearly see the difference between anti-aliasing [on](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=0) and [off](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/dynamically_change.html?pixi_flag=1). 
 - You may feel a flash of screen immediately after the trial when the background color is not white. In this case, you can avoid the problem by writing as `<body bgcolor="gray"></body>`.
-- The quality of text seems to be better in non Pixi mode. For example, [Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=1) and [Non Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/PixiJS_test/psychophysics-demos/mask_filter_with_label.html?pixi_flag=0)
+- The quality of text seems to be better in non Pixi mode. For example, [Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter_with_label.html?pixi_flag=1) and [Non Pixi mode](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mask_filter_with_label.html?pixi_flag=0)
 
 So, please switch between Pixi modes depending on the purpose of the experiment.
 
@@ -56,6 +56,6 @@ So, please switch between Pixi modes depending on the purpose of the experiment.
 
 Using the PixiJS application's ticker, you can change attributes of the stimulus. See the "Writing an Update Loop" section in [the PixiJS guides](https://pixijs.io/guides/basics/getting-started.html). To do the same thing in the psychophysics plugin, use the change_attr function. See [demos/change_attributes.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/change_attributes.html) and [demos/elapsed_time_frame_pixi.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/elapsed_time_frame_pixi.html).
 
-If you are familiar with PixiJS, you can make the PixiJS instances and include them in the stimuli property of the psychophysics plugin. See the demos/draw_part_of_image_pixi.html.
+If you are familiar with PixiJS, you can make the PixiJS instances and include them in the stimuli property of the psychophysics plugin. See the [demos/draw_part_of_image_pixi.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/draw_part_of_image_pixi.html).
 
 <You can change uniforms.>
