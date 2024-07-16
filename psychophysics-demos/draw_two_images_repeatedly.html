@@ -69,14 +69,14 @@
 
                     const time_from_first_image_onset = elapsedTime % period;
 
-                    if (time_from_first_image_onset > first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
+                    if (time_from_first_image_onset >= first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
                         const stim = trial.stim_array[0];
                         stim.show();
                     } else {
                         if (pixi_flag) trial.stim_array[0].pixi_obj.visible = false;
                     }
 
-                    if (time_from_first_image_onset > second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
+                    if (time_from_first_image_onset >= second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
                         const stim = trial.stim_array[1];
                         stim.show();
                     } else {
