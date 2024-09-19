@@ -1,164 +1,165 @@
 var jsPsychInitializeCamera = (function (jspsych) {
-    'use strict';
+  'use strict';
 
-    /******************************************************************************
-    Copyright (c) Microsoft Corporation.
-
-    Permission to use, copy, modify, and/or distribute this software for any
-    purpose with or without fee is hereby granted.
-
-    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-    PERFORMANCE OF THIS SOFTWARE.
-    ***************************************************************************** */
-    /* global Reflect, Promise, SuppressedError, Symbol */
-
-
-    function __awaiter(thisArg, _arguments, P, generator) {
-        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-        return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-            step((generator = generator.apply(thisArg, _arguments || [])).next());
-        });
+  var _package = {
+    name: "@jspsych/plugin-initialize-camera",
+    version: "2.0.0",
+    description: "jsPsych plugin for getting permission to initialize the user's camera",
+    type: "module",
+    main: "dist/index.cjs",
+    exports: {
+      import: "./dist/index.js",
+      require: "./dist/index.cjs"
+    },
+    typings: "dist/index.d.ts",
+    unpkg: "dist/index.browser.min.js",
+    files: [
+      "src",
+      "dist"
+    ],
+    source: "src/index.ts",
+    scripts: {
+      test: "jest --passWithNoTests",
+      "test:watch": "npm test -- --watch",
+      tsc: "tsc",
+      build: "rollup --config",
+      "build:watch": "npm run build -- --watch"
+    },
+    repository: {
+      type: "git",
+      url: "git+https://github.com/jspsych/jsPsych.git",
+      directory: "packages/plugin-initialize-camera"
+    },
+    author: "Josh de Leeuw",
+    license: "MIT",
+    bugs: {
+      url: "https://github.com/jspsych/jsPsych/issues"
+    },
+    homepage: "https://www.jspsych.org/latest/plugins/initialize-camera",
+    peerDependencies: {
+      jspsych: ">=7.2.0"
+    },
+    devDependencies: {
+      "@jspsych/config": "^3.0.0",
+      "@jspsych/test-utils": "^1.2.0"
     }
+  };
 
-    typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-        var e = new Error(message);
-        return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-    };
-
-    const info = {
-        name: "initialize-camera",
-        parameters: {
-            /** Message to display with the selection box */
-            device_select_message: {
-                type: jspsych.ParameterType.HTML_STRING,
-                default: `<p>Please select the camera you would like to use.</p>`,
-            },
-            /** Label to use for the button that confirms selection */
-            button_label: {
-                type: jspsych.ParameterType.STRING,
-                default: "Use this camera",
-            },
-            /** Set to `true` to include audio in the recording */
-            include_audio: {
-                type: jspsych.ParameterType.BOOL,
-                default: false,
-            },
-            /** Desired width of the camera stream */
-            width: {
-                type: jspsych.ParameterType.INT,
-                default: null,
-            },
-            /** Desired height of the camera stream */
-            height: {
-                type: jspsych.ParameterType.INT,
-                default: null,
-            },
-            /** MIME type of the recording. Set as a full string, e.g., 'video/webm; codecs="vp8, vorbis"'. */
-            mime_type: {
-                type: jspsych.ParameterType.STRING,
-                default: null,
-            },
-        },
-    };
-    /**
-     * **initialize-camera**
-     *
-     * jsPsych plugin for getting permission to initialize a camera and setting properties of the recording.
-     *
-     * @author Josh de Leeuw
-     * @see {@link https://www.jspsych.org/plugins/jspsych-initialize-camera/ initialize-camera plugin documentation on jspsych.org}
-     */
-    class InitializeCameraPlugin {
-        constructor(jsPsych) {
-            this.jsPsych = jsPsych;
-        }
-        trial(display_element, trial) {
-            this.run_trial(display_element, trial).then((id) => {
-                display_element.innerHTML = "";
-                this.jsPsych.finishTrial({
-                    device_id: id,
-                });
-            });
-        }
-        run_trial(display_element, trial) {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield this.askForPermission(trial);
-                this.showCameraSelection(display_element, trial);
-                this.updateDeviceList(display_element);
-                navigator.mediaDevices.ondevicechange = (e) => {
-                    this.updateDeviceList(display_element);
-                };
-                const camera_id = yield this.waitForSelection(display_element);
-                const constraints = { video: { deviceId: camera_id } };
-                if (trial.width) {
-                    constraints.video.width = trial.width;
-                }
-                if (trial.height) {
-                    constraints.video.height = trial.height;
-                }
-                if (trial.include_audio) {
-                    constraints.audio = true;
-                }
-                const stream = yield navigator.mediaDevices.getUserMedia(constraints);
-                const recorder_options = {};
-                if (trial.mime_type) {
-                    recorder_options.mimeType = trial.mime_type;
-                }
-                this.jsPsych.pluginAPI.initializeCameraRecorder(stream, recorder_options);
-                return camera_id;
-            });
-        }
-        askForPermission(trial) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const stream = yield navigator.mediaDevices.getUserMedia({
-                    audio: trial.include_audio,
-                    video: true,
-                });
-                return stream;
-            });
-        }
-        showCameraSelection(display_element, trial) {
-            let html = `
+  const info = {
+    name: "initialize-camera",
+    version: _package.version,
+    parameters: {
+      device_select_message: {
+        type: jspsych.ParameterType.HTML_STRING,
+        default: `<p>Please select the camera you would like to use.</p>`
+      },
+      button_label: {
+        type: jspsych.ParameterType.STRING,
+        default: "Use this camera"
+      },
+      include_audio: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      },
+      width: {
+        type: jspsych.ParameterType.INT,
+        default: null
+      },
+      height: {
+        type: jspsych.ParameterType.INT,
+        default: null
+      },
+      mime_type: {
+        type: jspsych.ParameterType.STRING,
+        default: null
+      }
+    },
+    data: {
+      device_id: {
+        type: jspsych.ParameterType.STRING
+      }
+    }
+  };
+  class InitializeCameraPlugin {
+    constructor(jsPsych) {
+      this.jsPsych = jsPsych;
+    }
+    static info = info;
+    trial(display_element, trial) {
+      this.run_trial(display_element, trial).then((id) => {
+        this.jsPsych.finishTrial({
+          device_id: id
+        });
+      });
+    }
+    async run_trial(display_element, trial) {
+      await this.askForPermission(trial);
+      this.showCameraSelection(display_element, trial);
+      this.updateDeviceList(display_element);
+      navigator.mediaDevices.ondevicechange = (e) => {
+        this.updateDeviceList(display_element);
+      };
+      const camera_id = await this.waitForSelection(display_element);
+      const constraints = { video: { deviceId: camera_id } };
+      if (trial.width) {
+        constraints.video.width = trial.width;
+      }
+      if (trial.height) {
+        constraints.video.height = trial.height;
+      }
+      if (trial.include_audio) {
+        constraints.audio = true;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const recorder_options = {};
+      if (trial.mime_type) {
+        recorder_options.mimeType = trial.mime_type;
+      }
+      this.jsPsych.pluginAPI.initializeCameraRecorder(stream, recorder_options);
+      return camera_id;
+    }
+    async askForPermission(trial) {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: trial.include_audio,
+        video: true
+      });
+      return stream;
+    }
+    showCameraSelection(display_element, trial) {
+      let html = `
       ${trial.device_select_message}
       <select name="camera" id="which-camera" style="font-size:14px; font-family: 'Open Sans', 'Arial', sans-serif; padding: 4px;">
       </select>
       <p><button class="jspsych-btn" id="btn-select-camera">${trial.button_label}</button></p>`;
-            display_element.innerHTML = html;
-        }
-        waitForSelection(display_element) {
-            return new Promise((resolve) => {
-                display_element.querySelector("#btn-select-camera").addEventListener("click", () => {
-                    const camera = display_element.querySelector("#which-camera").value;
-                    resolve(camera);
-                });
-            });
-        }
-        updateDeviceList(display_element) {
-            navigator.mediaDevices.enumerateDevices().then((devices) => {
-                const cams = devices.filter((d) => d.kind === "videoinput" && d.deviceId !== "default" && d.deviceId !== "communications");
-                // remove entries with duplicate groupID
-                const unique_cameras = cams.filter((cam, index, arr) => arr.findIndex((v) => v.groupId == cam.groupId) == index);
-                // reset the list by clearing all current options
-                display_element.querySelector("#which-camera").innerHTML = "";
-                unique_cameras.forEach((d) => {
-                    let el = document.createElement("option");
-                    el.value = d.deviceId;
-                    el.innerHTML = d.label;
-                    display_element.querySelector("#which-camera").appendChild(el);
-                });
-            });
-        }
+      display_element.innerHTML = html;
     }
-    InitializeCameraPlugin.info = info;
+    waitForSelection(display_element) {
+      return new Promise((resolve) => {
+        display_element.querySelector("#btn-select-camera").addEventListener("click", () => {
+          const camera = display_element.querySelector("#which-camera").value;
+          resolve(camera);
+        });
+      });
+    }
+    updateDeviceList(display_element) {
+      navigator.mediaDevices.enumerateDevices().then((devices) => {
+        const cams = devices.filter(
+          (d) => d.kind === "videoinput" && d.deviceId !== "default" && d.deviceId !== "communications"
+        );
+        const unique_cameras = cams.filter(
+          (cam, index, arr) => arr.findIndex((v) => v.groupId == cam.groupId) == index
+        );
+        display_element.querySelector("#which-camera").innerHTML = "";
+        unique_cameras.forEach((d) => {
+          let el = document.createElement("option");
+          el.value = d.deviceId;
+          el.innerHTML = d.label;
+          display_element.querySelector("#which-camera").appendChild(el);
+        });
+      });
+    }
+  }
 
-    return InitializeCameraPlugin;
+  return InitializeCameraPlugin;
 
 })(jsPsychModule);

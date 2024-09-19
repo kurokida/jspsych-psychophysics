@@ -1,323 +1,332 @@
 var jsPsychAudioButtonResponse = (function (jspsych) {
-  'use strict';
+	'use strict';
 
-  const info = {
-      name: "audio-button-response",
-      parameters: {
-          /** The audio to be played. */
-          stimulus: {
-              type: jspsych.ParameterType.AUDIO,
-              pretty_name: "Stimulus",
-              default: undefined,
-          },
-          /** Array containing the label(s) for the button(s). */
-          choices: {
-              type: jspsych.ParameterType.STRING,
-              pretty_name: "Choices",
-              default: undefined,
-              array: true,
-          },
-          /** The HTML for creating button. Can create own style. Use the "%choice%" string to indicate where the label from the choices parameter should be inserted. */
-          button_html: {
-              type: jspsych.ParameterType.HTML_STRING,
-              pretty_name: "Button HTML",
-              default: '<button class="jspsych-btn">%choice%</button>',
-              array: true,
-          },
-          /** Any content here will be displayed below the stimulus. */
-          prompt: {
-              type: jspsych.ParameterType.HTML_STRING,
-              pretty_name: "Prompt",
-              default: null,
-          },
-          /** The maximum duration to wait for a response. */
-          trial_duration: {
-              type: jspsych.ParameterType.INT,
-              pretty_name: "Trial duration",
-              default: null,
-          },
-          /** Vertical margin of button. */
-          margin_vertical: {
-              type: jspsych.ParameterType.STRING,
-              pretty_name: "Margin vertical",
-              default: "0px",
-          },
-          /** Horizontal margin of button. */
-          margin_horizontal: {
-              type: jspsych.ParameterType.STRING,
-              pretty_name: "Margin horizontal",
-              default: "8px",
-          },
-          /** If true, the trial will end when user makes a response. */
-          response_ends_trial: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Response ends trial",
-              default: true,
-          },
-          /** If true, then the trial will end as soon as the audio file finishes playing. */
-          trial_ends_after_audio: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Trial ends after audio",
-              default: false,
-          },
-          /**
-           * If true, then responses are allowed while the audio is playing.
-           * If false, then the audio must finish playing before a response is accepted.
-           */
-          response_allowed_while_playing: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Response allowed while playing",
-              default: true,
-          },
-          /** The delay of enabling button */
-          enable_button_after: {
-              type: jspsych.ParameterType.INT,
-              pretty_name: "Enable button after",
-              default: 0,
-          },
-      },
-  };
-  /**
-   * **audio-button-response**
-   *
-   * jsPsych plugin for playing an audio file and getting a button response
-   *
-   * @author Kristin Diep
-   * @see {@link https://www.jspsych.org/plugins/jspsych-audio-button-response/ audio-button-response plugin documentation on jspsych.org}
-   */
-  class AudioButtonResponsePlugin {
-      constructor(jsPsych) {
-          this.jsPsych = jsPsych;
-      }
-      trial(display_element, trial, on_load) {
-          // hold the .resolve() function from the Promise that ends the trial
-          let trial_complete;
-          // setup stimulus
-          var context = this.jsPsych.pluginAPI.audioContext();
-          // store response
-          var response = {
-              rt: null,
-              button: null,
-          };
-          // record webaudio context start time
-          var startTime;
-          // load audio file
-          this.jsPsych.pluginAPI
-              .getAudioBuffer(trial.stimulus)
-              .then((buffer) => {
-              if (context !== null) {
-                  this.audio = context.createBufferSource();
-                  this.audio.buffer = buffer;
-                  this.audio.connect(context.destination);
-              }
-              else {
-                  this.audio = buffer;
-                  this.audio.currentTime = 0;
-              }
-              setupTrial();
-          })
-              .catch((err) => {
-              console.error(`Failed to load audio file "${trial.stimulus}". Try checking the file path. We recommend using the preload plugin to load audio files.`);
-              console.error(err);
-          });
-          const setupTrial = () => {
-              // set up end event if trial needs it
-              if (trial.trial_ends_after_audio) {
-                  this.audio.addEventListener("ended", end_trial);
-              }
-              // enable buttons after audio ends if necessary
-              if (!trial.response_allowed_while_playing && !trial.trial_ends_after_audio) {
-                  this.audio.addEventListener("ended", enable_buttons);
-              }
-              //display buttons
-              var buttons = [];
-              if (Array.isArray(trial.button_html)) {
-                  if (trial.button_html.length == trial.choices.length) {
-                      buttons = trial.button_html;
-                  }
-                  else {
-                      console.error("Error in audio-button-response plugin. The length of the button_html array does not equal the length of the choices array");
-                  }
-              }
-              else {
-                  for (var i = 0; i < trial.choices.length; i++) {
-                      buttons.push(trial.button_html);
-                  }
-              }
-              var html = '<div id="jspsych-audio-button-response-btngroup">';
-              for (var i = 0; i < trial.choices.length; i++) {
-                  var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-                  html +=
-                      '<div class="jspsych-audio-button-response-button" style="cursor: pointer; display: inline-block; margin:' +
-                          trial.margin_vertical +
-                          " " +
-                          trial.margin_horizontal +
-                          '" id="jspsych-audio-button-response-button-' +
-                          i +
-                          '" data-choice="' +
-                          i +
-                          '">' +
-                          str +
-                          "</div>";
-              }
-              html += "</div>";
-              //show prompt if there is one
-              if (trial.prompt !== null) {
-                  html += trial.prompt;
-              }
-              display_element.innerHTML = html;
-              if (trial.response_allowed_while_playing) {
-                  disable_buttons();
-                  enable_buttons();
-              }
-              else {
-                  disable_buttons();
-              }
-              // start time
-              startTime = performance.now();
-              // start audio
-              if (context !== null) {
-                  startTime = context.currentTime;
-                  this.audio.start(startTime);
-              }
-              else {
-                  this.audio.play();
-              }
-              // end trial if time limit is set
-              if (trial.trial_duration !== null) {
-                  this.jsPsych.pluginAPI.setTimeout(() => {
-                      end_trial();
-                  }, trial.trial_duration);
-              }
-              on_load();
-          };
-          // function to handle responses by the subject
-          function after_response(choice) {
-              // measure rt
-              var endTime = performance.now();
-              var rt = Math.round(endTime - startTime);
-              if (context !== null) {
-                  endTime = context.currentTime;
-                  rt = Math.round((endTime - startTime) * 1000);
-              }
-              response.button = parseInt(choice);
-              response.rt = rt;
-              // disable all the buttons after a response
-              disable_buttons();
-              if (trial.response_ends_trial) {
-                  end_trial();
-              }
-          }
-          // function to end trial when it is time
-          const end_trial = () => {
-              // kill any remaining setTimeout handlers
-              this.jsPsych.pluginAPI.clearAllTimeouts();
-              // stop the audio file if it is playing
-              // remove end event listeners if they exist
-              if (context !== null) {
-                  this.audio.stop();
-              }
-              else {
-                  this.audio.pause();
-              }
-              this.audio.removeEventListener("ended", end_trial);
-              this.audio.removeEventListener("ended", enable_buttons);
-              // gather the data to store for the trial
-              var trial_data = {
-                  rt: response.rt,
-                  stimulus: trial.stimulus,
-                  response: response.button,
-              };
-              // clear the display
-              display_element.innerHTML = "";
-              // move on to the next trial
-              this.jsPsych.finishTrial(trial_data);
-              trial_complete();
-          };
-          const enable_buttons_with_delay = (delay) => {
-              this.jsPsych.pluginAPI.setTimeout(enable_buttons_without_delay, delay);
-          };
-          function button_response(e) {
-              var choice = e.currentTarget.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
-              after_response(choice);
-          }
-          function disable_buttons() {
-              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
-              for (var i = 0; i < btns.length; i++) {
-                  var btn_el = btns[i].querySelector("button");
-                  if (btn_el) {
-                      btn_el.disabled = true;
-                  }
-                  btns[i].removeEventListener("click", button_response);
-              }
-          }
-          function enable_buttons_without_delay() {
-              var btns = document.querySelectorAll(".jspsych-audio-button-response-button");
-              for (var i = 0; i < btns.length; i++) {
-                  var btn_el = btns[i].querySelector("button");
-                  if (btn_el) {
-                      btn_el.disabled = false;
-                  }
-                  btns[i].addEventListener("click", button_response);
-              }
-          }
-          function enable_buttons() {
-              if (trial.enable_button_after > 0) {
-                  enable_buttons_with_delay(trial.enable_button_after);
-              }
-              else {
-                  enable_buttons_without_delay();
-              }
-          }
-          return new Promise((resolve) => {
-              trial_complete = resolve;
-          });
-      }
-      simulate(trial, simulation_mode, simulation_options, load_callback) {
-          if (simulation_mode == "data-only") {
-              load_callback();
-              this.simulate_data_only(trial, simulation_options);
-          }
-          if (simulation_mode == "visual") {
-              this.simulate_visual(trial, simulation_options, load_callback);
-          }
-      }
-      create_simulation_data(trial, simulation_options) {
-          const default_data = {
-              stimulus: trial.stimulus,
-              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) +
-                  trial.enable_button_after,
-              response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1),
-          };
-          const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
-          this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
-          return data;
-      }
-      simulate_data_only(trial, simulation_options) {
-          const data = this.create_simulation_data(trial, simulation_options);
-          this.jsPsych.finishTrial(data);
-      }
-      simulate_visual(trial, simulation_options, load_callback) {
-          const data = this.create_simulation_data(trial, simulation_options);
-          const display_element = this.jsPsych.getDisplayElement();
-          const respond = () => {
-              if (data.rt !== null) {
-                  this.jsPsych.pluginAPI.clickTarget(display_element.querySelector(`div[data-choice="${data.response}"] button`), data.rt);
-              }
-          };
-          this.trial(display_element, trial, () => {
-              load_callback();
-              if (!trial.response_allowed_while_playing) {
-                  this.audio.addEventListener("ended", respond);
-              }
-              else {
-                  respond();
-              }
-          });
-      }
-  }
-  AudioButtonResponsePlugin.info = info;
+	function getDefaultExportFromCjs (x) {
+		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+	}
 
-  return AudioButtonResponsePlugin;
+	// Gets all non-builtin properties up the prototype chain
+	const getAllProperties = object => {
+		const properties = new Set();
+
+		do {
+			for (const key of Reflect.ownKeys(object)) {
+				properties.add([object, key]);
+			}
+		} while ((object = Reflect.getPrototypeOf(object)) && object !== Object.prototype);
+
+		return properties;
+	};
+
+	var autoBind = (self, {include, exclude} = {}) => {
+		const filter = key => {
+			const match = pattern => typeof pattern === 'string' ? key === pattern : pattern.test(key);
+
+			if (include) {
+				return include.some(match);
+			}
+
+			if (exclude) {
+				return !exclude.some(match);
+			}
+
+			return true;
+		};
+
+		for (const [object, key] of getAllProperties(self.constructor.prototype)) {
+			if (key === 'constructor' || !filter(key)) {
+				continue;
+			}
+
+			const descriptor = Reflect.getOwnPropertyDescriptor(object, key);
+			if (descriptor && typeof descriptor.value === 'function') {
+				self[key] = self[key].bind(self);
+			}
+		}
+
+		return self;
+	};
+
+	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
+
+	var _package = {
+	  name: "@jspsych/plugin-audio-button-response",
+	  version: "2.0.1",
+	  description: "jsPsych plugin for playing an audio file and getting a button response",
+	  type: "module",
+	  main: "dist/index.cjs",
+	  exports: {
+	    import: "./dist/index.js",
+	    require: "./dist/index.cjs"
+	  },
+	  typings: "dist/index.d.ts",
+	  unpkg: "dist/index.browser.min.js",
+	  files: [
+	    "src",
+	    "dist"
+	  ],
+	  source: "src/index.ts",
+	  scripts: {
+	    test: "jest",
+	    "test:watch": "npm test -- --watch",
+	    tsc: "tsc",
+	    build: "rollup --config",
+	    "build:watch": "npm run build -- --watch"
+	  },
+	  repository: {
+	    type: "git",
+	    url: "git+https://github.com/jspsych/jsPsych.git",
+	    directory: "packages/plugin-audio-button-response"
+	  },
+	  author: "Kristin Diep",
+	  license: "MIT",
+	  bugs: {
+	    url: "https://github.com/jspsych/jsPsych/issues"
+	  },
+	  homepage: "https://www.jspsych.org/latest/plugins/audio-button-response",
+	  peerDependencies: {
+	    jspsych: ">=7.1.0"
+	  },
+	  devDependencies: {
+	    "@jspsych/config": "^3.0.0",
+	    "@jspsych/test-utils": "^1.2.0"
+	  }
+	};
+
+	const info = {
+	  name: "audio-button-response",
+	  version: _package.version,
+	  parameters: {
+	    stimulus: {
+	      type: jspsych.ParameterType.AUDIO,
+	      default: void 0
+	    },
+	    choices: {
+	      type: jspsych.ParameterType.STRING,
+	      default: void 0,
+	      array: true
+	    },
+	    button_html: {
+	      type: jspsych.ParameterType.FUNCTION,
+	      default: function(choice, choice_index) {
+	        return `<button class="jspsych-btn">${choice}</button>`;
+	      }
+	    },
+	    prompt: {
+	      type: jspsych.ParameterType.HTML_STRING,
+	      default: null
+	    },
+	    trial_duration: {
+	      type: jspsych.ParameterType.INT,
+	      default: null
+	    },
+	    button_layout: {
+	      type: jspsych.ParameterType.STRING,
+	      default: "grid"
+	    },
+	    grid_rows: {
+	      type: jspsych.ParameterType.INT,
+	      default: 1
+	    },
+	    grid_columns: {
+	      type: jspsych.ParameterType.INT,
+	      default: null
+	    },
+	    response_ends_trial: {
+	      type: jspsych.ParameterType.BOOL,
+	      default: true
+	    },
+	    trial_ends_after_audio: {
+	      type: jspsych.ParameterType.BOOL,
+	      default: false
+	    },
+	    response_allowed_while_playing: {
+	      type: jspsych.ParameterType.BOOL,
+	      default: true
+	    },
+	    enable_button_after: {
+	      type: jspsych.ParameterType.INT,
+	      default: 0
+	    }
+	  },
+	  data: {
+	    rt: {
+	      type: jspsych.ParameterType.INT
+	    },
+	    response: {
+	      type: jspsych.ParameterType.INT
+	    }
+	  }
+	};
+	class AudioButtonResponsePlugin {
+	  constructor(jsPsych) {
+	    this.jsPsych = jsPsych;
+	    autoBind$1(this);
+	  }
+	  static info = info;
+	  audio;
+	  params;
+	  buttonElements = [];
+	  display;
+	  response = { rt: null, button: null };
+	  context;
+	  startTime;
+	  trial_complete;
+	  async trial(display_element, trial, on_load) {
+	    this.params = trial;
+	    this.display = display_element;
+	    this.context = this.jsPsych.pluginAPI.audioContext();
+	    this.audio = await this.jsPsych.pluginAPI.getAudioPlayer(trial.stimulus);
+	    if (trial.trial_ends_after_audio) {
+	      this.audio.addEventListener("ended", this.end_trial);
+	    }
+	    if (!trial.response_allowed_while_playing && !trial.trial_ends_after_audio) {
+	      this.audio.addEventListener("ended", this.enable_buttons);
+	    }
+	    const buttonGroupElement = document.createElement("div");
+	    buttonGroupElement.id = "jspsych-audio-button-response-btngroup";
+	    if (trial.button_layout === "grid") {
+	      buttonGroupElement.classList.add("jspsych-btn-group-grid");
+	      if (trial.grid_rows === null && trial.grid_columns === null) {
+	        throw new Error(
+	          "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+	        );
+	      }
+	      const n_cols = trial.grid_columns === null ? Math.ceil(trial.choices.length / trial.grid_rows) : trial.grid_columns;
+	      const n_rows = trial.grid_rows === null ? Math.ceil(trial.choices.length / trial.grid_columns) : trial.grid_rows;
+	      buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
+	      buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+	    } else if (trial.button_layout === "flex") {
+	      buttonGroupElement.classList.add("jspsych-btn-group-flex");
+	    }
+	    for (const [choiceIndex, choice] of trial.choices.entries()) {
+	      buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
+	      const buttonElement = buttonGroupElement.lastChild;
+	      buttonElement.dataset.choice = choiceIndex.toString();
+	      buttonElement.addEventListener("click", () => {
+	        this.after_response(choiceIndex);
+	      });
+	      this.buttonElements.push(buttonElement);
+	    }
+	    display_element.appendChild(buttonGroupElement);
+	    if (trial.prompt !== null) {
+	      display_element.insertAdjacentHTML("beforeend", trial.prompt);
+	    }
+	    if (trial.response_allowed_while_playing) {
+	      if (trial.enable_button_after > 0) {
+	        this.disable_buttons();
+	        this.enable_buttons();
+	      }
+	    } else {
+	      this.disable_buttons();
+	    }
+	    if (trial.trial_duration !== null) {
+	      this.jsPsych.pluginAPI.setTimeout(() => {
+	        this.end_trial();
+	      }, trial.trial_duration);
+	    }
+	    on_load();
+	    this.startTime = performance.now();
+	    if (this.context !== null) {
+	      this.startTime = this.context.currentTime;
+	    }
+	    this.audio.play();
+	    return new Promise((resolve) => {
+	      this.trial_complete = resolve;
+	    });
+	  }
+	  disable_buttons = () => {
+	    for (const button of this.buttonElements) {
+	      button.setAttribute("disabled", "disabled");
+	    }
+	  };
+	  enable_buttons_without_delay = () => {
+	    for (const button of this.buttonElements) {
+	      button.removeAttribute("disabled");
+	    }
+	  };
+	  enable_buttons_with_delay = (delay) => {
+	    this.jsPsych.pluginAPI.setTimeout(this.enable_buttons_without_delay, delay);
+	  };
+	  enable_buttons() {
+	    if (this.params.enable_button_after > 0) {
+	      this.enable_buttons_with_delay(this.params.enable_button_after);
+	    } else {
+	      this.enable_buttons_without_delay();
+	    }
+	  }
+	  after_response = (choice) => {
+	    var endTime = performance.now();
+	    var rt = Math.round(endTime - this.startTime);
+	    if (this.context !== null) {
+	      endTime = this.context.currentTime;
+	      rt = Math.round((endTime - this.startTime) * 1e3);
+	    }
+	    this.response.button = parseInt(choice);
+	    this.response.rt = rt;
+	    this.disable_buttons();
+	    if (this.params.response_ends_trial) {
+	      this.end_trial();
+	    }
+	  };
+	  end_trial = () => {
+	    this.audio.stop();
+	    this.audio.removeEventListener("ended", this.end_trial);
+	    this.audio.removeEventListener("ended", this.enable_buttons);
+	    var trial_data = {
+	      rt: this.response.rt,
+	      stimulus: this.params.stimulus,
+	      response: this.response.button
+	    };
+	    this.trial_complete(trial_data);
+	  };
+	  async simulate(trial, simulation_mode, simulation_options, load_callback) {
+	    if (simulation_mode == "data-only") {
+	      load_callback();
+	      this.simulate_data_only(trial, simulation_options);
+	    }
+	    if (simulation_mode == "visual") {
+	      this.simulate_visual(trial, simulation_options, load_callback);
+	    }
+	  }
+	  create_simulation_data(trial, simulation_options) {
+	    const default_data = {
+	      stimulus: trial.stimulus,
+	      rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true) + trial.enable_button_after,
+	      response: this.jsPsych.randomization.randomInt(0, trial.choices.length - 1)
+	    };
+	    const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+	    this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+	    return data;
+	  }
+	  simulate_data_only(trial, simulation_options) {
+	    const data = this.create_simulation_data(trial, simulation_options);
+	    this.jsPsych.finishTrial(data);
+	  }
+	  simulate_visual(trial, simulation_options, load_callback) {
+	    const data = this.create_simulation_data(trial, simulation_options);
+	    const display_element = this.jsPsych.getDisplayElement();
+	    const respond = () => {
+	      if (data.rt !== null) {
+	        this.jsPsych.pluginAPI.clickTarget(
+	          display_element.querySelector(
+	            `#jspsych-audio-button-response-btngroup [data-choice="${data.response}"]`
+	          ),
+	          data.rt
+	        );
+	      }
+	    };
+	    this.trial(display_element, trial, () => {
+	      load_callback();
+	      if (!trial.response_allowed_while_playing) {
+	        this.audio.addEventListener("ended", respond);
+	      } else {
+	        respond();
+	      }
+	    });
+	  }
+	}
+
+	return AudioButtonResponsePlugin;
 
 })(jsPsychModule);

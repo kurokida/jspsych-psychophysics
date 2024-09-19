@@ -330,7 +330,6 @@
 }
 
 .jspsych-content {
-  max-width: 95%; /* this is mainly an IE 10-11 fix */
   text-align: center;
   margin: auto; /* this is for overflowing content */
 }
@@ -356,11 +355,24 @@
   font-size: 14px;
 }
 
-/* borrowing Bootstrap style for btn elements, but combining styles a bit */
+/* Buttons and Button Groups */
+.jspsych-btn-group-flex {
+  display: flex;
+  justify-content: center;
+}
+
+.jspsych-btn-group-grid {
+  display: grid;
+  grid-auto-columns: max-content;
+  max-width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .jspsych-btn {
   display: inline-block;
-  padding: 6px 12px;
-  margin: 0px;
+  padding: 8px 12px;
+  margin: 0.75em;
   font-size: 14px;
   font-weight: 400;
   font-family: "Open Sans", "Arial", sans-serif;
@@ -409,7 +421,6 @@
   outline: none;
 }
 
-/* track */
 .jspsych-slider::-webkit-slider-runnable-track {
   appearance: none;
   -webkit-appearance: none;
@@ -444,7 +455,6 @@
   border: 1px solid #aaa;
 }
 
-/* thumb */
 .jspsych-slider::-webkit-slider-thumb {
   border: 1px solid #666;
   height: 24px;
@@ -475,7 +485,7 @@
   margin-top: -2px;
 }
 
-/* jsPsych progress bar */
+/* progress bar */
 #jspsych-progressbar-container {
   color: #555;
   border-bottom: 1px solid #dedede;
@@ -508,7 +518,7 @@
   height: 100%;
 }
 
-/* Control appearance of jsPsych.data.displayData() */
+/* Appearance of jsPsych.data.displayData() */
 #jspsych-data-display {
   text-align: left;
 }

@@ -1,339 +1,306 @@
 var jsPsychIatHtml = (function (jspsych) {
   'use strict';
 
-  const info = {
-      name: "iat-html",
-      parameters: {
-          /** The HTML string to be displayed. */
-          stimulus: {
-              type: jspsych.ParameterType.HTML_STRING,
-              pretty_name: "Stimulus",
-              default: undefined,
-          },
-          /** Key press that is associated with the left category label.*/
-          left_category_key: {
-              type: jspsych.ParameterType.KEY,
-              pretty_name: "Left category key",
-              default: "e",
-          },
-          /** Key press that is associated with the right category label. */
-          right_category_key: {
-              type: jspsych.ParameterType.KEY,
-              pretty_name: "Right category key",
-              default: "i",
-          },
-          /** The label that is associated with the stimulus. Aligned to the left side of page */
-          left_category_label: {
-              type: jspsych.ParameterType.STRING,
-              pretty_name: "Left category label",
-              array: true,
-              default: ["left"],
-          },
-          /** The label that is associated with the stimulus. Aligned to the right side of the page. */
-          right_category_label: {
-              type: jspsych.ParameterType.STRING,
-              pretty_name: "Right category label",
-              array: true,
-              default: ["right"],
-          },
-          /** Array containing the key(s) that allow the user to advance to the next trial if their key press was incorrect. */
-          key_to_move_forward: {
-              type: jspsych.ParameterType.KEYS,
-              pretty_name: "Key to move forward",
-              default: "ALL_KEYS",
-          },
-          /** If true, then html when wrong will be displayed when user makes an incorrect key press. */
-          display_feedback: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Display feedback",
-              default: false,
-          },
-          /** The HTML to display when a user presses the wrong key. */
-          html_when_wrong: {
-              type: jspsych.ParameterType.HTML_STRING,
-              pretty_name: "HTML when wrong",
-              default: '<span style="color: red; font-size: 80px">X</span>',
-          },
-          /** Instructions shown at the bottom of the page. */
-          bottom_instructions: {
-              type: jspsych.ParameterType.HTML_STRING,
-              pretty_name: "Bottom instructions",
-              default: "<p>If you press the wrong key, a red X will appear. Press any key to continue.</p>",
-          },
-          /** If true, in order to advance to the next trial after a wrong key press the user will be forced to press the correct key. */
-          force_correct_key_press: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Force correct key press",
-              default: false,
-          },
-          /** Stimulus will be associated with either "left" or "right". */
-          stim_key_association: {
-              type: jspsych.ParameterType.SELECT,
-              pretty_name: "Stimulus key association",
-              options: ["left", "right"],
-              default: undefined,
-          },
-          /** If true, trial will end when user makes a response. */
-          response_ends_trial: {
-              type: jspsych.ParameterType.BOOL,
-              pretty_name: "Response ends trial",
-              default: true,
-          },
-          /** How long to show the trial. */
-          trial_duration: {
-              type: jspsych.ParameterType.INT,
-              pretty_name: "Trial duration",
-              default: null,
-          },
-      },
+  var _package = {
+    name: "@jspsych/plugin-iat-html",
+    version: "2.0.0",
+    description: "jsPsych plugin for running an IAT (Implicit Association Test) with an HTML-formatted stimulus",
+    type: "module",
+    main: "dist/index.cjs",
+    exports: {
+      import: "./dist/index.js",
+      require: "./dist/index.cjs"
+    },
+    typings: "dist/index.d.ts",
+    unpkg: "dist/index.browser.min.js",
+    files: [
+      "src",
+      "dist"
+    ],
+    source: "src/index.ts",
+    scripts: {
+      test: "jest",
+      "test:watch": "npm test -- --watch",
+      tsc: "tsc",
+      build: "rollup --config",
+      "build:watch": "npm run build -- --watch"
+    },
+    repository: {
+      type: "git",
+      url: "git+https://github.com/jspsych/jsPsych.git",
+      directory: "packages/plugin-iat-html"
+    },
+    author: "Kristin Diep",
+    license: "MIT",
+    bugs: {
+      url: "https://github.com/jspsych/jsPsych/issues"
+    },
+    homepage: "https://www.jspsych.org/latest/plugins/iat-html",
+    peerDependencies: {
+      jspsych: ">=7.1.0"
+    },
+    devDependencies: {
+      "@jspsych/config": "^3.0.0",
+      "@jspsych/test-utils": "^1.2.0"
+    }
   };
-  /**
-   * **iat-html**
-   *
-   * jsPsych plugin for running an IAT (Implicit Association Test) with an HTML-formatted stimulus
-   *
-   * @author Kristin Diep
-   * @see {@link https://www.jspsych.org/plugins/jspsych-iat-html/ iat-html plugin documentation on jspsych.org}
-   */
+
+  const info = {
+    name: "iat-html",
+    version: _package.version,
+    parameters: {
+      stimulus: {
+        type: jspsych.ParameterType.HTML_STRING,
+        default: void 0
+      },
+      left_category_key: {
+        type: jspsych.ParameterType.KEY,
+        default: "e"
+      },
+      right_category_key: {
+        type: jspsych.ParameterType.KEY,
+        default: "i"
+      },
+      left_category_label: {
+        type: jspsych.ParameterType.STRING,
+        array: true,
+        default: ["left"]
+      },
+      right_category_label: {
+        type: jspsych.ParameterType.STRING,
+        array: true,
+        default: ["right"]
+      },
+      key_to_move_forward: {
+        type: jspsych.ParameterType.KEYS,
+        default: "ALL_KEYS"
+      },
+      display_feedback: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      },
+      html_when_wrong: {
+        type: jspsych.ParameterType.HTML_STRING,
+        default: '<span style="color: red; font-size: 80px">X</span>'
+      },
+      bottom_instructions: {
+        type: jspsych.ParameterType.HTML_STRING,
+        default: "<p>If you press the wrong key, a red X will appear. Press any key to continue.</p>"
+      },
+      force_correct_key_press: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      },
+      stim_key_association: {
+        type: jspsych.ParameterType.SELECT,
+        options: ["left", "right"],
+        default: void 0
+      },
+      response_ends_trial: {
+        type: jspsych.ParameterType.BOOL,
+        default: true
+      },
+      trial_duration: {
+        type: jspsych.ParameterType.INT,
+        default: null
+      }
+    },
+    data: {
+      stimulus: {
+        type: jspsych.ParameterType.HTML_STRING
+      },
+      response: {
+        type: jspsych.ParameterType.STRING
+      },
+      correct: {
+        type: jspsych.ParameterType.BOOL
+      },
+      rt: {
+        type: jspsych.ParameterType.INT
+      }
+    }
+  };
   class IatHtmlPlugin {
-      constructor(jsPsych) {
-          this.jsPsych = jsPsych;
+    constructor(jsPsych) {
+      this.jsPsych = jsPsych;
+    }
+    static info = info;
+    trial(display_element, trial) {
+      var html_str = "";
+      html_str += "<div style='position: absolute; height: 20%; width: 100%; margin-left: auto; margin-right: auto; top: 42%; left: 0; right: 0'><p id='jspsych-iat-stim'>" + trial.stimulus + "</p></div>";
+      html_str += "<div id='trial_left_align' style='position: absolute; top: 18%; left: 20%'>";
+      if (trial.left_category_label.length == 1) {
+        html_str += "<p>Press " + trial.left_category_key + " for:<br> " + trial.left_category_label[0].bold() + "</p></div>";
+      } else {
+        html_str += "<p>Press " + trial.left_category_key + " for:<br> " + trial.left_category_label[0].bold() + "<br>or<br>" + trial.left_category_label[1].bold() + "</p></div>";
       }
-      trial(display_element, trial) {
-          var html_str = "";
-          html_str +=
-              "<div style='position: absolute; height: 20%; width: 100%; margin-left: auto; margin-right: auto; top: 42%; left: 0; right: 0'><p id='jspsych-iat-stim'>" +
-                  trial.stimulus +
-                  "</p></div>";
-          html_str += "<div id='trial_left_align' style='position: absolute; top: 18%; left: 20%'>";
-          if (trial.left_category_label.length == 1) {
-              html_str +=
-                  "<p>Press " +
-                      trial.left_category_key +
-                      " for:<br> " +
-                      trial.left_category_label[0].bold() +
-                      "</p></div>";
-          }
-          else {
-              html_str +=
-                  "<p>Press " +
-                      trial.left_category_key +
-                      " for:<br> " +
-                      trial.left_category_label[0].bold() +
-                      "<br>" +
-                      "or<br>" +
-                      trial.left_category_label[1].bold() +
-                      "</p></div>";
-          }
-          html_str += "<div id='trial_right_align' style='position: absolute; top: 18%; right: 20%'>";
-          if (trial.right_category_label.length == 1) {
-              html_str +=
-                  "<p>Press " +
-                      trial.right_category_key +
-                      " for:<br> " +
-                      trial.right_category_label[0].bold() +
-                      "</p></div>";
-          }
-          else {
-              html_str +=
-                  "<p>Press " +
-                      trial.right_category_key +
-                      " for:<br> " +
-                      trial.right_category_label[0].bold() +
-                      "<br>" +
-                      "or<br>" +
-                      trial.right_category_label[1].bold() +
-                      "</p></div>";
-          }
-          html_str +=
-              "<div id='wrongImgID' style='position:relative; top: 300px; margin-left: auto; margin-right: auto; left: 0; right: 0'>";
-          if (trial.display_feedback === true) {
-              html_str +=
-                  "<div id='wrongImgContainer' style='visibility: hidden; position: absolute; top: -75px; margin-left: auto; margin-right: auto; left: 0; right: 0'><p>" +
-                      trial.html_when_wrong +
-                      "</p></div>";
-              html_str += "<div>" + trial.bottom_instructions + "</div>";
-          }
-          else {
-              html_str += "<div>" + trial.bottom_instructions + "</div>";
-          }
-          html_str += "</div>";
-          display_element.innerHTML = html_str;
-          // store response
-          var response = {
-              rt: null,
-              key: null,
-              correct: false,
-          };
-          // function to end trial when it is time
-          const end_trial = () => {
-              // kill any remaining setTimeout handlers
-              this.jsPsych.pluginAPI.clearAllTimeouts();
-              // kill keyboard listeners
-              if (typeof keyboardListener !== "undefined") {
-                  this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
+      html_str += "<div id='trial_right_align' style='position: absolute; top: 18%; right: 20%'>";
+      if (trial.right_category_label.length == 1) {
+        html_str += "<p>Press " + trial.right_category_key + " for:<br> " + trial.right_category_label[0].bold() + "</p></div>";
+      } else {
+        html_str += "<p>Press " + trial.right_category_key + " for:<br> " + trial.right_category_label[0].bold() + "<br>or<br>" + trial.right_category_label[1].bold() + "</p></div>";
+      }
+      html_str += "<div id='wrongImgID' style='position:relative; top: 300px; margin-left: auto; margin-right: auto; left: 0; right: 0'>";
+      if (trial.display_feedback === true) {
+        html_str += "<div id='wrongImgContainer' style='visibility: hidden; position: absolute; top: -75px; margin-left: auto; margin-right: auto; left: 0; right: 0'><p>" + trial.html_when_wrong + "</p></div>";
+        html_str += "<div>" + trial.bottom_instructions + "</div>";
+      } else {
+        html_str += "<div>" + trial.bottom_instructions + "</div>";
+      }
+      html_str += "</div>";
+      display_element.innerHTML = html_str;
+      var response = {
+        rt: null,
+        key: null,
+        correct: false
+      };
+      const end_trial = () => {
+        if (typeof keyboardListener !== "undefined") {
+          this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
+        }
+        var trial_data = {
+          rt: response.rt,
+          stimulus: trial.stimulus,
+          response: response.key,
+          correct: response.correct
+        };
+        this.jsPsych.finishTrial(trial_data);
+      };
+      var leftKeyCode = trial.left_category_key;
+      var rightKeyCode = trial.right_category_key;
+      const after_response = (info2) => {
+        var wImg = document.getElementById("wrongImgContainer");
+        display_element.querySelector("#jspsych-iat-stim").className += " responded";
+        if (response.key == null) {
+          response.key = info2.key;
+          response.rt = info2.rt;
+        }
+        if (trial.stim_key_association == "right") {
+          if (response.rt !== null && this.jsPsych.pluginAPI.compareKeys(response.key, rightKeyCode)) {
+            response.correct = true;
+            if (trial.response_ends_trial) {
+              end_trial();
+            }
+          } else {
+            response.correct = false;
+            if (!trial.response_ends_trial && trial.display_feedback == true) {
+              wImg.style.visibility = "visible";
+            }
+            if (trial.response_ends_trial && trial.display_feedback == true) {
+              wImg.style.visibility = "visible";
+              if (trial.force_correct_key_press) {
+                this.jsPsych.pluginAPI.getKeyboardResponse({
+                  callback_function: end_trial,
+                  valid_responses: [trial.right_category_key]
+                });
+              } else {
+                this.jsPsych.pluginAPI.getKeyboardResponse({
+                  callback_function: end_trial,
+                  valid_responses: trial.key_to_move_forward
+                });
               }
-              // gather the data to store for the trial
-              var trial_data = {
-                  rt: response.rt,
-                  stimulus: trial.stimulus,
-                  response: response.key,
-                  correct: response.correct,
-              };
-              // clears the display
-              display_element.innerHTML = "";
-              // move on to the next trial
-              this.jsPsych.finishTrial(trial_data);
-          };
-          var leftKeyCode = trial.left_category_key;
-          var rightKeyCode = trial.right_category_key;
-          // function to handle responses by the subject
-          const after_response = (info) => {
-              var wImg = document.getElementById("wrongImgContainer");
-              // after a valid response, the stimulus will have the CSS class 'responded'
-              // which can be used to provide visual feedback that a response was recorded
-              display_element.querySelector("#jspsych-iat-stim").className += " responded";
-              // only record the first response
-              if (response.key == null) {
-                  response.key = info.key;
-                  response.rt = info.rt;
+            } else if (trial.response_ends_trial && trial.display_feedback != true) {
+              end_trial();
+            } else if (!trial.response_ends_trial && trial.display_feedback != true) ;
+          }
+        } else if (trial.stim_key_association == "left") {
+          if (response.rt !== null && this.jsPsych.pluginAPI.compareKeys(response.key, leftKeyCode)) {
+            response.correct = true;
+            if (trial.response_ends_trial) {
+              end_trial();
+            }
+          } else {
+            response.correct = false;
+            if (!trial.response_ends_trial && trial.display_feedback == true) {
+              wImg.style.visibility = "visible";
+            }
+            if (trial.response_ends_trial && trial.display_feedback == true) {
+              wImg.style.visibility = "visible";
+              if (trial.force_correct_key_press) {
+                this.jsPsych.pluginAPI.getKeyboardResponse({
+                  callback_function: end_trial,
+                  valid_responses: [trial.left_category_key]
+                });
+              } else {
+                this.jsPsych.pluginAPI.getKeyboardResponse({
+                  callback_function: end_trial,
+                  valid_responses: trial.key_to_move_forward
+                });
               }
-              if (trial.stim_key_association == "right") {
-                  if (response.rt !== null &&
-                      this.jsPsych.pluginAPI.compareKeys(response.key, rightKeyCode)) {
-                      response.correct = true;
-                      if (trial.response_ends_trial) {
-                          end_trial();
-                      }
-                  }
-                  else {
-                      response.correct = false;
-                      if (!trial.response_ends_trial && trial.display_feedback == true) {
-                          wImg.style.visibility = "visible";
-                      }
-                      if (trial.response_ends_trial && trial.display_feedback == true) {
-                          wImg.style.visibility = "visible";
-                          if (trial.force_correct_key_press) {
-                              this.jsPsych.pluginAPI.getKeyboardResponse({
-                                  callback_function: end_trial,
-                                  valid_responses: [trial.right_category_key],
-                              });
-                          }
-                          else {
-                              this.jsPsych.pluginAPI.getKeyboardResponse({
-                                  callback_function: end_trial,
-                                  valid_responses: trial.key_to_move_forward,
-                              });
-                          }
-                      }
-                      else if (trial.response_ends_trial && trial.display_feedback != true) {
-                          end_trial();
-                      }
-                      else if (!trial.response_ends_trial && trial.display_feedback != true) ;
-                  }
-              }
-              else if (trial.stim_key_association == "left") {
-                  if (response.rt !== null && this.jsPsych.pluginAPI.compareKeys(response.key, leftKeyCode)) {
-                      response.correct = true;
-                      if (trial.response_ends_trial) {
-                          end_trial();
-                      }
-                  }
-                  else {
-                      response.correct = false;
-                      if (!trial.response_ends_trial && trial.display_feedback == true) {
-                          wImg.style.visibility = "visible";
-                      }
-                      if (trial.response_ends_trial && trial.display_feedback == true) {
-                          wImg.style.visibility = "visible";
-                          if (trial.force_correct_key_press) {
-                              this.jsPsych.pluginAPI.getKeyboardResponse({
-                                  callback_function: end_trial,
-                                  valid_responses: [trial.left_category_key],
-                              });
-                          }
-                          else {
-                              this.jsPsych.pluginAPI.getKeyboardResponse({
-                                  callback_function: end_trial,
-                                  valid_responses: trial.key_to_move_forward,
-                              });
-                          }
-                      }
-                      else if (trial.response_ends_trial && trial.display_feedback != true) {
-                          end_trial();
-                      }
-                      else if (!trial.response_ends_trial && trial.display_feedback != true) ;
-                  }
-              }
-          };
-          // start the response listener
-          if (trial.left_category_key != "NO_KEYS" && trial.right_category_key != "NO_KEYS") {
-              var keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
-                  callback_function: after_response,
-                  valid_responses: [trial.left_category_key, trial.right_category_key],
-                  rt_method: "performance",
-                  persist: false,
-                  allow_held_key: false,
-              });
+            } else if (trial.response_ends_trial && trial.display_feedback != true) {
+              end_trial();
+            } else if (!trial.response_ends_trial && trial.display_feedback != true) ;
           }
-          // end trial if time limit is set
-          if (trial.trial_duration !== null && trial.response_ends_trial != true) {
-              this.jsPsych.pluginAPI.setTimeout(() => {
-                  end_trial();
-              }, trial.trial_duration);
-          }
+        }
+      };
+      if (trial.left_category_key != "NO_KEYS" && trial.right_category_key != "NO_KEYS") {
+        var keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
+          callback_function: after_response,
+          valid_responses: [trial.left_category_key, trial.right_category_key],
+          rt_method: "performance",
+          persist: false,
+          allow_held_key: false
+        });
       }
-      simulate(trial, simulation_mode, simulation_options, load_callback) {
-          if (simulation_mode == "data-only") {
-              load_callback();
-              this.simulate_data_only(trial, simulation_options);
-          }
-          if (simulation_mode == "visual") {
-              this.simulate_visual(trial, simulation_options, load_callback);
-          }
+      if (trial.trial_duration !== null && trial.response_ends_trial != true) {
+        this.jsPsych.pluginAPI.setTimeout(() => {
+          end_trial();
+        }, trial.trial_duration);
       }
-      create_simulation_data(trial, simulation_options) {
-          const key = this.jsPsych.pluginAPI.getValidKey([
-              trial.left_category_key,
-              trial.right_category_key,
-          ]);
-          const correct = trial.stim_key_association == "left"
-              ? key == trial.left_category_key
-              : key == trial.right_category_key;
-          const default_data = {
-              stimulus: trial.stimulus,
-              response: key,
-              rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
-              correct: correct,
-          };
-          const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
-          this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
-          return data;
+    }
+    simulate(trial, simulation_mode, simulation_options, load_callback) {
+      if (simulation_mode == "data-only") {
+        load_callback();
+        this.simulate_data_only(trial, simulation_options);
       }
-      simulate_data_only(trial, simulation_options) {
-          const data = this.create_simulation_data(trial, simulation_options);
-          this.jsPsych.finishTrial(data);
+      if (simulation_mode == "visual") {
+        this.simulate_visual(trial, simulation_options, load_callback);
       }
-      simulate_visual(trial, simulation_options, load_callback) {
-          const data = this.create_simulation_data(trial, simulation_options);
-          const display_element = this.jsPsych.getDisplayElement();
-          this.trial(display_element, trial);
-          load_callback();
-          if (data.response !== null) {
-              this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
-          }
-          const cont_rt = data.rt == null ? trial.trial_duration : data.rt;
-          if (trial.force_correct_key_press) {
-              if (!data.correct) {
-                  this.jsPsych.pluginAPI.pressKey(trial.stim_key_association == "left" ? trial.left_category_key : trial.right_category_key, cont_rt + this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true));
-              }
-          }
-          else {
-              this.jsPsych.pluginAPI.pressKey(this.jsPsych.pluginAPI.getValidKey(trial.key_to_move_forward), cont_rt + this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true));
-          }
+    }
+    create_simulation_data(trial, simulation_options) {
+      const key = this.jsPsych.pluginAPI.getValidKey([
+        trial.left_category_key,
+        trial.right_category_key
+      ]);
+      const correct = trial.stim_key_association == "left" ? key == trial.left_category_key : key == trial.right_category_key;
+      const default_data = {
+        stimulus: trial.stimulus,
+        response: key,
+        rt: this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true),
+        correct
+      };
+      const data = this.jsPsych.pluginAPI.mergeSimulationData(default_data, simulation_options);
+      this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
+      return data;
+    }
+    simulate_data_only(trial, simulation_options) {
+      const data = this.create_simulation_data(trial, simulation_options);
+      this.jsPsych.finishTrial(data);
+    }
+    simulate_visual(trial, simulation_options, load_callback) {
+      const data = this.create_simulation_data(trial, simulation_options);
+      const display_element = this.jsPsych.getDisplayElement();
+      this.trial(display_element, trial);
+      load_callback();
+      if (data.response !== null) {
+        this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
       }
+      const cont_rt = data.rt == null ? trial.trial_duration : data.rt;
+      if (trial.force_correct_key_press) {
+        if (!data.correct) {
+          this.jsPsych.pluginAPI.pressKey(
+            trial.stim_key_association == "left" ? trial.left_category_key : trial.right_category_key,
+            cont_rt + this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true)
+          );
+        }
+      } else {
+        this.jsPsych.pluginAPI.pressKey(
+          this.jsPsych.pluginAPI.getValidKey(trial.key_to_move_forward),
+          cont_rt + this.jsPsych.randomization.sampleExGaussian(500, 50, 1 / 150, true)
+        );
+      }
+    }
   }
-  IatHtmlPlugin.info = info;
 
   return IatHtmlPlugin;
 

@@ -12,6 +12,7 @@ var jsPsychSurvey = (function (jspsych) {
 	 * (c) The Knockout.js team - http://knockoutjs.com/
 	 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
 	 */
+	knockoutLatest.exports;
 
 	var hasRequiredKnockoutLatest;
 
@@ -163,6 +164,7 @@ var jsPsychSurvey = (function (jspsych) {
 	 * Copyright (c) 2015-2024 Devsoft Baltic OÜ  - http://surveyjs.io/
 	 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
 	 */
+	survey_core.exports;
 
 	var hasRequiredSurvey_core;
 
@@ -71025,7 +71027,7 @@ var jsPsychSurvey = (function (jspsych) {
 			/******/ });
 			});
 			
-		} (survey_core));
+		} (survey_core, survey_core.exports));
 		return survey_core.exports;
 	}
 
@@ -71034,6 +71036,7 @@ var jsPsychSurvey = (function (jspsych) {
 	 * Copyright (c) 2015-2024 Devsoft Baltic OÜ  - http://surveyjs.io/
 	 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
 	 */
+	surveyKnockoutUi.exports;
 
 	(function (module, exports) {
 		(function webpackUniversalModuleDefinition(root, factory) {
@@ -77675,152 +77678,188 @@ var jsPsychSurvey = (function (jspsych) {
 		/******/ });
 		});
 		
-	} (surveyKnockoutUi));
+	} (surveyKnockoutUi, surveyKnockoutUi.exports));
 
 	var surveyKnockoutUiExports = surveyKnockoutUi.exports;
 
-	// import SurveyJS dependencies: survey-core and survey-knockout-ui (UI theme): https://surveyjs.io/documentation/surveyjs-architecture#surveyjs-packages
+	var _package = {
+	  name: "@jspsych/plugin-survey",
+	  version: "2.0.0",
+	  description: "A jsPsych plugin for complex surveys",
+	  type: "module",
+	  main: "dist/index.cjs",
+	  exports: {
+	    ".": {
+	      import: "./dist/index.js",
+	      require: "./dist/index.cjs"
+	    },
+	    "./css/survey.css": "./css/survey.css",
+	    "./css/survey.scss": "./css/survey.scss"
+	  },
+	  typings: "dist/index.d.ts",
+	  unpkg: "dist/index.browser.min.js",
+	  files: [
+	    "src",
+	    "dist",
+	    "css"
+	  ],
+	  source: "src/index.ts",
+	  scripts: {
+	    test: "jest",
+	    "test:watch": "npm test -- --watch",
+	    tsc: "tsc",
+	    "build:js": "rollup --config",
+	    "build:styles": "sass --load-path ./node_modules --load-path ../../node_modules css/survey.scss css/survey.css",
+	    build: "run-p build:js build:styles",
+	    "build:watch": 'run-p "build:js -- --watch" "build:styles -- --watch"'
+	  },
+	  repository: {
+	    type: "git",
+	    url: "git+https://github.com/jspsych/jsPsych.git",
+	    directory: "packages/plugin-survey"
+	  },
+	  author: "Becky Gilbert",
+	  license: "MIT",
+	  bugs: {
+	    url: "https://github.com/jspsych/jsPsych/issues"
+	  },
+	  homepage: "https://www.jspsych.org/latest/plugins/survey",
+	  peerDependencies: {
+	    jspsych: ">=7.0.0"
+	  },
+	  devDependencies: {
+	    "@jspsych/config": "^3.0.0",
+	    "@jspsych/test-utils": "^1.2.0",
+	    "npm-run-all": "^4.1.5",
+	    sass: "^1.43.5"
+	  },
+	  dependencies: {
+	    "survey-core": "^1.9.138",
+	    "survey-knockout-ui": "^1.9.139"
+	  }
+	};
+
 	const info = {
-	    name: "survey",
-	    parameters: {
-	        /**
-	         * A SurveyJS survey model defined as a JavaScript object.
-	         * See: https://surveyjs.io/form-library/documentation/design-survey/create-a-simple-survey#define-a-static-survey-model-in-json
-	         */
-	        survey_json: {
-	            type: jspsych.ParameterType.OBJECT,
-	            default: {},
-	            pretty_name: "Survey JSON object",
-	        },
-	        /**
-	         * A SurveyJS survey model defined as a function. The function receives an empty SurveyJS survey object as an argument.
-	         * See: https://surveyjs.io/form-library/documentation/design-survey/create-a-simple-survey#create-or-change-a-survey-model-dynamically
-	         */
-	        survey_function: {
-	            type: jspsych.ParameterType.FUNCTION,
-	            default: null,
-	            pretty_name: "Survey function",
-	        },
-	        /**
-	         * A function that can be used to validate responses. This function is called whenever the SurveyJS onValidateQuestion event occurs.
-	         * See: https://surveyjs.io/form-library/documentation/data-validation#implement-custom-client-side-validation
-	         */
-	        validation_function: {
-	            type: jspsych.ParameterType.FUNCTION,
-	            default: null,
-	            pretty_name: "Validation function",
-	        },
+	  name: "survey",
+	  version: _package.version,
+	  parameters: {
+	    survey_json: {
+	      type: jspsych.ParameterType.OBJECT,
+	      default: {}
 	    },
+	    survey_function: {
+	      type: jspsych.ParameterType.FUNCTION,
+	      default: null
+	    },
+	    validation_function: {
+	      type: jspsych.ParameterType.FUNCTION,
+	      default: null
+	    }
+	  },
+	  data: {
+	    response: {
+	      type: jspsych.ParameterType.COMPLEX,
+	      nested: {
+	        identifier: {
+	          type: jspsych.ParameterType.STRING
+	        },
+	        response: {
+	          type: jspsych.ParameterType.STRING | jspsych.ParameterType.INT | jspsych.ParameterType.FLOAT | jspsych.ParameterType.BOOL | jspsych.ParameterType.OBJECT
+	        }
+	      }
+	    },
+	    rt: {
+	      type: jspsych.ParameterType.INT
+	    }
+	  }
 	};
-	// Define the mapping between custom jsPsych class names (jspsych-*) and class names provided by SurveyJS.
-	// See here for full list: https://github.com/surveyjs/survey-library/blob/master/src/defaultCss/defaultV2Css.ts.
-	// To modify the survey plugin CSS:
-	// (1) search for the CSS selector that you want to modify,
-	// (2) look it up and get the associated ID (note that some of these are nested)
-	// (3) if the ID isn't already listed as a key here, add it and use a new jspsych class name as the value
-	// (4) in survey.scss, use the jspsych class name as the selector and add/modify the rule
 	const jsPsychSurveyCssClassMap = {
-	    body: "jspsych-body",
-	    bodyContainer: "jspsych-body-container",
-	    question: {
-	        content: "jspsych-question-content",
-	        mainRoot: "jspsych-question-root",
-	    },
-	    page: {
-	        root: "jspsych-page",
-	    },
-	    footer: "jspsych-footer",
-	    navigation: {
-	        complete: "jspsych-nav-complete",
-	    },
-	    rowMultiple: "jspsych-row-multiple",
+	  body: "jspsych-body",
+	  bodyContainer: "jspsych-body-container",
+	  question: {
+	    content: "jspsych-question-content",
+	    mainRoot: "jspsych-question-root"
+	  },
+	  page: {
+	    root: "jspsych-page"
+	  },
+	  footer: "jspsych-footer",
+	  navigation: {
+	    complete: "jspsych-nav-complete"
+	  },
+	  rowMultiple: "jspsych-row-multiple"
 	};
-	/**
-	 * **survey**
-	 *
-	 * jsPsych plugin for presenting complex questionnaires using the SurveyJS library
-	 *
-	 * @author Becky Gilbert
-	 * @see {@link https://www.jspsych.org/plugins/survey/ survey plugin documentation on jspsych.org}
-	 */
 	class SurveyPlugin {
-	    constructor(jsPsych) {
-	        this.jsPsych = jsPsych;
-	        this.jsPsych = jsPsych;
+	  constructor(jsPsych) {
+	    this.jsPsych = jsPsych;
+	    this.jsPsych = jsPsych;
+	  }
+	  static info = info;
+	  survey;
+	  start_time;
+	  applyStyles(survey) {
+	    survey.applyTheme({
+	      cssVariables: {
+	        "--sjs-general-backcolor": "rgba(255, 255, 255, 1)",
+	        "--sjs-general-backcolor-dim": "rgba(255, 255, 255, 1)",
+	        "--sjs-general-backcolor-dim-light": "rgba(249, 249, 249, 1)",
+	        "--sjs-general-forecolor": "rgba(0, 0, 0, 0.91)",
+	        "--sjs-general-forecolor-light": "rgba(0, 0, 0, 0.45)",
+	        "--sjs-general-dim-forecolor": "rgba(0, 0, 0, 0.91)",
+	        "--sjs-general-dim-forecolor-light": "rgba(0, 0, 0, 0.45)",
+	        "--sjs-primary-backcolor": "#474747",
+	        "--sjs-primary-backcolor-light": "rgba(0, 0, 0, 0.1)",
+	        "--sjs-primary-backcolor-dark": "#000000",
+	        "--sjs-primary-forecolor": "rgba(255, 255, 255, 1)",
+	        "--sjs-primary-forecolor-light": "rgba(255, 255, 255, 0.25)",
+	        "--sjs-shadow-small": "0px 0px 0px 1px rgba(0, 0, 0, 0.15)",
+	        "--sjs-shadow-small-reset": "0px 0px 0px 0px rgba(0, 0, 0, 0.15)",
+	        "--sjs-shadow-medium": "0px 0px 0px 1px rgba(0, 0, 0, 0.1)",
+	        "--sjs-shadow-large": "0px 8px 16px 0px rgba(0, 0, 0, 0.05)",
+	        "--sjs-shadow-inner-reset": "0px 0px 0px 0px rgba(0, 0, 0, 0.15)",
+	        "--sjs-border-light": "rgba(0, 0, 0, 0.15)",
+	        "--sjs-border-default": "rgba(0, 0, 0, 0.15)",
+	        "--sjs-border-inside": " rgba(0, 0, 0, 0.16)"
+	      },
+	      themeName: "plain",
+	      colorPalette: "light",
+	      isPanelless: false
+	    });
+	  }
+	  trial(display_element, trial) {
+	    if (JSON.stringify(trial.survey_json) === "{}" && trial.survey_function === null) {
+	      console.error(
+	        "Survey plugin warning: you must define the survey using a non-empty JSON object and/or a survey function."
+	      );
 	    }
-	    applyStyles(survey) {
-	        // https://surveyjs.io/form-library/documentation/manage-default-themes-and-styles#create-a-custom-theme
-	        survey.applyTheme({
-	            cssVariables: {
-	                "--sjs-general-backcolor": "rgba(255, 255, 255, 1)",
-	                "--sjs-general-backcolor-dim": "rgba(255, 255, 255, 1)",
-	                "--sjs-general-backcolor-dim-light": "rgba(249, 249, 249, 1)",
-	                "--sjs-general-forecolor": "rgba(0, 0, 0, 0.91)",
-	                "--sjs-general-forecolor-light": "rgba(0, 0, 0, 0.45)",
-	                "--sjs-general-dim-forecolor": "rgba(0, 0, 0, 0.91)",
-	                "--sjs-general-dim-forecolor-light": "rgba(0, 0, 0, 0.45)",
-	                "--sjs-primary-backcolor": "#474747",
-	                "--sjs-primary-backcolor-light": "rgba(0, 0, 0, 0.1)",
-	                "--sjs-primary-backcolor-dark": "#000000",
-	                "--sjs-primary-forecolor": "rgba(255, 255, 255, 1)",
-	                "--sjs-primary-forecolor-light": "rgba(255, 255, 255, 0.25)",
-	                // all shadow and border variables below affect the question/panel borders
-	                "--sjs-shadow-small": "0px 0px 0px 1px rgba(0, 0, 0, 0.15)",
-	                "--sjs-shadow-small-reset": "0px 0px 0px 0px rgba(0, 0, 0, 0.15)",
-	                "--sjs-shadow-medium": "0px 0px 0px 1px rgba(0, 0, 0, 0.1)",
-	                "--sjs-shadow-large": "0px 8px 16px 0px rgba(0, 0, 0, 0.05)",
-	                "--sjs-shadow-inner-reset": "0px 0px 0px 0px rgba(0, 0, 0, 0.15)",
-	                "--sjs-border-light": "rgba(0, 0, 0, 0.15)",
-	                "--sjs-border-default": "rgba(0, 0, 0, 0.15)",
-	                "--sjs-border-inside": " rgba(0, 0, 0, 0.16)",
-	            },
-	            themeName: "plain",
-	            colorPalette: "light",
-	            isPanelless: false,
-	        });
+	    this.survey = new surveyKnockoutUiExports.Survey(trial.survey_json);
+	    if (trial.survey_function !== null) {
+	      trial.survey_function(this.survey);
 	    }
-	    trial(display_element, trial) {
-	        // check for empty JSON and no survey function
-	        if (JSON.stringify(trial.survey_json) === "{}" && trial.survey_function === null) {
-	            console.error("Survey plugin warning: you must define the survey using a non-empty JSON object and/or a survey function.");
-	        }
-	        this.survey = new surveyKnockoutUiExports.Survey(trial.survey_json);
-	        if (trial.survey_function !== null) {
-	            trial.survey_function(this.survey);
-	        }
-	        // apply our custom theme
-	        this.applyStyles(this.survey);
-	        // apply our custom CSS class names
-	        this.survey.css = jsPsychSurveyCssClassMap;
-	        if (trial.validation_function) {
-	            this.survey.onValidateQuestion.add(trial.validation_function);
-	        }
-	        this.survey.onComplete.add((sender, options) => {
-	            var _a;
-	            // add default values to any questions without responses
-	            const all_questions = sender.getAllQuestions();
-	            const data_names = Object.keys(sender.data);
-	            for (const question of all_questions) {
-	                if (!data_names.includes(question.name)) {
-	                    sender.mergeData({ [question.name]: (_a = question.defaultValue) !== null && _a !== void 0 ? _a : null });
-	                }
-	            }
-	            // clear display and reset flex on jspsych-content-wrapper
-	            display_element.innerHTML = "";
-	            document.querySelector(".jspsych-content-wrapper").style.display = "flex";
-	            // finish trial and save data
-	            this.jsPsych.finishTrial({
-	                rt: Math.round(performance.now() - this.start_time),
-	                response: sender.data,
-	            });
-	        });
-	        // remove flex display from jspsych-content-wrapper to get formatting to work
-	        document.querySelector(".jspsych-content-wrapper").style.display = "block";
-	        this.survey.render(display_element);
-	        this.start_time = performance.now();
+	    this.applyStyles(this.survey);
+	    this.survey.css = jsPsychSurveyCssClassMap;
+	    if (trial.validation_function) {
+	      this.survey.onValidateQuestion.add(trial.validation_function);
 	    }
+	    this.survey.onComplete.add((sender, options) => {
+	      const all_questions = sender.getAllQuestions();
+	      const data_names = Object.keys(sender.data);
+	      for (const question of all_questions) {
+	        if (!data_names.includes(question.name)) {
+	          sender.mergeData({ [question.name]: question.defaultValue ?? null });
+	        }
+	      }
+	      document.querySelector(".jspsych-content-wrapper").style.display = "flex";
+	      this.jsPsych.finishTrial({
+	        rt: Math.round(performance.now() - this.start_time),
+	        response: sender.data
+	      });
+	    });
+	    document.querySelector(".jspsych-content-wrapper").style.display = "block";
+	    this.survey.render(display_element);
+	    this.start_time = performance.now();
+	  }
 	}
-	SurveyPlugin.info = info;
 
 	return SurveyPlugin;
 
