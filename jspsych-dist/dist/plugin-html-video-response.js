@@ -1,124 +1,101 @@
 var jsPsychHtmlVideoResponse = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-html-video-response",
-    version: "2.0.0",
-    description: "jsPsych plugin for displaying a stimulus and recording a video response through a camera",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-html-video-response"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/html-video-response",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0",
-      "@types/resize-observer-browser": "^0.1.6"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "html-video-response",
-    version: _package.version,
+    version,
     parameters: {
+      /** The HTML string to be displayed */
       stimulus: {
         type: jspsych.ParameterType.HTML_STRING,
         default: void 0
       },
+      /** How long to display the stimulus in milliseconds. The visibility CSS property of the stimulus will be set to `hidden`
+       * after this time has elapsed. If this is null, then the stimulus will remain visible until the trial ends. */
       stimulus_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** The maximum length of the recording, in milliseconds. The default value is intentionally set low because of the
+       * potential to accidentally record very large data files if left too high. You can set this to `null` to allow the
+       * participant to control the length of the recording via the done button, but be careful with this option as it can
+       * lead to crashing the browser if the participant waits too long to stop the recording. */
       recording_duration: {
         type: jspsych.ParameterType.INT,
         default: 2e3
       },
+      /** Whether or not to show a button to end the recording. If false, the recording_duration must be set. */
       show_done_button: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** Label for the done (stop recording) button. Only used if show_done_button is true. */
       done_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /** The label for the record again button enabled when `allow_playback: true`.*/
       record_again_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Record again"
       },
+      /** The label for the accept button enabled when `allow_playback: true`. */
       accept_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /** Whether to allow the participant to listen to their recording and decide whether to rerecord or not. If `true`,
+       * then the participant will be shown an interface to play their recorded video and click one of two buttons to
+       * either accept the recording or rerecord. If rerecord is selected, then stimulus will be shown again, as if the
+       * trial is starting again from the beginning. */
       allow_playback: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** If `true`, then an [Object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) will be
+       * generated and stored for the recorded video. Only set this to `true` if you plan to reuse the recorded video
+       * later in the experiment, as it is a potentially memory-intensive feature. */
       save_video_url: {
         type: jspsych.ParameterType.BOOL,
         default: false
       }
     },
     data: {
+      /** The time, since the onset of the stimulus, for the participant to click the done button. If the button is not clicked (or not enabled), then `rt` will be `null`. */
       rt: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** The HTML content that was displayed on the screen.*/
       stimulus: {
         type: jspsych.ParameterType.HTML_STRING
       },
+      /** The base64-encoded video data. */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** A URL to a copy of the video data. */
       video_url: {
         type: jspsych.ParameterType.STRING
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class HtmlVideoResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
+      this.rt = null;
+      this.recorded_data_chunks = [];
     }
-    static info = info;
-    stimulus_start_time;
-    recorder_start_time;
-    recorder;
-    video_url;
-    response;
-    load_resolver;
-    rt = null;
-    start_event_handler;
-    stop_event_handler;
-    data_available_handler;
-    recorded_data_chunks = [];
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       this.recorder = this.jsPsych.pluginAPI.getCameraRecorder();
       this.setupRecordingEvents(display_element, trial);

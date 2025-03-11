@@ -1,75 +1,46 @@
 var jsPsychCallFunction = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-call-function",
-    version: "2.0.0",
-    description: "jsPsych plugin for calling an arbitrary function during a jspsych experiment",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-call-function"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/call-function",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "call-function",
-    version: _package.version,
+    version,
     parameters: {
+      /** The function to call. */
       func: {
         type: jspsych.ParameterType.FUNCTION,
         default: void 0
       },
+      /** Set to true if `func` is an asynchoronous function. If this is true, then the first argument passed to `func`
+       * will be a callback that you should call when the async operation is complete. You can pass data to the callback.
+       * See example below.
+       */
       async: {
         type: jspsych.ParameterType.BOOL,
         default: false
       }
     },
     data: {
+      /** The return value of the called function. */
       value: {
         type: jspsych.ParameterType.COMPLEX,
         default: void 0
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class CallFunctionPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       let return_val;
       const end_trial = () => {
@@ -89,6 +60,8 @@ var jsPsychCallFunction = (function (jspsych) {
         end_trial();
       }
     }
+    // no explicit simulate() mode for this plugin because it would just do
+    // the same thing as the regular plugin
   }
 
   return CallFunctionPlugin;

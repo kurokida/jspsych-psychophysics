@@ -1,93 +1,69 @@
 var jsPsychResize = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-resize",
-    version: "2.0.0",
-    description: "jsPsych plugin for controlling the real world size of the display",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-resize"
-    },
-    author: "Steve Chao",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/resize",
-    peerDependencies: {
-      jspsych: ">=7.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "resize",
-    version: _package.version,
+    version,
     parameters: {
+      /** The height of the item to be measured. Any units can be used
+       * as long as you are consistent with using the same units for
+       * all parameters. */
       item_height: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** The width of the item to be measured. */
       item_width: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** The content displayed below the resizable box and above the button. */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** After the scaling factor is applied, this many pixels will equal one unit of measurement. */
       pixels_per_unit: {
         type: jspsych.ParameterType.INT,
         default: 100
       },
+      /** The initial size of the box, in pixels, along the largest dimension.
+       * The aspect ratio will be set automatically to match the item width and height. */
       starting_size: {
         type: jspsych.ParameterType.INT,
         default: 100
       },
+      /** Label to display on the button to complete calibration. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       }
     },
     data: {
+      /** Final width of the resizable div container, in pixels. */
       final_width_px: {
         type: jspsych.ParameterType.INT
       },
+      /** Scaling factor that will be applied to the div containing jsPsych content. */
       scale_factor: {
         type: jspsych.ParameterType.FLOAT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class ResizePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var aspect_ratio = trial.item_width / trial.item_height;
       if (trial.item_width >= trial.item_height) {

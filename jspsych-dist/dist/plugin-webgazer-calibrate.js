@@ -1,58 +1,16 @@
 var jsPsychWebgazerCalibrate = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-webgazer-calibrate",
-    version: "2.0.0",
-    description: "",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-webgazer-calibrate"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/webgazer-calibrate",
-    peerDependencies: {
-      jspsych: ">=7.0.0",
-      "@jspsych/extension-webgazer": ">=1.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/extension-webgazer": "^1.0.2",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "webgazer-calibrate",
-    version: _package.version,
+    version,
     parameters: {
+      /** Array of points in `[x,y]` coordinates. Specified as a percentage of the screen width and height, from the left and top edge. The default grid is 9 points. */
       calibration_points: {
         type: jspsych.ParameterType.INT,
+        // TO DO: nested array, so different type?
         default: [
           [10, 10],
           [10, 50],
@@ -66,39 +24,58 @@ var jsPsychWebgazerCalibrate = (function (jspsych) {
         ],
         array: true
       },
+      /** Can specify `click` to have participants click on calibration points or `view` to have participants passively watch calibration points.  */
       calibration_mode: {
         type: jspsych.ParameterType.SELECT,
         options: ["click", "view"],
         default: "click"
       },
+      /** Diameter of the calibration points in pixels. */
       point_size: {
         type: jspsych.ParameterType.INT,
         default: 20
       },
+      /** The number of times to repeat the sequence of calibration points. */
       repetitions_per_point: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** Whether to randomize the order of the calibration points. */
       randomize_calibration_order: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** If `calibration_mode` is set to `view`, then this is the delay before calibrating after showing a point.
+       * Gives the participant time to fixate on the new target before assuming that the participant is looking at the target. */
       time_to_saccade: {
         type: jspsych.ParameterType.INT,
         default: 1e3
       },
+      /**
+       * If `calibration_mode` is set to `view`, then this is the length of time to show a point while calibrating. Note
+       * that if `click` calibration is used then the point will remain on the screen until clicked.
+       */
       time_per_point: {
         type: jspsych.ParameterType.INT,
         default: 1e3
       }
     },
-    data: {}
+    data: {
+      // no data collected
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
+    }
   };
   class WebgazerCalibratePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       const extension = this.jsPsych.extensions.webgazer;
       var html = `

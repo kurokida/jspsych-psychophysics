@@ -1,95 +1,67 @@
 var jsPsychInstructions = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-instructions",
-    version: "2.0.0",
-    description: "jsPsych plugin to display instructions",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-instructions"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/instructions",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "instructions",
-    version: _package.version,
+    version,
     parameters: {
+      /** Each element of the array is the content for a single page. Each page should be an HTML-formatted string.  */
       pages: {
         type: jspsych.ParameterType.HTML_STRING,
         default: void 0,
         array: true
       },
+      /** This is the key that the participant can press in order to advance to the next page. This key should be
+       * specified as a string (e.g., `'a'`, `'ArrowLeft'`, `' '`, `'Enter'`). */
       key_forward: {
         type: jspsych.ParameterType.KEY,
         default: "ArrowRight"
       },
+      /** This is the key that the participant can press to return to the previous page. This key should be specified as a
+       * string (e.g., `'a'`, `'ArrowLeft'`, `' '`, `'Enter'`). */
       key_backward: {
         type: jspsych.ParameterType.KEY,
         default: "ArrowLeft"
       },
+      /** If true, the participant can return to previous pages of the instructions. If false, they may only advace to the next page. */
       allow_backward: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** If `true`, the participant can use keyboard keys to navigate the pages. If `false`, they may not. */
       allow_keys: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** If true, then a `Previous` and `Next` button will be displayed beneath the instructions. Participants can
+       * click the buttons to navigate. */
       show_clickable_nav: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** If true, and clickable navigation is enabled, then Page x/y will be shown between the nav buttons. */
       show_page_number: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** The text that appears before x/y pages displayed when show_page_number is true.*/
       page_label: {
         type: jspsych.ParameterType.STRING,
         default: "Page"
       },
+      /** The text that appears on the button to go backwards. */
       button_label_previous: {
         type: jspsych.ParameterType.STRING,
         default: "Previous"
       },
+      /** The text that appears on the button to go forwards. */
       button_label_next: {
         type: jspsych.ParameterType.STRING,
         default: "Next"
       },
+      /** The callback function when page changes */
       on_page_change: {
         type: jspsych.ParameterType.FUNCTION,
         pretty_name: "Page change callback",
@@ -98,10 +70,16 @@ var jsPsychInstructions = (function (jspsych) {
       }
     },
     data: {
+      /** An array containing the order of pages the participant viewed (including when the participant returned to previous pages)
+       *  and the time spent viewing each page. Each object in the array represents a single page view,
+       * and contains keys called `page_index` (the page number, starting with 0) and `viewing_time`
+       * (duration of the page view). This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()`
+       * functions.
+       */
       view_history: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
-        parameters: {
+        nested: {
           page_index: {
             type: jspsych.ParameterType.INT
           },
@@ -110,16 +88,24 @@ var jsPsychInstructions = (function (jspsych) {
           }
         }
       },
+      /** The response time in milliseconds for the participant to view all of the pages. */
       rt: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class InstructionsPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var current_page = 0;
       var view_history = [];

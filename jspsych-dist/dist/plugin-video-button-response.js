@@ -1,154 +1,181 @@
 var jsPsychVideoButtonResponse = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-video-button-response",
-    version: "2.0.0",
-    description: "jsPsych plugin for playing a video file and getting a button response",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-video-button-response"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/video-button-response",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "video-button-response",
-    version: _package.version,
+    version,
     parameters: {
+      /**
+       * An array of file paths to the video. You can specify multiple formats of the same video (e.g., .mp4, .ogg, .webm)
+       * to maximize the [cross-browser compatibility](https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats).
+       * Usually .mp4 is a safe cross-browser option. The plugin does not reliably support .mov files. The player will use the
+       * first source file in the array that is compatible with the browser, so specify the files in order of preference.
+       */
       stimulus: {
         type: jspsych.ParameterType.VIDEO,
         default: void 0,
         array: true
       },
+      /**
+       * Labels for the buttons. Each different string in the array will generate a different button.
+       */
       choices: {
         type: jspsych.ParameterType.STRING,
         default: void 0,
         array: true
       },
+      /**
+       *  A function that generates the HTML for each button in the `choices` array. The function gets the string and index
+       * of the item in the `choices` array and should return valid HTML. If you want to use different markup for each
+       * button, you can do that by using a conditional on either parameter. The default parameter returns a button element
+       * with the text label of the choice.
+       */
       button_html: {
         type: jspsych.ParameterType.FUNCTION,
         default: function(choice, choice_index) {
           return `<button class="jspsych-btn">${choice}</button>`;
         }
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is
+       * that it can be used to provide a reminder about the action the participant is supposed to take (e.g., which
+       * key to press).
+       */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** The width of the video display in pixels. */
       width: {
         type: jspsych.ParameterType.INT,
         default: ""
       },
+      /** The height of the video display in pixels. */
       height: {
         type: jspsych.ParameterType.INT,
         default: ""
       },
+      /** If true, the video will begin playing as soon as it has loaded. */
       autoplay: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Autoplay",
         default: true
       },
+      /** If true, controls for the video player will be available to the participant. They will be able to pause
+       * the video or move the playback to any point in the video.
+       */
       controls: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** Time to start the clip. If null (default), video will start at the beginning of the file. */
       start: {
         type: jspsych.ParameterType.FLOAT,
         default: null
       },
+      /** Time to stop the clip. If null (default), video will stop at the end of the file. */
       stop: {
         type: jspsych.ParameterType.FLOAT,
         default: null
       },
+      /** The playback rate of the video. 1 is normal, <1 is slower, >1 is faster. */
       rate: {
         type: jspsych.ParameterType.FLOAT,
         default: 1
       },
+      /** If true, the trial will end immediately after the video finishes playing. */
       trial_ends_after_video: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** How long to wait for the participant to make a response before ending the trial in milliseconds. If the
+       * participant fails to make a response before this timer is reached, the participant's response will be
+       * recorded as null for the trial and the trial will end. If the value of this parameter is null, then the
+       * trial will wait for a response indefinitely.
+       */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Setting to `'grid'` will make the container element have the CSS property `display: grid` and enable the
+       * use of `grid_rows` and `grid_columns`. Setting to `'flex'` will make the container element have the CSS
+       * property `display: flex`. You can customize how the buttons are laid out by adding inline CSS in the
+       * `button_html` parameter.
+       */
       button_layout: {
         type: jspsych.ParameterType.STRING,
         default: "grid"
       },
+      /**
+       * The number of rows in the button grid. Only applicable when `button_layout` is set to `'grid'`. If null,
+       * the number of rows will be determined automatically based on the number of buttons and the number of columns.
+       */
       grid_rows: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** The number of grid columns when `button_layout` is "grid".
+       * Setting to `null` (default value) will infer the number of columns
+       * based on the number of rows and buttons. */
       grid_columns: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** If true, then the trial will end whenever the participant makes a response (assuming they make their response
+       * before the cutoff specified by the `trial_duration` parameter). If false, then the trial will continue until
+       * the value for `trial_duration` is reached. You can set this parameter to `false` to force the participant
+       * to view a stimulus for a fixed amount of time, even if they respond before the time is complete.
+       */
       response_ends_trial: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** If true, then responses are allowed while the video is playing. If false, then the video must finish
+       * playing before the button choices are enabled and a response is accepted. Once the video has played
+       * all the way through, the buttons are enabled and a response is allowed (including while the video is
+       * being re-played via on-screen playback controls).
+       */
       response_allowed_while_playing: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** How long the button will delay enabling in milliseconds. If `response_allowed_while_playing` is `true`,
+       * the timer will start immediately. If it is `false`, the timer will start at the end of the video.
+       */
       enable_button_after: {
         type: jspsych.ParameterType.INT,
         default: 0
       }
     },
     data: {
+      /** Indicates which button the participant pressed. The first button in the `choices` array is 0, the second is 1, and so on.  */
       response: {
         type: jspsych.ParameterType.INT
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the stimulus first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The `stimulus` array. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       stimulus: {
         type: jspsych.ParameterType.STRING,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class VideoButtonResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       const stimulusWrapper = document.createElement("div");
       display_element.appendChild(stimulusWrapper);

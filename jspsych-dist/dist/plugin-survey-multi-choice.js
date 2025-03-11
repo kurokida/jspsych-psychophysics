@@ -1,137 +1,131 @@
 var jsPsychSurveyMultiChoice = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-survey-multi-choice",
-    version: "2.0.0",
-    description: "a jspsych plugin for multiple choice survey questions",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-survey-multi-choice"
-    },
-    author: "Shane Martin",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/survey-multi-choice",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "survey-multi-choice",
-    version: _package.version,
+    version,
     parameters: {
+      /**
+       * An array of objects, each object represents a question that appears on the screen. Each object contains a prompt,
+       * options, required, and horizontal parameter that will be applied to the question. See examples below for further
+       * clarification.`prompt`: Type string, default value is *undefined*. The string is prompt/question that will be
+       * associated with a group of options (radio buttons). All questions will get presented on the same page (trial).
+       * `options`: Type array, defualt value is *undefined*. An array of strings. The array contains a set of options to
+       * display for an individual question.`required`: Type boolean, default value is null. The boolean value indicates
+       * if a question is required('true') or not ('false'), using the HTML5 `required` attribute. If this parameter is
+       * undefined, the question will be optional. `horizontal`:Type boolean, default value is false. If true, then the
+       * question is centered and the options are displayed horizontally. `name`: Name of the question. Used for storing
+       * data. If left undefined then default names (`Q0`, `Q1`, `...`) will be used for the questions.
+       */
       questions: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
         nested: {
+          /** Question prompt. */
           prompt: {
             type: jspsych.ParameterType.HTML_STRING,
             default: void 0
           },
+          /** Array of multiple choice options for this question. */
           options: {
             type: jspsych.ParameterType.STRING,
             array: true,
             default: void 0
           },
+          /** Whether or not a response to this question must be given in order to continue. */
           required: {
             type: jspsych.ParameterType.BOOL,
             default: false
           },
+          /** If true, then the question will be centered and options will be displayed horizontally. */
           horizontal: {
             type: jspsych.ParameterType.BOOL,
             default: false
           },
+          /** Name of the question in the trial data. If no name is given, the questions are named Q0, Q1, etc. */
           name: {
             type: jspsych.ParameterType.STRING,
             default: ""
           }
         }
       },
+      /**
+       * If true, the display order of `questions` is randomly determined at the start of the trial. In the data object,
+       * `Q0` will still refer to the first question in the array, regardless of where it was presented visually.
+       */
       randomize_question_order: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** HTML formatted string to display at the top of the page above all the questions. */
       preamble: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** Label of the button. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /**
+       * This determines whether or not all of the input elements on the page should allow autocomplete. Setting
+       * this to true will enable autocomplete or auto-fill for the form.
+       */
       autocomplete: {
         type: jspsych.ParameterType.BOOL,
         default: false
       }
     },
     data: {
+      /** An object containing the response for each question. The object will have a separate key (variable) for each question, with the first question in the trial being recorded in `Q0`, the second in `Q1`, and so on. The responses are recorded as integers, representing the position selected on the likert scale for that question. If the `name` parameter is defined for the question, then the response object will use the value of `name` as the key for each question. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       response: {
-        type: jspsych.ParameterType.COMPLEX,
-        nested: {
-          identifier: {
-            type: jspsych.ParameterType.STRING
-          },
-          response: {
-            type: jspsych.ParameterType.STRING | jspsych.ParameterType.INT | jspsych.ParameterType.FLOAT | jspsych.ParameterType.BOOL | jspsych.ParameterType.OBJECT
-          }
-        }
+        type: jspsych.ParameterType.OBJECT
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the questions first appear on the screen until the participant's response(s) are submitted. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** An array with the order of questions. For example `[2,0,1]` would indicate that the first question was `trial.questions[2]` (the third item in the `questions` parameter), the second question was `trial.questions[0]`, and the final question was `trial.questions[1]`. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       question_order: {
         type: jspsych.ParameterType.INT,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
+  const plugin_id_name = "jspsych-survey-multi-choice";
   class SurveyMultiChoicePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
-      var plugin_id_name = "jspsych-survey-multi-choice";
+      const trial_form_id = `${plugin_id_name}_form`;
       var html = "";
-      html += '<style id="jspsych-survey-multi-choice-css">';
-      html += ".jspsych-survey-multi-choice-question { margin-top: 2em; margin-bottom: 2em; text-align: left; }.jspsych-survey-multi-choice-text span.required {color: darkred;}.jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text {  text-align: center;}.jspsych-survey-multi-choice-option { line-height: 2; }.jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-option {  display: inline-block;  margin-left: 1em;  margin-right: 1em;  vertical-align: top;}label.jspsych-survey-multi-choice-text input[type='radio'] {margin-right: 1em;}";
-      html += "</style>";
+      html += `
+    <style id="${plugin_id_name}-css">
+      .${plugin_id_name}-question { margin-top: 2em; margin-bottom: 2em; text-align: left; }
+      .${plugin_id_name}-text span.required {color: darkred;}
+      .${plugin_id_name}-horizontal .${plugin_id_name}-text {  text-align: center;}
+      .${plugin_id_name}-option { line-height: 2; }
+      .${plugin_id_name}-horizontal .${plugin_id_name}-option {  display: inline-block;  margin-left: 1em;  margin-right: 1em;  vertical-align: top;}
+      label.${plugin_id_name}-text input[type='radio'] {margin-right: 1em;}
+      </style>`;
       if (trial.preamble !== null) {
-        html += '<div id="jspsych-survey-multi-choice-preamble" class="jspsych-survey-multi-choice-preamble">' + trial.preamble + "</div>";
+        html += `<div id="${plugin_id_name}-preamble" class="${plugin_id_name}-preamble">${trial.preamble}</div>`;
       }
       if (trial.autocomplete) {
-        html += '<form id="jspsych-survey-multi-choice-form">';
+        html += `<form id="${trial_form_id}">`;
       } else {
-        html += '<form id="jspsych-survey-multi-choice-form" autocomplete="off">';
+        html += `<form id="${trial_form_id}" autocomplete="off">`;
       }
       var question_order = [];
       for (var i = 0; i < trial.questions.length; i++) {
@@ -143,39 +137,42 @@ var jsPsychSurveyMultiChoice = (function (jspsych) {
       for (var i = 0; i < trial.questions.length; i++) {
         var question = trial.questions[question_order[i]];
         var question_id = question_order[i];
-        var question_classes = ["jspsych-survey-multi-choice-question"];
+        var question_classes = [`${plugin_id_name}-question`];
         if (question.horizontal) {
-          question_classes.push("jspsych-survey-multi-choice-horizontal");
+          question_classes.push(`${plugin_id_name}-horizontal`);
         }
-        html += '<div id="jspsych-survey-multi-choice-' + question_id + '" class="' + question_classes.join(" ") + '"  data-name="' + question.name + '">';
-        html += '<p class="jspsych-survey-multi-choice-text survey-multi-choice">' + question.prompt;
+        html += `<div id="${plugin_id_name}-${question_id}" class="${question_classes.join(" ")}" data-name="${question.name}">`;
+        html += `<p class="${plugin_id_name}-text survey-multi-choice">${question.prompt}`;
         if (question.required) {
           html += "<span class='required'>*</span>";
         }
         html += "</p>";
         for (var j = 0; j < question.options.length; j++) {
-          var option_id_name = "jspsych-survey-multi-choice-option-" + question_id + "-" + j;
-          var input_name = "jspsych-survey-multi-choice-response-" + question_id;
-          var input_id = "jspsych-survey-multi-choice-response-" + question_id + "-" + j;
+          var option_id_name = `${plugin_id_name}-option-${question_id}-${j}`;
+          var input_name = `${plugin_id_name}-response-${question_id}`;
+          var input_id = `${plugin_id_name}-response-${question_id}-${j}`;
           var required_attr = question.required ? "required" : "";
-          html += '<div id="' + option_id_name + '" class="jspsych-survey-multi-choice-option">';
-          html += '<label class="jspsych-survey-multi-choice-text" for="' + input_id + '">';
-          html += '<input type="radio" name="' + input_name + '" id="' + input_id + '" value="' + question.options[j] + '" ' + required_attr + "></input>";
-          html += question.options[j] + "</label>";
-          html += "</div>";
+          html += `
+        <div id="${option_id_name}" class="${plugin_id_name}-option">
+          <label class="${plugin_id_name}-text" for="${input_id}">
+            <input type="radio" name="${input_name}" id="${input_id}" value="${question.options[j]}" ${required_attr} />
+            ${question.options[j]}
+            </label>
+        </div>`;
         }
         html += "</div>";
       }
-      html += '<input type="submit" id="' + plugin_id_name + '-next" class="' + plugin_id_name + ' jspsych-btn"' + (trial.button_label ? ' value="' + trial.button_label + '"' : "") + "></input>";
+      html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn"${trial.button_label ? ' value="' + trial.button_label + '"' : ""} />`;
       html += "</form>";
       display_element.innerHTML = html;
-      document.querySelector("form").addEventListener("submit", (event) => {
+      const trial_form = display_element.querySelector(`#${trial_form_id}`);
+      trial_form.addEventListener("submit", (event) => {
         event.preventDefault();
         var endTime = performance.now();
         var response_time = Math.round(endTime - startTime);
         var question_data = {};
         for (var i2 = 0; i2 < trial.questions.length; i2++) {
-          var match = display_element.querySelector("#jspsych-survey-multi-choice-" + i2);
+          var match = display_element.querySelector(`#${plugin_id_name}-${i2}`);
           var id = "Q" + i2;
           var val;
           if (match.querySelector("input[type=radio]:checked") !== null) {
@@ -239,7 +236,7 @@ var jsPsychSurveyMultiChoice = (function (jspsych) {
       for (let i = 0; i < answers.length; i++) {
         this.jsPsych.pluginAPI.clickTarget(
           display_element.querySelector(
-            `#jspsych-survey-multi-choice-response-${i}-${trial.questions[i].options.indexOf(
+            `#${plugin_id_name}-response-${i}-${trial.questions[i].options.indexOf(
             answers[i][1]
           )}`
           ),
@@ -247,7 +244,7 @@ var jsPsychSurveyMultiChoice = (function (jspsych) {
         );
       }
       this.jsPsych.pluginAPI.clickTarget(
-        display_element.querySelector("#jspsych-survey-multi-choice-next"),
+        display_element.querySelector(`#${plugin_id_name}-next`),
         data.rt
       );
     }

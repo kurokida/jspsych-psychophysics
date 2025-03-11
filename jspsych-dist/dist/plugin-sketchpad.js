@@ -1,182 +1,239 @@
 var jsPsychSketchpad = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-sketchpad",
-    version: "2.0.1",
-    description: "jsPsych plugin for sketching a response",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-sketchpad"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/sketchpad",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "sketchpad",
-    version: _package.version,
+    version,
     parameters: {
+      /**
+       * The shape of the canvas element. Accepts `'rectangle'` or `'circle'`
+       */
       canvas_shape: {
         type: jspsych.ParameterType.STRING,
         default: "rectangle"
       },
+      /**
+       * Width of the canvas in pixels when `canvas_shape` is a `"rectangle"`.
+       */
       canvas_width: {
         type: jspsych.ParameterType.INT,
         default: 500
       },
+      /**
+       * Height of the canvas in pixels when `canvas_shape` is a `"rectangle"`.
+       */
       canvas_height: {
         type: jspsych.ParameterType.INT,
         default: 500
       },
+      /**
+       * Diameter of the canvas (when `canvas_shape` is `'circle'`) in pixels.
+       */
       canvas_diameter: {
         type: jspsych.ParameterType.INT,
         default: 500
       },
+      /**
+       * This width of the border around the canvas element
+       */
       canvas_border_width: {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /**
+       * The color of the border around the canvas element.
+       */
       canvas_border_color: {
         type: jspsych.ParameterType.STRING,
         default: "#000"
       },
+      /**
+       * Path to an image to render as the background of the canvas.
+       */
       background_image: {
         type: jspsych.ParameterType.IMAGE,
         default: null
       },
+      /**
+       * Color of the canvas background. Note that a `background_image` will render on top of the color.
+       */
       background_color: {
         type: jspsych.ParameterType.STRING,
         default: "#ffffff"
       },
+      /**
+       * The width of the strokes on the canvas.
+       */
       stroke_width: {
         type: jspsych.ParameterType.INT,
         default: 2
       },
+      /**
+       * The color of the stroke on the canvas.
+       */
       stroke_color: {
         type: jspsych.ParameterType.STRING,
         default: "#000000"
       },
+      /**
+       * Array of colors to render as a palette of choices for stroke color. Clicking on the corresponding color button will change the stroke color.
+       */
       stroke_color_palette: {
         type: jspsych.ParameterType.STRING,
         array: true,
         default: []
       },
+      /**
+       * HTML content to render above or below the canvas (use `prompt_location` parameter to change location).
+       */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /**
+       * Location of the `prompt` content. Can be 'abovecanvas' or 'belowcanvas' or 'belowbutton'.
+       */
       prompt_location: {
         type: jspsych.ParameterType.STRING,
         default: "abovecanvas"
       },
+      /**
+       * Whether to save the final image in the data as a base64 encoded data URL.
+       */
       save_final_image: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * Whether to save the individual stroke data that generated the final image.
+       */
       save_strokes: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * If this key is held down then it is like the mouse button being held down.
+       * The "ink" will flow when the button is held and stop when it is lifted.
+       * Pass in the string representation of the key, e.g., `'a'` for the A key
+       * or `' '` for the spacebar.
+       */
       key_to_draw: {
         type: jspsych.ParameterType.KEY,
         default: null
       },
+      /**
+       * Whether to show the button that ends the trial.
+       */
       show_finished_button: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * The label for the button that ends the trial.
+       */
       finished_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Finished"
       },
+      /**
+       * Whether to show the button that clears the entire drawing.
+       */
       show_clear_button: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * The label for the button that clears the entire drawing.
+       */
       clear_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Clear"
       },
+      /**
+       * Whether to show the button that enables an undo action.
+       */
       show_undo_button: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * The label for the button that performs an undo action.
+       */
       undo_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Undo"
       },
+      /**
+       * Whether to show the button that enables an redo action. `show_undo_button` must also
+       * be `true` for the redo button to show.
+       */
       show_redo_button: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * The label for the button that performs an redo action.
+       */
       redo_button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Redo"
       },
+      /**
+       * This array contains the key(s) that the participant is allowed to press in order to end
+       * the trial. Keys should be specified as characters (e.g., `'a'`, `'q'`, `' '`, `'Enter'`,
+       * `'ArrowDown'`) - see [this page](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values)
+       * and [this page (event.key column)](https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/)
+       * for more examples. Any key presses that are not listed in the array will be ignored. The default value of `"NO_KEYS"`
+       * means that no keys will be accepted as valid responses. Specifying `"ALL_KEYS"` will mean that all responses are allowed.
+       */
       choices: {
         type: jspsych.ParameterType.KEYS,
         default: "NO_KEYS"
       },
+      /**
+       * Length of time before the trial ends. If `null` the trial will continue indefinitely
+       * (until another way of ending the trial occurs).
+       */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /**
+       * Whether to show a timer that counts down until the end of the trial when `trial_duration` is not `null`.
+       */
       show_countdown_trial_duration: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /**
+       * The HTML to use for rendering the countdown timer. The element with `id="sketchpad-timer"`
+       * will have its content replaced by a countdown timer in the format `MM:SS`.
+       */
       countdown_timer_html: {
         type: jspsych.ParameterType.HTML_STRING,
         default: `<span id="sketchpad-timer"></span> remaining`
       }
     },
     data: {
+      /** The length of time from the start of the trial to the end of the trial. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** If the trial was ended by clicking the finished button, then `"button"`. If the trial was ended by pressing a key, then the key that was pressed. If the trial timed out, then `null`. */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** If `save_final_image` is true, then this will contain the base64 encoded data URL for the image, in png format. */
       png: {
         type: jspsych.ParameterType.STRING
       },
+      /** If `save_strokes` is true, then this will contain an array of stroke objects. Objects have an `action` property that is either `"start"`, `"move"`, or `"end"`. If `action` is `"start"` or `"move"` it will have an `x` and `y` property that report the coordinates of the action relative to the upper-left corner of the canvas. If `action` is `"start"` then the object will also have a `t` and `color` property, specifying the time of the action relative to the onset of the trial (ms) and the color of the stroke. If `action` is `"end"` then it will only have a `t` property. */
       strokes: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
-        parameters: {
+        nested: {
           action: {
             type: jspsych.ParameterType.STRING
           },
@@ -198,28 +255,26 @@ var jsPsychSketchpad = (function (jspsych) {
           }
         }
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class SketchpadPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
+      this.is_drawing = false;
+      this.strokes = [];
+      this.stroke = [];
+      this.undo_history = [];
+      this.mouse_position = { x: 0, y: 0 };
+      this.draw_key_held = false;
     }
-    static info = info;
-    display;
-    params;
-    sketchpad;
-    is_drawing = false;
-    ctx;
-    trial_finished_handler;
-    background_image;
-    strokes = [];
-    stroke = [];
-    undo_history = [];
-    current_stroke_color;
-    start_time;
-    mouse_position = { x: 0, y: 0 };
-    draw_key_held = false;
-    timer_interval;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial, on_load) {
       this.display = display_element;
       this.params = trial;

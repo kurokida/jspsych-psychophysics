@@ -1,145 +1,147 @@
 var jsPsychImageSliderResponse = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-image-slider-response",
-    version: "2.0.0",
-    description: "a jspsych plugin for free response survey questions",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-image-slider-response"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/image-slider-response",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "image-slider-response",
-    version: _package.version,
+    version,
     parameters: {
+      /** The path to the image file to be displayed. */
       stimulus: {
         type: jspsych.ParameterType.IMAGE,
         default: void 0
       },
+      /** Set the height of the image in pixels. If left null (no value specified), then the image will display at its natural height. */
       stimulus_height: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Set the width of the image in pixels. If left null (no value specified), then the image will display at its natural width. */
       stimulus_width: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** If setting *only* the width or *only* the height and this parameter is true, then the other dimension will be scaled
+       * to maintain the image's aspect ratio. */
       maintain_aspect_ratio: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** Sets the minimum value of the slider. */
       min: {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /** Sets the maximum value of the slider. */
       max: {
         type: jspsych.ParameterType.INT,
         default: 100
       },
+      /** Sets the starting value of the slider. */
       slider_start: {
         type: jspsych.ParameterType.INT,
         default: 50
       },
+      /** Sets the step of the slider. */
       step: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** abels displayed at equidistant locations on the slider. For example, two labels will be placed at the ends of the slider.
+       * Three labels would place two at the ends and one in the middle. Four will place two at the ends, and the other two will
+       * be at 33% and 67% of the slider width. */
       labels: {
         type: jspsych.ParameterType.STRING,
         default: [],
         array: true
       },
+      /** Set the width of the slider in pixels. If left null, then the width will be equal to the widest element in the display. */
       slider_width: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Label of the button to advance/submit. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue",
         array: false
       },
+      /** If true, the participant must move the slider before clicking the continue button. */
       require_movement: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is that it can be
+       * used to provide a reminder about the action the participant is supposed to take (e.g., which key to press). */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** How long to show the stimulus for in milliseconds. If the value is null, then the stimulus will be shown until the participant
+       * makes a response. */
       stimulus_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** How long to wait for the participant to make a response before ending the trial in milliseconds. If the participant
+       * fails to make a response before this timer is reached, the participant's response will be recorded as null for the trial
+       * and the trial will end. If the value of this parameter is null, then the trial will wait for a response indefinitely. */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** If true, then the trial will end whenever the participant makes a response (assuming they make their response
+       * before the cutoff specified by the `trial_duration` parameter). If false, then the trial will continue until the
+       * value for `trial_duration` is reached. You can set this parameter to `false` to force the participant to view a
+       * stimulus for a fixed amount of time, even if they respond before the time is complete. */
       response_ends_trial: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * If true, the image will be drawn onto a canvas element. This prevents a blank screen (white flash) between
+       * consecutive image trials in some browsers, like Firefox and Edge.
+       * If false, the image will be shown via an img element, as in previous versions of jsPsych. If the stimulus is
+       * an **animated gif**, you must set this parameter to false, because the canvas rendering method will only present static images.
+       */
       render_on_canvas: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** The path of the image that was displayed. */
       stimulus: {
         type: jspsych.ParameterType.STRING
       },
+      /** The numeric value of the slider. */
       response: {
         type: jspsych.ParameterType.INT
       },
+      /** The time in milliseconds for the participant to make a response. The time is measured from when the stimulus
+       * first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The starting value of the slider. */
       slider_start: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class ImageSliderResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var height, width;
       var html;

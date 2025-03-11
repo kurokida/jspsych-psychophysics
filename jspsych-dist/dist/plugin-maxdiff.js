@@ -1,88 +1,59 @@
 var jsPsychMaxdiff = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-maxdiff",
-    version: "2.0.1",
-    description: "a jspsych plugin for maxdiff/conjoint analysis designs",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-maxdiff"
-    },
-    author: "Angus Hughes",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/maxdiff",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "maxdiff",
-    version: _package.version,
+    version,
     parameters: {
+      /** An array of one or more alternatives of string type to fill the rows of the maxdiff table. If `required` is true,
+       * then the array must contain two or more alternatives, so that at least one can be selected for both the left
+       * and right columns.  */
       alternatives: {
         type: jspsych.ParameterType.STRING,
         array: true,
         default: void 0
       },
+      /** An array with exactly two labels of string type to display as column headings (to the left and right of the
+       * alternatives) for responses on the criteria of interest. */
       labels: {
         type: jspsych.ParameterType.STRING,
         array: true,
         default: void 0
       },
+      /** If true, the display order of `alternatives` is randomly determined at the start of the trial. */
       randomize_alternative_order: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** HTML formatted string to display at the top of the page above the maxdiff table. */
       preamble: {
         type: jspsych.ParameterType.HTML_STRING,
         default: ""
       },
+      /** Label of the button to submit response. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /** If true, prevents the user from submitting the response and proceeding until a radio button in both the left and right response columns has been selected. */
       required: {
         type: jspsych.ParameterType.BOOL,
         default: false
       }
     },
     data: {
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the maxdiff table first
+       * appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** An object with two keys, `left` and `right`, containing the labels (strings) corresponding to the left and right response
+       * columns. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions.  */
       labels: {
         type: jspsych.ParameterType.COMPLEX,
-        parameters: {
+        nested: {
           left: {
             type: jspsych.ParameterType.STRING
           },
@@ -91,9 +62,11 @@ var jsPsychMaxdiff = (function (jspsych) {
           }
         }
       },
+      /** An object with two keys, `left` and `right`, containing the alternatives selected on the left and right columns.
+       * This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       response: {
         type: jspsych.ParameterType.COMPLEX,
-        parameters: {
+        nested: {
           left: {
             type: jspsych.ParameterType.STRING
           },
@@ -102,13 +75,20 @@ var jsPsychMaxdiff = (function (jspsych) {
           }
         }
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class MaxdiffPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var html = "";
       html += '<style id="jspsych-maxdiff-css">';

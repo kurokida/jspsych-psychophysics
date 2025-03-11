@@ -1,56 +1,13 @@
 var jsPsychWebgazerInitCamera = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-webgazer-init-camera",
-    version: "2.0.0",
-    description: "",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-webgazer-init-camera"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/webgazer-init-camera",
-    peerDependencies: {
-      jspsych: ">=7.0.0",
-      "@jspsych/extension-webgazer": ">=1.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/extension-webgazer": "^1.0.2",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "webgazer-init-camera",
-    version: _package.version,
+    version,
     parameters: {
+      /** Instructions for the participant to follow. */
       instructions: {
         type: jspsych.ParameterType.HTML_STRING,
         default: `
@@ -59,22 +16,33 @@ var jsPsychWebgazerInitCamera = (function (jspsych) {
             <p>It is important that you try and keep your head reasonably still throughout the experiment, so please take a moment to adjust your setup to be comfortable.</p>
             <p>When your face is centered in the box and the box is green, you can click to continue.</p>`
       },
+      /** The text for the button that participants click to end the trial. */
       button_text: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       }
     },
     data: {
+      /** The time it took for webgazer to initialize. This can be a long time in some situations, so this
+       * value is recorded for troubleshooting when participants are reporting difficulty.
+       */
       load_time: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class WebgazerInitCameraPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial, on_load) {
       const extension = this.jsPsych.extensions.webgazer;
       let trial_complete;

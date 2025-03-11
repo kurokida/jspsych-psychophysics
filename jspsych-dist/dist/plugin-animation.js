@@ -1,89 +1,72 @@
 var jsPsychAnimation = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-animation",
-    version: "2.0.0",
-    description: "jsPsych plugin for showing animations and recording keyboard responses",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-animation"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/animation",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "animation",
-    version: _package.version,
+    version,
     parameters: {
+      /** Each element of the array is a path to an image file. */
       stimuli: {
         type: jspsych.ParameterType.IMAGE,
         default: void 0,
         array: true
       },
+      /** How long to display each image in milliseconds. */
       frame_time: {
         type: jspsych.ParameterType.INT,
         default: 250
       },
+      /** If greater than 0, then a gap will be shown between each image in the sequence. This parameter
+       * specifies the length of the gap in milliseconds.
+       */
       frame_isi: {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /** How many times to show the entire sequence. There will be no gap (other than the gap specified by `frame_isi`)
+       * between repetitions. */
       sequence_reps: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** This array contains the key(s) that the participant is allowed to press in order to respond to the stimulus.
+       * Keys should be specified as characters (e.g., `'a'`, `'q'`, `' '`, `'Enter'`, `'ArrowDown'`) - see
+       * [this page](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) and
+       * [this page (event.key column)](https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/)
+       * for more examples. Any key presses that are not listed in the array will be ignored. The default value of `"ALL_KEYS"`
+       * means that all keys will be accepted as valid responses. Specifying `"NO_KEYS"` will mean that no responses are allowed. */
       choices: {
         type: jspsych.ParameterType.KEYS,
         default: "ALL_KEYS"
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is that
+       * it can be used to provide a reminder about the action the participant is supposed to take (e.g., which key(s) to press). */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /**
+       * If true, the images will be drawn onto a canvas element. This prevents a blank screen (white flash) between consecutive
+       * images in some browsers, like Firefox and Edge. If false, the image will be shown via an img element, as in previous
+       * versions of jsPsych.
+       */
       render_on_canvas: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** An array, where each element is an object that represents a stimulus in the animation sequence. Each object has
+       * a `stimulus` property, which is the image that was displayed, and a `time` property, which is the time in ms,
+       * measured from when the sequence began, that the stimulus was displayed. The array will be encoded in JSON format
+       * when data is saved using either the `.json()` or `.csv()` functions.
+       */
       animation_sequence: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
-        parameters: {
+        nested: {
           stimulus: {
             type: jspsych.ParameterType.STRING
           },
@@ -92,10 +75,16 @@ var jsPsychAnimation = (function (jspsych) {
           }
         }
       },
+      /** An array, where each element is an object representing a response given by the participant. Each object has a
+       * `stimulus` property, indicating which image was displayed when the key was pressed, an `rt` property, indicating
+       * the time of the key press relative to the start of the animation, and a `key_press` property, indicating which
+       * key was pressed. The array will be encoded in JSON format when data is saved using either the `.json()` or `.csv()`
+       * functions.
+       */
       response: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
-        parameters: {
+        nested: {
           stimulus: {
             type: jspsych.ParameterType.STRING
           },
@@ -107,13 +96,20 @@ var jsPsychAnimation = (function (jspsych) {
           }
         }
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class AnimationPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var interval_time = trial.frame_time + trial.frame_isi;
       var animate_frame = 0;

@@ -1,120 +1,92 @@
 var jsPsychVideoKeyboardResponse = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-video-keyboard-response",
-    version: "2.0.0",
-    description: "jsPsych plugin for playing a video file and getting a keyboard response",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-video-keyboard-response"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/video-keyboard-response",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "video-keyboard-response",
-    version: _package.version,
+    version,
     parameters: {
+      /** Array of the video file(s) to play. Video can be provided in multiple file formats for better cross-browser support. */
       stimulus: {
         type: jspsych.ParameterType.VIDEO,
         pretty_name: "Video",
         default: void 0,
         array: true
       },
+      /** Array containing the key(s) the subject is allowed to press to respond to the stimulus. */
       choices: {
         type: jspsych.ParameterType.KEYS,
         pretty_name: "Choices",
         default: "ALL_KEYS"
       },
+      /** Any content here will be displayed below the stimulus. */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         pretty_name: "Prompt",
         default: null
       },
+      /** The width of the video in pixels. */
       width: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Width",
         default: ""
       },
+      /** The height of the video display in pixels. */
       height: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Height",
         default: ""
       },
+      /** If true, the video will begin playing as soon as it has loaded. */
       autoplay: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Autoplay",
         default: true
       },
+      /** If true, the subject will be able to pause the video or move the playback to any point in the video. */
       controls: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Controls",
         default: false
       },
+      /** Time to start the clip. If null (default), video will start at the beginning of the file. */
       start: {
         type: jspsych.ParameterType.FLOAT,
         pretty_name: "Start",
         default: null
       },
+      /** Time to stop the clip. If null (default), video will stop at the end of the file. */
       stop: {
         type: jspsych.ParameterType.FLOAT,
         pretty_name: "Stop",
         default: null
       },
+      /** The playback rate of the video. 1 is normal, <1 is slower, >1 is faster. */
       rate: {
         type: jspsych.ParameterType.FLOAT,
         pretty_name: "Rate",
         default: 1
       },
+      /** If true, the trial will end immediately after the video finishes playing. */
       trial_ends_after_video: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "End trial after video finishes",
         default: false
       },
+      /** How long to show trial before it ends. */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Trial duration",
         default: null
       },
+      /** If true, the trial will end when subject makes a response. */
       response_ends_trial: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Response ends trial",
         default: true
       },
+      /** If true, then responses are allowed while the video is playing. If false, then the video must finish playing before a response is accepted. */
       response_allowed_while_playing: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Response allowed while playing",
@@ -122,23 +94,35 @@ var jsPsychVideoKeyboardResponse = (function (jspsych) {
       }
     },
     data: {
+      /** Indicates which key the participant pressed. */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the
+       * stimulus first appears on the screen until the participant's response.
+       * */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The `stimulus` array. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       stimulus: {
         type: jspsych.ParameterType.STRING,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class VideoKeyboardResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       if (!Array.isArray(trial.stimulus)) {
         throw new Error(`

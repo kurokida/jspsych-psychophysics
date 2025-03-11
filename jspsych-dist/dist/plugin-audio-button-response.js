@@ -49,129 +49,174 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var _package = {
-	  name: "@jspsych/plugin-audio-button-response",
-	  version: "2.0.1",
-	  description: "jsPsych plugin for playing an audio file and getting a button response",
-	  type: "module",
-	  main: "dist/index.cjs",
-	  exports: {
-	    import: "./dist/index.js",
-	    require: "./dist/index.cjs"
-	  },
-	  typings: "dist/index.d.ts",
-	  unpkg: "dist/index.browser.min.js",
-	  files: [
-	    "src",
-	    "dist"
-	  ],
-	  source: "src/index.ts",
-	  scripts: {
-	    test: "jest",
-	    "test:watch": "npm test -- --watch",
-	    tsc: "tsc",
-	    build: "rollup --config",
-	    "build:watch": "npm run build -- --watch"
-	  },
-	  repository: {
-	    type: "git",
-	    url: "git+https://github.com/jspsych/jsPsych.git",
-	    directory: "packages/plugin-audio-button-response"
-	  },
-	  author: "Kristin Diep",
-	  license: "MIT",
-	  bugs: {
-	    url: "https://github.com/jspsych/jsPsych/issues"
-	  },
-	  homepage: "https://www.jspsych.org/latest/plugins/audio-button-response",
-	  peerDependencies: {
-	    jspsych: ">=7.1.0"
-	  },
-	  devDependencies: {
-	    "@jspsych/config": "^3.0.0",
-	    "@jspsych/test-utils": "^1.2.0"
-	  }
-	};
+	var version = "2.1.0";
 
 	const info = {
 	  name: "audio-button-response",
-	  version: _package.version,
+	  version,
 	  parameters: {
+	    /** Path to audio file to be played. */
 	    stimulus: {
 	      type: jspsych.ParameterType.AUDIO,
 	      default: void 0
 	    },
+	    /** Labels for the buttons. Each different string in the array will generate a different button.  */
 	    choices: {
 	      type: jspsych.ParameterType.STRING,
 	      default: void 0,
 	      array: true
 	    },
+	    /**
+	     * A function that generates the HTML for each button in the `choices` array. The function gets the string
+	     * and index of the item in the `choices` array and should return valid HTML. If you want to use different
+	     * markup for each button, you can do that by using a conditional on either parameter. The default parameter
+	     * returns a button element with the text label of the choice.
+	     */
 	    button_html: {
 	      type: jspsych.ParameterType.FUNCTION,
 	      default: function(choice, choice_index) {
 	        return `<button class="jspsych-btn">${choice}</button>`;
 	      }
 	    },
+	    /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention
+	     *  is that it can be used to provide a reminder about the action the participant is supposed to take
+	     * (e.g., which key to press). */
 	    prompt: {
 	      type: jspsych.ParameterType.HTML_STRING,
 	      default: null
 	    },
+	    /** How long to wait for the participant to make a response before ending the trial in milliseconds. If the
+	     * participant fails to make a response before this timer is reached, the participant's response will be
+	     * recorded as null for the trial and the trial will end. If the value of this parameter is null, the trial
+	     * will wait for a response indefinitely */
 	    trial_duration: {
 	      type: jspsych.ParameterType.INT,
 	      default: null
 	    },
+	    /** Setting to `'grid'` will make the container element have the CSS property `display: grid` and enable the
+	     * use of `grid_rows` and `grid_columns`. Setting to `'flex'` will make the container element have the CSS
+	     * property `display: flex`. You can customize how the buttons are laid out by adding inline CSS in the `button_html` parameter.
+	     */
 	    button_layout: {
 	      type: jspsych.ParameterType.STRING,
 	      default: "grid"
 	    },
+	    /** The number of rows in the button grid. Only applicable when `button_layout` is set to `'grid'`. If null, the
+	     * number of rows will be determined automatically based on the number of buttons and the number of columns.
+	     */
 	    grid_rows: {
 	      type: jspsych.ParameterType.INT,
 	      default: 1
 	    },
+	    /** The number of columns in the button grid. Only applicable when `button_layout` is set to `'grid'`.
+	     * If null, the number of columns will be determined automatically based on the number of buttons and the
+	     * number of rows.
+	     */
 	    grid_columns: {
 	      type: jspsych.ParameterType.INT,
 	      default: null
 	    },
+	    /** If true, then the trial will end whenever the participant makes a response (assuming they make their
+	     * response before the cutoff specified by the `trial_duration` parameter). If false, then the trial will
+	     * continue until the value for `trial_duration` is reached. You can set this parameter to `false` to force
+	     * the participant to listen to the stimulus for a fixed amount of time, even if they respond before the time is complete. */
 	    response_ends_trial: {
 	      type: jspsych.ParameterType.BOOL,
 	      default: true
 	    },
+	    /** If true, then the trial will end as soon as the audio file finishes playing.  */
 	    trial_ends_after_audio: {
 	      type: jspsych.ParameterType.BOOL,
 	      default: false
 	    },
+	    /**
+	     * If true, then responses are allowed while the audio is playing. If false, then the audio must finish
+	     * playing before the button choices are enabled and a response is accepted. Once the audio has played
+	     * all the way through, the buttons are enabled and a response is allowed (including while the audio is
+	     * being re-played via on-screen playback controls).
+	     */
 	    response_allowed_while_playing: {
 	      type: jspsych.ParameterType.BOOL,
 	      default: true
 	    },
+	    /** How long the button will delay enabling in milliseconds. If `response_allowed_while_playing` is `true`,
+	     * the timer will start immediately. If it is `false`, the timer will start at the end of the audio. */
 	    enable_button_after: {
 	      type: jspsych.ParameterType.INT,
 	      default: 0
 	    }
 	  },
 	  data: {
+	    /** The path of the audio file that was played. */
+	    stimulus: {
+	      type: jspsych.ParameterType.STRING
+	    },
+	    /** The response time in milliseconds for the participant to make a response. The time is measured from
+	     * when the stimulus first began playing until the participant's response.*/
 	    rt: {
 	      type: jspsych.ParameterType.INT
 	    },
+	    /** Indicates which button the participant pressed. The first button in the `choices` array is 0, the second is 1, and so on. */
 	    response: {
 	      type: jspsych.ParameterType.INT
 	    }
+	  },
+	  // prettier-ignore
+	  citations: {
+	    "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+	    "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
 	  }
 	};
 	class AudioButtonResponsePlugin {
 	  constructor(jsPsych) {
 	    this.jsPsych = jsPsych;
+	    this.buttonElements = [];
+	    this.response = { rt: null, button: null };
+	    this.disable_buttons = () => {
+	      for (const button of this.buttonElements) {
+	        button.setAttribute("disabled", "disabled");
+	      }
+	    };
+	    this.enable_buttons_without_delay = () => {
+	      for (const button of this.buttonElements) {
+	        button.removeAttribute("disabled");
+	      }
+	    };
+	    this.enable_buttons_with_delay = (delay) => {
+	      this.jsPsych.pluginAPI.setTimeout(this.enable_buttons_without_delay, delay);
+	    };
+	    // function to handle responses by the subject
+	    this.after_response = (choice) => {
+	      var endTime = performance.now();
+	      var rt = Math.round(endTime - this.startTime);
+	      if (this.context !== null) {
+	        endTime = this.context.currentTime;
+	        rt = Math.round((endTime - this.startTime) * 1e3);
+	      }
+	      this.response.button = parseInt(choice);
+	      this.response.rt = rt;
+	      this.disable_buttons();
+	      if (this.params.response_ends_trial) {
+	        this.end_trial();
+	      }
+	    };
+	    // method to end trial when it is time
+	    this.end_trial = () => {
+	      this.audio.stop();
+	      this.audio.removeEventListener("ended", this.end_trial);
+	      this.audio.removeEventListener("ended", this.enable_buttons);
+	      var trial_data = {
+	        rt: this.response.rt,
+	        stimulus: this.params.stimulus,
+	        response: this.response.button
+	      };
+	      this.trial_complete(trial_data);
+	    };
 	    autoBind$1(this);
 	  }
-	  static info = info;
-	  audio;
-	  params;
-	  buttonElements = [];
-	  display;
-	  response = { rt: null, button: null };
-	  context;
-	  startTime;
-	  trial_complete;
+	  static {
+	    this.info = info;
+	  }
 	  async trial(display_element, trial, on_load) {
 	    this.params = trial;
 	    this.display = display_element;
@@ -235,19 +280,6 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
 	      this.trial_complete = resolve;
 	    });
 	  }
-	  disable_buttons = () => {
-	    for (const button of this.buttonElements) {
-	      button.setAttribute("disabled", "disabled");
-	    }
-	  };
-	  enable_buttons_without_delay = () => {
-	    for (const button of this.buttonElements) {
-	      button.removeAttribute("disabled");
-	    }
-	  };
-	  enable_buttons_with_delay = (delay) => {
-	    this.jsPsych.pluginAPI.setTimeout(this.enable_buttons_without_delay, delay);
-	  };
 	  enable_buttons() {
 	    if (this.params.enable_button_after > 0) {
 	      this.enable_buttons_with_delay(this.params.enable_button_after);
@@ -255,31 +287,6 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
 	      this.enable_buttons_without_delay();
 	    }
 	  }
-	  after_response = (choice) => {
-	    var endTime = performance.now();
-	    var rt = Math.round(endTime - this.startTime);
-	    if (this.context !== null) {
-	      endTime = this.context.currentTime;
-	      rt = Math.round((endTime - this.startTime) * 1e3);
-	    }
-	    this.response.button = parseInt(choice);
-	    this.response.rt = rt;
-	    this.disable_buttons();
-	    if (this.params.response_ends_trial) {
-	      this.end_trial();
-	    }
-	  };
-	  end_trial = () => {
-	    this.audio.stop();
-	    this.audio.removeEventListener("ended", this.end_trial);
-	    this.audio.removeEventListener("ended", this.enable_buttons);
-	    var trial_data = {
-	      rt: this.response.rt,
-	      stimulus: this.params.stimulus,
-	      response: this.response.button
-	    };
-	    this.trial_complete(trial_data);
-	  };
 	  async simulate(trial, simulation_mode, simulation_options, load_callback) {
 	    if (simulation_mode == "data-only") {
 	      load_callback();

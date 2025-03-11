@@ -1,75 +1,38 @@
 var jsPsychExternalHtml = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-external-html",
-    version: "2.0.0",
-    description: "jsPsych plugin to load and display external html pages",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-external-html"
-    },
-    author: "Erik Weitnauer",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/external-html",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0",
-      "jest-fetch-mock": "^3.0.3"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "external-html",
-    version: _package.version,
+    version,
     parameters: {
+      /** The URL of the page to display. */
       url: {
         type: jspsych.ParameterType.STRING,
         default: void 0
       },
+      /** The key character the participant can use to advance to the next trial. If left as null, then the participant will not be able to advance trials using the keyboard. */
       cont_key: {
         type: jspsych.ParameterType.KEY,
         default: null
       },
+      /** The ID of a clickable element on the page. When the element is clicked, the trial will advance. */
       cont_btn: {
         type: jspsych.ParameterType.STRING,
         default: null
       },
+      /** `function(){ return true; }` | This function is called with the jsPsych `display_element` as the only argument when the participant attempts to advance the trial. The trial will only advance if the function return `true`. This can be used to verify that the participant has correctly filled out a form before continuing, for example. */
       check_fn: {
         type: jspsych.ParameterType.FUNCTION,
         default: () => true
       },
+      /** If `true`, then the plugin will avoid using the cached version of the HTML page to load if one exists. */
       force_refresh: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** If `true`, then scripts on the remote page will be executed. */
       execute_script: {
         type: jspsych.ParameterType.BOOL,
         pretty_name: "Execute scripts",
@@ -77,19 +40,28 @@ var jsPsychExternalHtml = (function (jspsych) {
       }
     },
     data: {
+      /** The url of the page. */
       url: {
         type: jspsych.ParameterType.STRING
       },
+      /** The response time in milliseconds for the participant to finish the trial. */
       rt: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class ExternalHtmlPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial, on_load) {
       let trial_complete;
       var url = trial.url;

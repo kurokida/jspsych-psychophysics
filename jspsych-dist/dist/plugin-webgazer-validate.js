@@ -1,58 +1,16 @@
 var jsPsychWebgazerValidate = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-webgazer-validate",
-    version: "2.0.0",
-    description: "",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-webgazer-validate"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/webgazer-validate",
-    peerDependencies: {
-      jspsych: ">=7.0.0",
-      "@jspsych/extension-webgazer": ">=1.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/extension-webgazer": "^1.0.2",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "webgazer-validate",
-    version: _package.version,
+    version,
     parameters: {
+      /** Array of points in [x,y] coordinates */
       validation_points: {
         type: jspsych.ParameterType.INT,
+        // TO DO: nested array, so different type?
         default: [
           [10, 10],
           [10, 50],
@@ -66,37 +24,48 @@ var jsPsychWebgazerValidate = (function (jspsych) {
         ],
         array: true
       },
+      /**
+       * Are the validation_points specified as percentages of screen width and height, or the distance in pixels from the center of the screen?
+       * Options are 'percent' and 'center-offset-pixels'
+       */
       validation_point_coordinates: {
         type: jspsych.ParameterType.SELECT,
         default: "percent",
         options: ["percent", "center-offset-pixels"]
       },
+      /** Tolerance around validation point in pixels */
       roi_radius: {
         type: jspsych.ParameterType.INT,
         default: 200
       },
+      /** Whether or not to randomize the order of validation points */
       randomize_validation_order: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** Delay before validating after showing a point */
       time_to_saccade: {
         type: jspsych.ParameterType.INT,
         default: 1e3
       },
+      /** Length of time to show each point */
       validation_duration: {
         type: jspsych.ParameterType.INT,
         default: 2e3
       },
+      /** Validation point size in pixels */
       point_size: {
         type: jspsych.ParameterType.INT,
         default: 20
       },
+      /** If true, then validation data will be shown on the screen after validation is complete */
       show_validation_data: {
         type: jspsych.ParameterType.BOOL,
         default: false
       }
     },
     data: {
+      /** Raw gaze data for the trial. The array will contain a nested array for each validation point. Within each nested array will be a list of `{x,y,dx,dy}` values specifying the absolute x and y pixels, as well as the distance from the target for that gaze point. */
       raw_gaze: {
         type: jspsych.ParameterType.COMPLEX,
         array: true,
@@ -115,28 +84,39 @@ var jsPsychWebgazerValidate = (function (jspsych) {
           }
         }
       },
+      /** The percentage of samples within the `roi_radius` for each validation point. */
       percent_in_roi: {
         type: jspsych.ParameterType.FLOAT,
         array: true
       },
+      /** The average `x` and `y` distance from each validation point, plus the median distance `r` of the points from this average offset. */
       average_offset: {
         type: jspsych.ParameterType.FLOAT,
         array: true
       },
+      /** The average number of samples per second. Calculated by finding samples per second for each point and then averaging these estimates together. */
       samples_per_sec: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** The list of validation points, in the order that they appeared. */
       validation_points: {
         type: jspsych.ParameterType.INT,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class WebgazerValidatePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       const extension = this.jsPsych.extensions.webgazer;
       var trial_data = {};

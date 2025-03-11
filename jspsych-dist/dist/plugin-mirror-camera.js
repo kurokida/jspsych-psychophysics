@@ -1,88 +1,57 @@
 var jsPsychMirrorCamera = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-mirror-camera",
-    version: "2.0.0",
-    description: "jsPsych plugin for showing a live feed of the user's camera",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-mirror-camera"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/mirror-camera",
-    peerDependencies: {
-      jspsych: ">=7.2.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "mirror-camera",
-    version: _package.version,
+    version,
     parameters: {
+      /** HTML-formatted content to display below the camera feed. */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** The label of the button to advance to the next trial. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /** The height of the video playback element. If left `null` then it will match the size of the recording. */
       height: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** The width of the video playback element. If left `null` then it will match the size of the recording. */
       width: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /**  Whether to mirror the video image. */
       mirror_camera: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** The length of time the participant viewed the video playback. */
       rt: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class MirrorCameraPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
-    stream;
-    start_time;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       this.stream = this.jsPsych.pluginAPI.getCameraStream();
       display_element.innerHTML = `

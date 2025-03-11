@@ -1,92 +1,99 @@
 var jsPsychCloze = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-cloze",
-    version: "2.0.0",
-    description: "jsPsych plugin for displaying a cloze test and checking participants answers against a correct solution",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-cloze"
-    },
-    author: "Philipp Sprengholz",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/cloze",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.2.0";
 
   const info = {
     name: "cloze",
-    version: _package.version,
+    version,
     parameters: {
+      /** 
+       * The cloze text to be displayed. Blanks are indicated by %% signs and automatically replaced by 
+       * input fields. If there is a correct answer you want the system to check against, it must be typed
+       * between the two percentage signs (i.e. % correct solution %). If you would like to input multiple
+       * solutions, type a slash between each responses (i.e. %1/2/3%).
+       */
       text: {
         type: jspsych.ParameterType.HTML_STRING,
         default: void 0
       },
+      /** Text of the button participants have to press for finishing the cloze test. */
       button_text: {
         type: jspsych.ParameterType.STRING,
         default: "OK"
       },
+      /** 
+       * Boolean value indicating if the answers given by participants should be compared
+       * against a correct solution given in `text` after the submit button was clicked. 
+       * If ```true```, answers are checked and in case of differences, the ```mistake_fn``` 
+       * is called. In this case, the trial does not automatically finish. If ```false```, 
+       * no checks are performed and the trial ends when clicking the submit button. 
+       */
       check_answers: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** 
+       * Boolean value indicating if the answers given by participants should be checked for
+       * completion after the button was clicked. If ```true```, answers are not checked for
+       * completion and blank answers are allowed. The trial will then automatically finish 
+       * upon the clicking the button. If ```false```, answers are checked for completion, 
+       * and in case there are some fields with missing answers, the ```mistake_fn``` is called. 
+       * In this case, the trial does not automatically finish. 
+       */
       allow_blanks: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** Boolean value indicating if the solutions checker must be case sensitive. */
+      case_sensitivity: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Case sensitivity",
+        default: true
+      },
+      /** 
+       * Function called if either `check_answers` is `true` or `allow_blanks` is `false` 
+       * and there is a discrepancy between the set answers and the answers provided, or 
+       * if all input fields aren't filled out, respectively. 
+       */
       mistake_fn: {
         type: jspsych.ParameterType.FUNCTION,
         default: () => {
         }
+      },
+      /**
+       * Boolean value indicating if the first input field should be focused when the trial starts.
+       * Enabled by default, but may be disabled especially if participants are using screen readers.
+       */
+      autofocus: {
+        type: jspsych.ParameterType.BOOL,
+        default: true
       }
     },
     data: {
+      /** Answers the participant gave. */
       response: {
         type: jspsych.ParameterType.STRING,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class ClozePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var html = '<div class="cloze">';
       var elements = trial.text.split("%");
-      const solutions = this.getSolutions(trial.text);
+      const solutions = this.getSolutions(trial.text, trial.case_sensitivity);
       let solution_counter = 0;
       for (var i = 0; i < elements.length; i++) {
         if (i % 2 === 0) {
@@ -104,9 +111,11 @@ var jsPsychCloze = (function (jspsych) {
         var answers_filled = true;
         for (var i2 = 0; i2 < solutions.length; i2++) {
           var field = document.getElementById("input" + i2);
-          answers.push(field.value.trim());
+          answers.push(
+            trial.case_sensitivity ? field.value.trim() : field.value.toLowerCase().trim()
+          );
           if (trial.check_answers) {
-            if (answers[i2] !== solutions[i2]) {
+            if (!solutions[i2].includes(answers[i2])) {
               field.style.color = "red";
               answers_correct = false;
             } else {
@@ -130,14 +139,16 @@ var jsPsychCloze = (function (jspsych) {
       };
       display_element.innerHTML += '<br><button class="jspsych-html-button-response-button" type="button" id="finish_cloze_button">' + trial.button_text + "</button>";
       display_element.querySelector("#finish_cloze_button").addEventListener("click", check);
+      if (trial.autofocus)
+        display_element.querySelector("#input0").focus();
     }
-    getSolutions(text) {
+    getSolutions(text, case_sensitive) {
       const solutions = [];
       const elements = text.split("%");
-      for (let i = 0; i < elements.length; i++) {
-        if (i % 2 == 1) {
-          solutions.push(elements[i].trim());
-        }
+      for (let i = 1; i < elements.length; i += 2) {
+        solutions.push(
+          case_sensitive ? elements[i].trim().split("/") : elements[i].toLowerCase().trim().split("/")
+        );
       }
       return solutions;
     }
@@ -151,13 +162,14 @@ var jsPsychCloze = (function (jspsych) {
       }
     }
     create_simulation_data(trial, simulation_options) {
-      const solutions = this.getSolutions(trial.text);
+      const solutions = this.getSolutions(trial.text, trial.case_sensitivity);
       const responses = [];
-      for (const word of solutions) {
-        if (word == "") {
-          responses.push(this.jsPsych.randomization.randomWords({ exactly: 1 }));
+      for (const wordList of solutions) {
+        if (wordList.includes("")) {
+          var word = this.jsPsych.randomization.randomWords({ exactly: 1 });
+          responses.push(word[0]);
         } else {
-          responses.push(word);
+          responses.push(wordList[Math.floor(Math.random() * wordList.length)]);
         }
       }
       const default_data = {

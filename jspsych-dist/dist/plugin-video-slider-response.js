@@ -1,165 +1,183 @@
 var jsPsychVideoSliderResponse = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-video-slider-response",
-    version: "2.0.0",
-    description: "jsPsych plugin for playing a video file and getting a slider response",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-video-slider-response"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/video-slider-response",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "video-slider-response",
-    version: _package.version,
+    version,
     parameters: {
+      /** An array of file paths to the video. You can specify multiple formats of the same video (e.g., .mp4, .ogg, .webm)
+       * to maximize the [cross-browser compatibility](https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats).
+       * Usually .mp4 is a safe cross-browser option. The plugin does not reliably support .mov files. The player will use
+       * the first source file in the array that is compatible with the browser, so specify the files in order of preference.
+       */
       stimulus: {
         type: jspsych.ParameterType.VIDEO,
         default: void 0,
         array: true
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is that
+       * it can be used to provide a reminder about the action the participant is supposed to take (e.g., which key to press).
+       */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** The width of the video in pixels. */
       width: {
         type: jspsych.ParameterType.INT,
         default: ""
       },
+      /** The height of the video display in pixels. */
       height: {
         type: jspsych.ParameterType.INT,
         default: ""
       },
+      /** If true, the video will begin playing as soon as it has loaded. */
       autoplay: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /** If true, controls for the video player will be available to the participant. They will be able to pause the
+       * video or move the playback to any point in the video.
+       */
       controls: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** Time to start the clip. If null (default), video will start at the beginning of the file. */
       start: {
         type: jspsych.ParameterType.FLOAT,
         default: null
       },
+      /** Time to stop the clip. If null (default), video will stop at the end of the file. */
       stop: {
         type: jspsych.ParameterType.FLOAT,
         default: null
       },
+      /** The playback rate of the video. 1 is normal, <1 is slower, >1 is faster. */
       rate: {
         type: jspsych.ParameterType.FLOAT,
         default: 1
       },
+      /** Sets the minimum value of the slider. */
       min: {
         type: jspsych.ParameterType.INT,
         default: 0
       },
+      /** Sets the maximum value of the slider. */
       max: {
         type: jspsych.ParameterType.INT,
         default: 100
       },
+      /** Sets the starting value of the slider. */
       slider_start: {
         type: jspsych.ParameterType.INT,
         default: 50
       },
+      /** Sets the step of the slider. This is the smallest amount by which the slider can change. */
       step: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /**
+       * Labels displayed at equidistant locations on the slider. For example, two labels will be placed at the ends
+       * of the slider. Three labels would place two at the ends and one in the middle. Four will place two at the
+       * ends, and the other two will be at 33% and 67% of the slider width.
+       */
       labels: {
         type: jspsych.ParameterType.HTML_STRING,
         default: [],
         array: true
       },
+      /** Set the width of the slider in pixels. If left null, then the width will be equal to the widest element in
+       * the display.
+       */
       slider_width: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Label of the button to end the trial. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       },
+      /** If true, the participant must move the slider before clicking the continue button. */
       require_movement: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** If true, the trial will end immediately after the video finishes playing. */
       trial_ends_after_video: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** How long to wait for the participant to make a response before ending the trial in milliseconds. If the
+       * participant fails to make a response before this timer is reached, the participant's response will be
+       * recorded as null for the trial and the trial will end. If the value of this parameter is null, then the
+       * trial will wait for a response indefinitely.
+       */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** If true, then the trial will end whenever the participant makes a response (assuming they make their response
+       * before the cutoff specified by the `trial_duration` parameter). If false, then the trial will continue until
+       * the value for `trial_duration` is reached. You can set this parameter to `false` to force the participant
+       * to view a stimulus for a fixed amount of time, even if they respond before the time is complete.
+       */
       response_ends_trial: {
         type: jspsych.ParameterType.BOOL,
         default: true
       },
+      /**
+       * If true, then responses are allowed while the video is playing. If false, then the video must finish playing
+       * before the slider is enabled and the trial can end via the next button click. Once the video has played all
+       * the way through, the slider is enabled and a response is allowed (including while the video is being re-played
+       * via on-screen playback controls).
+       */
       response_allowed_while_playing: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** The numeric value of the slider. */
       response: {
         type: jspsych.ParameterType.INT
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the stimulus first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The `stimulus` array. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions.  */
       stimulus: {
         type: jspsych.ParameterType.STRING,
         array: true
       },
+      /** The starting value of the slider. */
       slider_start: {
         type: jspsych.ParameterType.INT
       },
+      /** The start time of the video clip. */
       start: {
         type: jspsych.ParameterType.FLOAT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class VideoSliderResponsePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       if (!Array.isArray(trial.stimulus)) {
         throw new Error(`

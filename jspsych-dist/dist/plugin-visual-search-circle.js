@@ -1,141 +1,167 @@
 var jsPsychVisualSearchCircle = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-visual-search-circle",
-    version: "2.0.0",
-    description: "jsPsych visual search circle plugin",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-visual-search-circle"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/visual-search-circle",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.2.0";
 
   const info = {
     name: "visual-search-circle",
-    version: _package.version,
+    version,
     parameters: {
+      /**
+       * Path to image file that is the search target. This parameter must specified when the stimuli set is
+       * defined using the `target`, `foil` and `set_size` parameters, but should NOT be specified when using
+       * the `stimuli` parameter.
+       */
       target: {
         type: jspsych.ParameterType.IMAGE,
         default: null
       },
+      /**
+       * Path to image file that is the foil/distractor. This image will be repeated for all distractors up to
+       * the `set_size` value. This parameter must specified when the stimuli set is defined using the `target`,
+       * `foil` and `set_size` parameters, but should NOT be specified when using the `stimuli` parameter.
+       */
       foil: {
         type: jspsych.ParameterType.IMAGE,
         default: null
       },
+      /**
+       * How many items should be displayed, including the target when `target_present` is `true`. The foil
+       * image will be repeated up to this value when `target_present` is `false`, or up to `set_size - 1`
+       * when `target_present` is `true`. This parameter must specified when using the `target`, `foil` and
+       * `set_size` parameters to define the stimuli set, but should NOT be specified when using the `stimuli`
+       * parameter.
+       */
       set_size: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /**
+       * Array containing all of the image files to be displayed. This parameter must be specified when NOT
+       * using the `target`, `foil`, and `set_size` parameters to define the stimuli set.
+       */
       stimuli: {
         type: jspsych.ParameterType.IMAGE,
         default: [],
         array: true
       },
+      /**
+       * Is the target present? This parameter must always be specified. When using the `target`, `foil` and
+       * `set_size` parameters, `false` means that the foil image will be repeated up to the set_size, and
+       * `true` means that the target will be presented along with the foil image repeated up to set_size - 1.
+       * When using the `stimuli` parameter, this parameter is only used to determine the response accuracy.
+       */
       target_present: {
         type: jspsych.ParameterType.BOOL,
         default: void 0
       },
+      /**
+       * Path to image file that is a fixation target. This parameter must always be specified.
+       */
       fixation_image: {
         type: jspsych.ParameterType.IMAGE,
         default: void 0
       },
+      /** Two element array indicating the height and width of the search array element images. */
       target_size: {
         type: jspsych.ParameterType.INT,
         array: true,
         default: [50, 50]
       },
+      /** Two element array indicating the height and width of the fixation image. */
       fixation_size: {
         type: jspsych.ParameterType.INT,
         array: true,
         default: [16, 16]
       },
+      /** The diameter of the search array circle in pixels. */
       circle_diameter: {
         type: jspsych.ParameterType.INT,
         default: 250
       },
+      /** The key to press if the target is present in the search array. */
       target_present_key: {
         type: jspsych.ParameterType.KEY,
         default: "j"
       },
+      /** The key to press if the target is not present in the search array. */
       target_absent_key: {
         type: jspsych.ParameterType.KEY,
         default: "f"
       },
+      /** The maximum amount of time the participant is allowed to search before the trial will continue. A value
+       * of null will allow the participant to search indefinitely.
+       */
       trial_duration: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** How long to show the fixation image for before the search array (in milliseconds). */
       fixation_duration: {
         type: jspsych.ParameterType.INT,
         default: 1e3
       },
+      /** Whether to use randomized locations on the circle for the items. If `false`, then the first item will always show at the location specified by `location_first_item`. */
+      randomize_item_locations: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Randomize item locations",
+        default: true
+      },
+      /** 
+       * If `randomize_item_locations` is `false`, the location of the first item on the circle, in degrees.
+       * 0 degrees is above the fixation, and moving clockwise in the positive direction.
+      */
+      location_first_item: {
+        type: jspsych.ParameterType.INT,
+        pretty_name: "Location first item",
+        default: 0
+      },
+      /** If true, the trial will end when the participant makes a response. */
       response_ends_trial: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** True if the participant gave the correct response. */
       correct: {
         type: jspsych.ParameterType.BOOL
       },
+      /** Indicates which key the participant pressed. */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the stimulus first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The number of items in the search array. */
       set_size: {
         type: jspsych.ParameterType.INT
       },
+      /** True if the target is present in the search array. */
       target_present: {
         type: jspsych.ParameterType.BOOL
       },
+      /** Array where each element is the pixel value of the center of an image in the search array. If the target is present, then the first element will represent the location of the target. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       locations: {
         type: jspsych.ParameterType.INT,
         array: true
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class VisualSearchCirclePlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var paper_size = trial.circle_diameter + trial.target_size[0];
       var fix_loc = this.generateFixationLoc(trial);
@@ -217,11 +243,11 @@ var jsPsychVisualSearchCircle = (function (jspsych) {
       var hstimh = stimh / 2;
       var hstimw = stimw / 2;
       var display_locs = [];
-      var random_offset = Math.floor(Math.random() * 360);
+      var offset = trial.randomize_item_locations ? Math.floor(Math.random() * 360) : trial.location_first_item - 180;
       for (var i = 0; i < n_locs; i++) {
         display_locs.push([
-          Math.floor(paper_size / 2 + this.cosd(random_offset + i * (360 / n_locs)) * radi - hstimw),
-          Math.floor(paper_size / 2 - this.sind(random_offset + i * (360 / n_locs)) * radi - hstimh)
+          Math.floor(paper_size / 2 + this.cosd(offset + i * (360 / n_locs)) * radi - hstimw),
+          Math.floor(paper_size / 2 - this.sind(offset + i * (360 / n_locs)) * radi - hstimh)
         ]);
       }
       return display_locs;

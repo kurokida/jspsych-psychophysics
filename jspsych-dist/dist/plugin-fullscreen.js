@@ -1,69 +1,31 @@
 var jsPsychFullscreen = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-fullscreen",
-    version: "2.0.0",
-    description: "jsPsych plugin to toggle fullscreen mode in the browser",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-fullscreen"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/fullscreen",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "fullscreen",
-    version: _package.version,
+    version,
     parameters: {
+      /** A value of `true` causes the experiment to enter fullscreen mode. A value of `false` causes the browser to exit fullscreen mode. */
       fullscreen_mode: {
         type: jspsych.ParameterType.BOOL,
         default: true,
         array: false
       },
+      /** `<p>The experiment will switch to full screen mode when you press the button below</p>` | The HTML content to display above the button to enter fullscreen mode. */
       message: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "<p>The experiment will switch to full screen mode when you press the button below</p>",
         array: false
       },
+      /** The text that appears on the button to enter fullscreen mode. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue",
         array: false
       },
+      /** The length of time to delay after entering fullscreen mode before ending the trial. This can be useful because entering fullscreen is jarring and most browsers display some kind of message that the browser has entered fullscreen mode. */
       delay_after: {
         type: jspsych.ParameterType.INT,
         default: 1e3,
@@ -71,25 +33,34 @@ var jsPsychFullscreen = (function (jspsych) {
       }
     },
     data: {
+      /** true if the browser supports fullscreen mode (i.e., is not Safari) */
       success: {
         type: jspsych.ParameterType.BOOL,
         default: null,
         description: "True if the user entered fullscreen mode, false if not."
       },
+      /** Response time to click the button that launches fullscreen mode */
       rt: {
         type: jspsych.ParameterType.INT,
         default: null,
         description: "Time in milliseconds until the user entered fullscreen mode."
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class FullscreenPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
+      this.rt = null;
+      this.start_time = 0;
     }
-    static info = info;
-    rt = null;
-    start_time = 0;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var keyboardNotAllowed = typeof Element !== "undefined" && "ALLOW_KEYBOARD_INPUT" in Element;
       if (keyboardNotAllowed) {

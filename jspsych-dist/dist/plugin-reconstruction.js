@@ -1,96 +1,70 @@
 var jsPsychReconstruction = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-reconstruction",
-    version: "2.0.0",
-    description: "a jspsych plugin for a reconstruction task where the participant recreates a stimulus from memory",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-reconstruction"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/reconstruction",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "reconstruction",
-    version: _package.version,
+    version,
     parameters: {
+      /** A function with a single parameter that returns an HTML-formatted string representing the stimulus. */
       stim_function: {
         type: jspsych.ParameterType.FUNCTION,
         default: void 0
       },
+      /** The starting value of the stimulus parameter. */
       starting_value: {
         type: jspsych.ParameterType.FLOAT,
         default: 0.5
       },
+      /** The change in the stimulus parameter caused by pressing one of the modification keys. */
       step_size: {
         type: jspsych.ParameterType.FLOAT,
         default: 0.05
       },
+      /** The key to press for increasing the parameter value. */
       key_increase: {
         type: jspsych.ParameterType.KEY,
         default: "h"
       },
+      /** The key to press for decreasing the parameter value. */
       key_decrease: {
         type: jspsych.ParameterType.KEY,
         default: "g"
       },
+      /** The text that appears on the button to finish the trial. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Continue"
       }
     },
     data: {
+      /** The starting value of the stimulus parameter. */
       start_value: {
         type: jspsych.ParameterType.INT
       },
+      /** The final value of the stimulus parameter. */
       final_value: {
         type: jspsych.ParameterType.INT
       },
+      /** The length of time, in milliseconds, that the trial lasted. */
       rt: {
         type: jspsych.ParameterType.INT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class ReconstructionPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var param = trial.starting_value;
       const endTrial = () => {

@@ -51,70 +51,7 @@ var jsPsychModule = (function (exports) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var _package = {
-	  name: "jspsych",
-	  version: "8.0.2",
-	  description: "Behavioral experiments in a browser",
-	  type: "module",
-	  main: "dist/index.cjs",
-	  exports: {
-	    ".": {
-	      import: "./dist/index.js",
-	      require: "./dist/index.cjs"
-	    },
-	    "./css/*": "./css/*"
-	  },
-	  typings: "dist/index.d.ts",
-	  unpkg: "dist/index.browser.min.js",
-	  files: [
-	    "src",
-	    "dist",
-	    "css"
-	  ],
-	  source: "src/index.ts",
-	  scripts: {
-	    test: "jest",
-	    "test:watch": "npm test -- --watch",
-	    tsc: "tsc",
-	    "build:js": "rollup --config",
-	    "build:styles": "webpack-cli",
-	    build: "run-p build:js build:styles",
-	    "build:watch": 'run-p "build:js -- --watch" "build:styles watch"',
-	    prepack: "cp ../../README.md ."
-	  },
-	  repository: {
-	    type: "git",
-	    url: "git+https://github.com/jspsych/jsPsych.git",
-	    directory: "packages/jspsych"
-	  },
-	  author: "Josh de Leeuw",
-	  license: "MIT",
-	  bugs: {
-	    url: "https://github.com/jspsych/jsPsych/issues"
-	  },
-	  homepage: "https://www.jspsych.org",
-	  dependencies: {
-	    "auto-bind": "^4.0.0",
-	    "random-words": "^1.1.1",
-	    seedrandom: "^3.0.5",
-	    "type-fest": "^2.9.0"
-	  },
-	  devDependencies: {
-	    "@fontsource/open-sans": "4.5.3",
-	    "@jspsych/config": "^3.0.0",
-	    "@types/dom-mediacapture-record": "^1.0.11",
-	    "base64-inline-loader": "^2.0.1",
-	    "css-loader": "^6.6.0",
-	    "mini-css-extract-plugin": "^2.5.3",
-	    "npm-run-all": "^4.1.5",
-	    "replace-in-file-webpack-plugin": "^1.0.6",
-	    sass: "^1.43.5",
-	    "sass-loader": "^12.4.0",
-	    webpack: "^5.76.0",
-	    "webpack-cli": "^4.9.2",
-	    "webpack-remove-empty-scripts": "^0.7.2"
-	  }
-	};
+	var version = "8.2.1";
 
 	class ExtensionManager {
 	  constructor(dependencies, extensionsConfiguration) {
@@ -130,7 +67,6 @@ var jsPsychModule = (function (exports) {
 	  static getExtensionNameByClass(extensionClass) {
 	    return extensionClass["info"].name;
 	  }
-	  extensions;
 	  getExtensionInstanceByClass(extensionClass) {
 	    return this.extensions[ExtensionManager.getExtensionNameByClass(extensionClass)];
 	  }
@@ -187,8 +123,7 @@ var jsPsychModule = (function (exports) {
 	  return [...new Set(arr)];
 	}
 	function deepCopy(obj) {
-	  if (!obj)
-	    return obj;
+	  if (!obj) return obj;
 	  let out;
 	  if (Array.isArray(obj)) {
 	    out = [];
@@ -235,9 +170,9 @@ var jsPsychModule = (function (exports) {
 
 	var utils = /*#__PURE__*/Object.freeze({
 		__proto__: null,
-		unique: unique,
 		deepCopy: deepCopy,
-		deepMerge: deepMerge
+		deepMerge: deepMerge,
+		unique: unique
 	});
 
 	class DataColumn {
@@ -383,16 +318,13 @@ var jsPsychModule = (function (exports) {
 	  const b = {};
 	  for (let i = 0; i < a.length; ++i) {
 	    const p = a[i].split("=", 2);
-	    if (p.length == 1)
-	      b[p[0]] = "";
-	    else
-	      b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+	    if (p.length == 1) b[p[0]] = "";
+	    else b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
 	  }
 	  return b;
 	}
 
 	class DataCollection {
-	  trials;
 	  constructor(data = []) {
 	    this.trials = data;
 	  }
@@ -411,26 +343,44 @@ var jsPsychModule = (function (exports) {
 	      return new DataCollection([this.trials[this.trials.length - 1]]);
 	    }
 	  }
+	  /**
+	   * Queries the first n elements in a collection of trials.
+	   *
+	   * @param n A positive integer of elements to return. A value of
+	   *          n that is less than 1 will throw an error.
+	   *
+	   * @return First n objects of a collection of trials. If fewer than
+	   *         n trials are available, the trials.length elements will
+	   *         be returned.
+	   *
+	   */
 	  first(n = 1) {
 	    if (n < 1) {
 	      throw `You must query with a positive nonzero integer. Please use a
                different value for n.`;
 	    }
-	    if (this.trials.length === 0)
-	      return new DataCollection();
-	    if (n > this.trials.length)
-	      n = this.trials.length;
+	    if (this.trials.length === 0) return new DataCollection();
+	    if (n > this.trials.length) n = this.trials.length;
 	    return new DataCollection(this.trials.slice(0, n));
 	  }
+	  /**
+	   * Queries the last n elements in a collection of trials.
+	   *
+	   * @param n A positive integer of elements to return. A value of
+	   *          n that is less than 1 will throw an error.
+	   *
+	   * @return Last n objects of a collection of trials. If fewer than
+	   *         n trials are available, the trials.length elements will
+	   *         be returned.
+	   *
+	   */
 	  last(n = 1) {
 	    if (n < 1) {
 	      throw `You must query with a positive nonzero integer. Please use a
                different value for n.`;
 	    }
-	    if (this.trials.length === 0)
-	      return new DataCollection();
-	    if (n > this.trials.length)
-	      n = this.trials.length;
+	    if (this.trials.length === 0) return new DataCollection();
+	    if (n > this.trials.length) n = this.trials.length;
 	    return new DataCollection(this.trials.slice(this.trials.length - n, this.trials.length));
 	  }
 	  values() {
@@ -550,13 +500,26 @@ var jsPsychModule = (function (exports) {
 	class JsPsychData {
 	  constructor(dependencies) {
 	    this.dependencies = dependencies;
+	    /** Data properties for all trials */
+	    this.dataProperties = {};
+	    this.interactionListeners = {
+	      blur: () => {
+	        this.addInteractionRecord("blur");
+	      },
+	      focus: () => {
+	        this.addInteractionRecord("focus");
+	      },
+	      fullscreenchange: () => {
+	        this.addInteractionRecord(
+	          // @ts-expect-error
+	          document.isFullScreen || // @ts-expect-error
+	          document.webkitIsFullScreen || // @ts-expect-error
+	          document.mozIsFullScreen || document.fullscreenElement ? "fullscreenenter" : "fullscreenexit"
+	        );
+	      }
+	    };
 	    this.reset();
 	  }
-	  results;
-	  resultToTrialMap;
-	  interactionRecords;
-	  dataProperties = {};
-	  query_string;
 	  reset() {
 	    this.results = new DataCollection();
 	    this.resultToTrialMap = /* @__PURE__ */ new WeakMap();
@@ -615,19 +578,6 @@ var jsPsychModule = (function (exports) {
 	    this.interactionRecords.push(record);
 	    this.dependencies.onInteractionRecordAdded(record);
 	  }
-	  interactionListeners = {
-	    blur: () => {
-	      this.addInteractionRecord("blur");
-	    },
-	    focus: () => {
-	      this.addInteractionRecord("focus");
-	    },
-	    fullscreenchange: () => {
-	      this.addInteractionRecord(
-	        document.isFullScreen || document.webkitIsFullScreen || document.mozIsFullScreen || document.fullscreenElement ? "fullscreenenter" : "fullscreenexit"
-	      );
-	    }
-	  };
 	  createInteractionListeners() {
 	    window.addEventListener("blur", this.interactionListeners.blur);
 	    window.addEventListener("focus", this.interactionListeners.focus);
@@ -652,12 +602,16 @@ var jsPsychModule = (function (exports) {
 	    this.getRootElement = getRootElement;
 	    this.areResponsesCaseSensitive = areResponsesCaseSensitive;
 	    this.minimumValidRt = minimumValidRt;
+	    this.listeners = /* @__PURE__ */ new Set();
+	    this.heldKeys = /* @__PURE__ */ new Set();
+	    this.areRootListenersRegistered = false;
 	    autoBind$1(this);
 	    this.registerRootListeners();
 	  }
-	  listeners = /* @__PURE__ */ new Set();
-	  heldKeys = /* @__PURE__ */ new Set();
-	  areRootListenersRegistered = false;
+	  /**
+	   * If not previously done and `this.getRootElement()` returns an element, adds the root key
+	   * listeners to that element.
+	   */
 	  registerRootListeners() {
 	    if (!this.areRootListenersRegistered) {
 	      const rootElement = this.getRootElement();
@@ -773,11 +727,6 @@ var jsPsychModule = (function (exports) {
 	})(ParameterType || {});
 
 	class AudioPlayer {
-	  audio;
-	  webAudioBuffer;
-	  audioContext;
-	  useWebAudio;
-	  src;
 	  constructor(src, options = { useWebAudio: false }) {
 	    this.src = src;
 	    this.useWebAudio = options.useWebAudio;
@@ -794,8 +743,7 @@ var jsPsychModule = (function (exports) {
 	    if (this.audio instanceof HTMLAudioElement) {
 	      this.audio.play();
 	    } else {
-	      if (!this.audio)
-	        this.audio = this.getAudioSourceNode(this.webAudioBuffer);
+	      if (!this.audio) this.audio = this.getAudioSourceNode(this.webAudioBuffer);
 	      this.audio.start();
 	    }
 	  }
@@ -857,19 +805,28 @@ var jsPsychModule = (function (exports) {
 	class MediaAPI {
 	  constructor(useWebaudio) {
 	    this.useWebaudio = useWebaudio;
+	    // video //
+	    this.video_buffers = {};
+	    // audio //
+	    this.context = null;
+	    this.audio_buffers = [];
+	    // preloading stimuli //
+	    this.preload_requests = [];
+	    this.img_cache = {};
+	    this.preloadMap = /* @__PURE__ */ new Map();
+	    this.microphone_recorder = null;
+	    this.camera_stream = null;
+	    this.camera_recorder = null;
 	    if (this.useWebaudio && typeof window !== "undefined" && typeof window.AudioContext !== "undefined") {
 	      this.context = new AudioContext();
 	    }
 	  }
-	  video_buffers = {};
 	  getVideoBuffer(videoID) {
 	    if (videoID.startsWith("blob:")) {
 	      this.video_buffers[videoID] = videoID;
 	    }
 	    return this.video_buffers[videoID];
 	  }
-	  context = null;
-	  audio_buffers = [];
 	  audioContext() {
 	    if (this.context && this.context.state !== "running") {
 	      this.context.resume();
@@ -888,8 +845,6 @@ var jsPsychModule = (function (exports) {
 	      return this.audio_buffers[audioID];
 	    }
 	  }
-	  preload_requests = [];
-	  img_cache = {};
 	  preloadAudio(files, callback_complete = () => {
 	  }, callback_load = (filepath) => {
 	  }, callback_error = (error) => {
@@ -994,7 +949,6 @@ var jsPsychModule = (function (exports) {
 	      this.preload_requests.push(request);
 	    }
 	  }
-	  preloadMap = /* @__PURE__ */ new Map();
 	  getAutoPreloadList(timeline_description) {
 	    const preloadPaths = Object.fromEntries(
 	      preloadParameterTypes.map((type) => [type, /* @__PURE__ */ new Set()])
@@ -1054,7 +1008,6 @@ var jsPsychModule = (function (exports) {
 	    }
 	    this.preload_requests = [];
 	  }
-	  microphone_recorder = null;
 	  initializeMicrophoneRecorder(stream) {
 	    const recorder = new MediaRecorder(stream);
 	    this.microphone_recorder = recorder;
@@ -1062,8 +1015,6 @@ var jsPsychModule = (function (exports) {
 	  getMicrophoneRecorder() {
 	    return this.microphone_recorder;
 	  }
-	  camera_stream = null;
-	  camera_recorder = null;
 	  initializeCameraRecorder(stream, opts) {
 	    this.camera_stream = stream;
 	    const recorder = new MediaRecorder(stream, opts);
@@ -1085,12 +1036,25 @@ var jsPsychModule = (function (exports) {
 	  dispatchEvent(event) {
 	    this.getDisplayContainerElement().dispatchEvent(event);
 	  }
+	  /**
+	   * Dispatches a `keydown` event for the specified key
+	   * @param key Character code (`.key` property) for the key to press.
+	   */
 	  keyDown(key) {
 	    this.dispatchEvent(new KeyboardEvent("keydown", { key }));
 	  }
+	  /**
+	   * Dispatches a `keyup` event for the specified key
+	   * @param key Character code (`.key` property) for the key to press.
+	   */
 	  keyUp(key) {
 	    this.dispatchEvent(new KeyboardEvent("keyup", { key }));
 	  }
+	  /**
+	   * Dispatches a `keydown` and `keyup` event in sequence to simulate pressing a key.
+	   * @param key Character code (`.key` property) for the key to press.
+	   * @param delay Length of time to wait (ms) before executing action
+	   */
 	  pressKey(key, delay = 0) {
 	    if (delay > 0) {
 	      this.setJsPsychTimeout(() => {
@@ -1102,6 +1066,11 @@ var jsPsychModule = (function (exports) {
 	      this.keyUp(key);
 	    }
 	  }
+	  /**
+	   * Dispatches `mousedown`, `mouseup`, and `click` events on the target element
+	   * @param target The element to click
+	   * @param delay Length of time to wait (ms) before executing action
+	   */
 	  clickTarget(target, delay = 0) {
 	    if (delay > 0) {
 	      this.setJsPsychTimeout(() => {
@@ -1115,6 +1084,12 @@ var jsPsychModule = (function (exports) {
 	      target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 	    }
 	  }
+	  /**
+	   * Sets the value of a target text input
+	   * @param target A text input element to fill in
+	   * @param text Text to input
+	   * @param delay Length of time to wait (ms) before executing action
+	   */
 	  fillTextInput(target, text, delay = 0) {
 	    if (delay > 0) {
 	      this.setJsPsychTimeout(() => {
@@ -1124,6 +1099,12 @@ var jsPsychModule = (function (exports) {
 	      target.value = text;
 	    }
 	  }
+	  /**
+	   * Picks a valid key from `choices`, taking into account jsPsych-specific
+	   * identifiers like "NO_KEYS" and "ALL_KEYS".
+	   * @param choices Which keys are valid.
+	   * @returns A key selected at random from the valid keys.
+	   */
 	  getValidKey(choices) {
 	    const possible_keys = [
 	      "a",
@@ -1215,12 +1196,23 @@ var jsPsychModule = (function (exports) {
 	}
 
 	class TimeoutAPI {
-	  timeout_handlers = [];
+	  constructor() {
+	    this.timeout_handlers = [];
+	  }
+	  /**
+	   * Calls a function after a specified delay, in milliseconds.
+	   * @param callback The function to call after the delay.
+	   * @param delay The number of milliseconds to wait before calling the function.
+	   * @returns A handle that can be used to clear the timeout with clearTimeout.
+	   */
 	  setTimeout(callback, delay) {
 	    const handle = window.setTimeout(callback, delay);
 	    this.timeout_handlers.push(handle);
 	    return handle;
 	  }
+	  /**
+	   * Clears all timeouts that have been created with setTimeout.
+	   */
 	  clearAllTimeouts() {
 	    for (const handler of this.timeout_handlers) {
 	      clearTimeout(handler);
@@ -1247,6 +1239,973 @@ var jsPsychModule = (function (exports) {
 	    ...[keyboardListenerAPI, timeoutAPI, mediaAPI, simulationAPI].map((object) => autoBind$1(object))
 	  );
 	}
+
+	var alea$1 = {exports: {}};
+
+	alea$1.exports;
+
+	(function (module) {
+		// A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
+		// http://baagoe.com/en/RandomMusings/javascript/
+		// https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
+		// Original work is under MIT license -
+
+		// Copyright (C) 2010 by Johannes Baagøe <baagoe@baagoe.org>
+		//
+		// Permission is hereby granted, free of charge, to any person obtaining a copy
+		// of this software and associated documentation files (the "Software"), to deal
+		// in the Software without restriction, including without limitation the rights
+		// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		// copies of the Software, and to permit persons to whom the Software is
+		// furnished to do so, subject to the following conditions:
+		//
+		// The above copyright notice and this permission notice shall be included in
+		// all copies or substantial portions of the Software.
+		//
+		// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+		// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+		// THE SOFTWARE.
+
+
+
+		(function(global, module, define) {
+
+		function Alea(seed) {
+		  var me = this, mash = Mash();
+
+		  me.next = function() {
+		    var t = 2091639 * me.s0 + me.c * 2.3283064365386963e-10; // 2^-32
+		    me.s0 = me.s1;
+		    me.s1 = me.s2;
+		    return me.s2 = t - (me.c = t | 0);
+		  };
+
+		  // Apply the seeding algorithm from Baagoe.
+		  me.c = 1;
+		  me.s0 = mash(' ');
+		  me.s1 = mash(' ');
+		  me.s2 = mash(' ');
+		  me.s0 -= mash(seed);
+		  if (me.s0 < 0) { me.s0 += 1; }
+		  me.s1 -= mash(seed);
+		  if (me.s1 < 0) { me.s1 += 1; }
+		  me.s2 -= mash(seed);
+		  if (me.s2 < 0) { me.s2 += 1; }
+		  mash = null;
+		}
+
+		function copy(f, t) {
+		  t.c = f.c;
+		  t.s0 = f.s0;
+		  t.s1 = f.s1;
+		  t.s2 = f.s2;
+		  return t;
+		}
+
+		function impl(seed, opts) {
+		  var xg = new Alea(seed),
+		      state = opts && opts.state,
+		      prng = xg.next;
+		  prng.int32 = function() { return (xg.next() * 0x100000000) | 0; };
+		  prng.double = function() {
+		    return prng() + (prng() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
+		  };
+		  prng.quick = prng;
+		  if (state) {
+		    if (typeof(state) == 'object') copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		function Mash() {
+		  var n = 0xefc8249d;
+
+		  var mash = function(data) {
+		    data = String(data);
+		    for (var i = 0; i < data.length; i++) {
+		      n += data.charCodeAt(i);
+		      var h = 0.02519603282416938 * n;
+		      n = h >>> 0;
+		      h -= n;
+		      h *= n;
+		      n = h >>> 0;
+		      h -= n;
+		      n += h * 0x100000000; // 2^32
+		    }
+		    return (n >>> 0) * 2.3283064365386963e-10; // 2^-32
+		  };
+
+		  return mash;
+		}
+
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.alea = impl;
+		}
+
+		})(
+		  commonjsGlobal,
+		  module); 
+	} (alea$1));
+
+	var aleaExports = alea$1.exports;
+	var seedrandom$3 = /*@__PURE__*/getDefaultExportFromCjs(aleaExports);
+
+	var xor128$1 = {exports: {}};
+
+	xor128$1.exports;
+
+	(function (module) {
+		// A Javascript implementaion of the "xor128" prng algorithm by
+		// George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
+
+		(function(global, module, define) {
+
+		function XorGen(seed) {
+		  var me = this, strseed = '';
+
+		  me.x = 0;
+		  me.y = 0;
+		  me.z = 0;
+		  me.w = 0;
+
+		  // Set up generator function.
+		  me.next = function() {
+		    var t = me.x ^ (me.x << 11);
+		    me.x = me.y;
+		    me.y = me.z;
+		    me.z = me.w;
+		    return me.w ^= (me.w >>> 19) ^ t ^ (t >>> 8);
+		  };
+
+		  if (seed === (seed | 0)) {
+		    // Integer seed.
+		    me.x = seed;
+		  } else {
+		    // String seed.
+		    strseed += seed;
+		  }
+
+		  // Mix in string seed, then discard an initial batch of 64 values.
+		  for (var k = 0; k < strseed.length + 64; k++) {
+		    me.x ^= strseed.charCodeAt(k) | 0;
+		    me.next();
+		  }
+		}
+
+		function copy(f, t) {
+		  t.x = f.x;
+		  t.y = f.y;
+		  t.z = f.z;
+		  t.w = f.w;
+		  return t;
+		}
+
+		function impl(seed, opts) {
+		  var xg = new XorGen(seed),
+		      state = opts && opts.state,
+		      prng = function() { return (xg.next() >>> 0) / 0x100000000; };
+		  prng.double = function() {
+		    do {
+		      var top = xg.next() >>> 11,
+		          bot = (xg.next() >>> 0) / 0x100000000,
+		          result = (top + bot) / (1 << 21);
+		    } while (result === 0);
+		    return result;
+		  };
+		  prng.int32 = xg.next;
+		  prng.quick = prng;
+		  if (state) {
+		    if (typeof(state) == 'object') copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.xor128 = impl;
+		}
+
+		})(
+		  commonjsGlobal,
+		  module); 
+	} (xor128$1));
+
+	var xor128Exports = xor128$1.exports;
+
+	var xorwow$1 = {exports: {}};
+
+	xorwow$1.exports;
+
+	(function (module) {
+		// A Javascript implementaion of the "xorwow" prng algorithm by
+		// George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
+
+		(function(global, module, define) {
+
+		function XorGen(seed) {
+		  var me = this, strseed = '';
+
+		  // Set up generator function.
+		  me.next = function() {
+		    var t = (me.x ^ (me.x >>> 2));
+		    me.x = me.y; me.y = me.z; me.z = me.w; me.w = me.v;
+		    return (me.d = (me.d + 362437 | 0)) +
+		       (me.v = (me.v ^ (me.v << 4)) ^ (t ^ (t << 1))) | 0;
+		  };
+
+		  me.x = 0;
+		  me.y = 0;
+		  me.z = 0;
+		  me.w = 0;
+		  me.v = 0;
+
+		  if (seed === (seed | 0)) {
+		    // Integer seed.
+		    me.x = seed;
+		  } else {
+		    // String seed.
+		    strseed += seed;
+		  }
+
+		  // Mix in string seed, then discard an initial batch of 64 values.
+		  for (var k = 0; k < strseed.length + 64; k++) {
+		    me.x ^= strseed.charCodeAt(k) | 0;
+		    if (k == strseed.length) {
+		      me.d = me.x << 10 ^ me.x >>> 4;
+		    }
+		    me.next();
+		  }
+		}
+
+		function copy(f, t) {
+		  t.x = f.x;
+		  t.y = f.y;
+		  t.z = f.z;
+		  t.w = f.w;
+		  t.v = f.v;
+		  t.d = f.d;
+		  return t;
+		}
+
+		function impl(seed, opts) {
+		  var xg = new XorGen(seed),
+		      state = opts && opts.state,
+		      prng = function() { return (xg.next() >>> 0) / 0x100000000; };
+		  prng.double = function() {
+		    do {
+		      var top = xg.next() >>> 11,
+		          bot = (xg.next() >>> 0) / 0x100000000,
+		          result = (top + bot) / (1 << 21);
+		    } while (result === 0);
+		    return result;
+		  };
+		  prng.int32 = xg.next;
+		  prng.quick = prng;
+		  if (state) {
+		    if (typeof(state) == 'object') copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.xorwow = impl;
+		}
+
+		})(
+		  commonjsGlobal,
+		  module); 
+	} (xorwow$1));
+
+	var xorwowExports = xorwow$1.exports;
+
+	var xorshift7$1 = {exports: {}};
+
+	xorshift7$1.exports;
+
+	(function (module) {
+		// A Javascript implementaion of the "xorshift7" algorithm by
+		// François Panneton and Pierre L'ecuyer:
+		// "On the Xorgshift Random Number Generators"
+		// http://saluc.engr.uconn.edu/refs/crypto/rng/panneton05onthexorshift.pdf
+
+		(function(global, module, define) {
+
+		function XorGen(seed) {
+		  var me = this;
+
+		  // Set up generator function.
+		  me.next = function() {
+		    // Update xor generator.
+		    var X = me.x, i = me.i, t, v;
+		    t = X[i]; t ^= (t >>> 7); v = t ^ (t << 24);
+		    t = X[(i + 1) & 7]; v ^= t ^ (t >>> 10);
+		    t = X[(i + 3) & 7]; v ^= t ^ (t >>> 3);
+		    t = X[(i + 4) & 7]; v ^= t ^ (t << 7);
+		    t = X[(i + 7) & 7]; t = t ^ (t << 13); v ^= t ^ (t << 9);
+		    X[i] = v;
+		    me.i = (i + 1) & 7;
+		    return v;
+		  };
+
+		  function init(me, seed) {
+		    var j, X = [];
+
+		    if (seed === (seed | 0)) {
+		      // Seed state array using a 32-bit integer.
+		      X[0] = seed;
+		    } else {
+		      // Seed state using a string.
+		      seed = '' + seed;
+		      for (j = 0; j < seed.length; ++j) {
+		        X[j & 7] = (X[j & 7] << 15) ^
+		            (seed.charCodeAt(j) + X[(j + 1) & 7] << 13);
+		      }
+		    }
+		    // Enforce an array length of 8, not all zeroes.
+		    while (X.length < 8) X.push(0);
+		    for (j = 0; j < 8 && X[j] === 0; ++j);
+		    if (j == 8) X[7] = -1; else X[j];
+
+		    me.x = X;
+		    me.i = 0;
+
+		    // Discard an initial 256 values.
+		    for (j = 256; j > 0; --j) {
+		      me.next();
+		    }
+		  }
+
+		  init(me, seed);
+		}
+
+		function copy(f, t) {
+		  t.x = f.x.slice();
+		  t.i = f.i;
+		  return t;
+		}
+
+		function impl(seed, opts) {
+		  if (seed == null) seed = +(new Date);
+		  var xg = new XorGen(seed),
+		      state = opts && opts.state,
+		      prng = function() { return (xg.next() >>> 0) / 0x100000000; };
+		  prng.double = function() {
+		    do {
+		      var top = xg.next() >>> 11,
+		          bot = (xg.next() >>> 0) / 0x100000000,
+		          result = (top + bot) / (1 << 21);
+		    } while (result === 0);
+		    return result;
+		  };
+		  prng.int32 = xg.next;
+		  prng.quick = prng;
+		  if (state) {
+		    if (state.x) copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.xorshift7 = impl;
+		}
+
+		})(
+		  commonjsGlobal,
+		  module); 
+	} (xorshift7$1));
+
+	var xorshift7Exports = xorshift7$1.exports;
+
+	var xor4096$1 = {exports: {}};
+
+	xor4096$1.exports;
+
+	(function (module) {
+		// A Javascript implementaion of Richard Brent's Xorgens xor4096 algorithm.
+		//
+		// This fast non-cryptographic random number generator is designed for
+		// use in Monte-Carlo algorithms. It combines a long-period xorshift
+		// generator with a Weyl generator, and it passes all common batteries
+		// of stasticial tests for randomness while consuming only a few nanoseconds
+		// for each prng generated.  For background on the generator, see Brent's
+		// paper: "Some long-period random number generators using shifts and xors."
+		// http://arxiv.org/pdf/1004.3115v1.pdf
+		//
+		// Usage:
+		//
+		// var xor4096 = require('xor4096');
+		// random = xor4096(1);                        // Seed with int32 or string.
+		// assert.equal(random(), 0.1520436450538547); // (0, 1) range, 53 bits.
+		// assert.equal(random.int32(), 1806534897);   // signed int32, 32 bits.
+		//
+		// For nonzero numeric keys, this impelementation provides a sequence
+		// identical to that by Brent's xorgens 3 implementaion in C.  This
+		// implementation also provides for initalizing the generator with
+		// string seeds, or for saving and restoring the state of the generator.
+		//
+		// On Chrome, this prng benchmarks about 2.1 times slower than
+		// Javascript's built-in Math.random().
+
+		(function(global, module, define) {
+
+		function XorGen(seed) {
+		  var me = this;
+
+		  // Set up generator function.
+		  me.next = function() {
+		    var w = me.w,
+		        X = me.X, i = me.i, t, v;
+		    // Update Weyl generator.
+		    me.w = w = (w + 0x61c88647) | 0;
+		    // Update xor generator.
+		    v = X[(i + 34) & 127];
+		    t = X[i = ((i + 1) & 127)];
+		    v ^= v << 13;
+		    t ^= t << 17;
+		    v ^= v >>> 15;
+		    t ^= t >>> 12;
+		    // Update Xor generator array state.
+		    v = X[i] = v ^ t;
+		    me.i = i;
+		    // Result is the combination.
+		    return (v + (w ^ (w >>> 16))) | 0;
+		  };
+
+		  function init(me, seed) {
+		    var t, v, i, j, w, X = [], limit = 128;
+		    if (seed === (seed | 0)) {
+		      // Numeric seeds initialize v, which is used to generates X.
+		      v = seed;
+		      seed = null;
+		    } else {
+		      // String seeds are mixed into v and X one character at a time.
+		      seed = seed + '\0';
+		      v = 0;
+		      limit = Math.max(limit, seed.length);
+		    }
+		    // Initialize circular array and weyl value.
+		    for (i = 0, j = -32; j < limit; ++j) {
+		      // Put the unicode characters into the array, and shuffle them.
+		      if (seed) v ^= seed.charCodeAt((j + 32) % seed.length);
+		      // After 32 shuffles, take v as the starting w value.
+		      if (j === 0) w = v;
+		      v ^= v << 10;
+		      v ^= v >>> 15;
+		      v ^= v << 4;
+		      v ^= v >>> 13;
+		      if (j >= 0) {
+		        w = (w + 0x61c88647) | 0;     // Weyl.
+		        t = (X[j & 127] ^= (v + w));  // Combine xor and weyl to init array.
+		        i = (0 == t) ? i + 1 : 0;     // Count zeroes.
+		      }
+		    }
+		    // We have detected all zeroes; make the key nonzero.
+		    if (i >= 128) {
+		      X[(seed && seed.length || 0) & 127] = -1;
+		    }
+		    // Run the generator 512 times to further mix the state before using it.
+		    // Factoring this as a function slows the main generator, so it is just
+		    // unrolled here.  The weyl generator is not advanced while warming up.
+		    i = 127;
+		    for (j = 4 * 128; j > 0; --j) {
+		      v = X[(i + 34) & 127];
+		      t = X[i = ((i + 1) & 127)];
+		      v ^= v << 13;
+		      t ^= t << 17;
+		      v ^= v >>> 15;
+		      t ^= t >>> 12;
+		      X[i] = v ^ t;
+		    }
+		    // Storing state as object members is faster than using closure variables.
+		    me.w = w;
+		    me.X = X;
+		    me.i = i;
+		  }
+
+		  init(me, seed);
+		}
+
+		function copy(f, t) {
+		  t.i = f.i;
+		  t.w = f.w;
+		  t.X = f.X.slice();
+		  return t;
+		}
+		function impl(seed, opts) {
+		  if (seed == null) seed = +(new Date);
+		  var xg = new XorGen(seed),
+		      state = opts && opts.state,
+		      prng = function() { return (xg.next() >>> 0) / 0x100000000; };
+		  prng.double = function() {
+		    do {
+		      var top = xg.next() >>> 11,
+		          bot = (xg.next() >>> 0) / 0x100000000,
+		          result = (top + bot) / (1 << 21);
+		    } while (result === 0);
+		    return result;
+		  };
+		  prng.int32 = xg.next;
+		  prng.quick = prng;
+		  if (state) {
+		    if (state.X) copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.xor4096 = impl;
+		}
+
+		})(
+		  commonjsGlobal,                                     // window object or global
+		  module); 
+	} (xor4096$1));
+
+	var xor4096Exports = xor4096$1.exports;
+
+	var tychei$1 = {exports: {}};
+
+	tychei$1.exports;
+
+	(function (module) {
+		// A Javascript implementaion of the "Tyche-i" prng algorithm by
+		// Samuel Neves and Filipe Araujo.
+		// See https://eden.dei.uc.pt/~sneves/pubs/2011-snfa2.pdf
+
+		(function(global, module, define) {
+
+		function XorGen(seed) {
+		  var me = this, strseed = '';
+
+		  // Set up generator function.
+		  me.next = function() {
+		    var b = me.b, c = me.c, d = me.d, a = me.a;
+		    b = (b << 25) ^ (b >>> 7) ^ c;
+		    c = (c - d) | 0;
+		    d = (d << 24) ^ (d >>> 8) ^ a;
+		    a = (a - b) | 0;
+		    me.b = b = (b << 20) ^ (b >>> 12) ^ c;
+		    me.c = c = (c - d) | 0;
+		    me.d = (d << 16) ^ (c >>> 16) ^ a;
+		    return me.a = (a - b) | 0;
+		  };
+
+		  /* The following is non-inverted tyche, which has better internal
+		   * bit diffusion, but which is about 25% slower than tyche-i in JS.
+		  me.next = function() {
+		    var a = me.a, b = me.b, c = me.c, d = me.d;
+		    a = (me.a + me.b | 0) >>> 0;
+		    d = me.d ^ a; d = d << 16 ^ d >>> 16;
+		    c = me.c + d | 0;
+		    b = me.b ^ c; b = b << 12 ^ d >>> 20;
+		    me.a = a = a + b | 0;
+		    d = d ^ a; me.d = d = d << 8 ^ d >>> 24;
+		    me.c = c = c + d | 0;
+		    b = b ^ c;
+		    return me.b = (b << 7 ^ b >>> 25);
+		  }
+		  */
+
+		  me.a = 0;
+		  me.b = 0;
+		  me.c = 2654435769 | 0;
+		  me.d = 1367130551;
+
+		  if (seed === Math.floor(seed)) {
+		    // Integer seed.
+		    me.a = (seed / 0x100000000) | 0;
+		    me.b = seed | 0;
+		  } else {
+		    // String seed.
+		    strseed += seed;
+		  }
+
+		  // Mix in string seed, then discard an initial batch of 64 values.
+		  for (var k = 0; k < strseed.length + 20; k++) {
+		    me.b ^= strseed.charCodeAt(k) | 0;
+		    me.next();
+		  }
+		}
+
+		function copy(f, t) {
+		  t.a = f.a;
+		  t.b = f.b;
+		  t.c = f.c;
+		  t.d = f.d;
+		  return t;
+		}
+		function impl(seed, opts) {
+		  var xg = new XorGen(seed),
+		      state = opts && opts.state,
+		      prng = function() { return (xg.next() >>> 0) / 0x100000000; };
+		  prng.double = function() {
+		    do {
+		      var top = xg.next() >>> 11,
+		          bot = (xg.next() >>> 0) / 0x100000000,
+		          result = (top + bot) / (1 << 21);
+		    } while (result === 0);
+		    return result;
+		  };
+		  prng.int32 = xg.next;
+		  prng.quick = prng;
+		  if (state) {
+		    if (typeof(state) == 'object') copy(state, xg);
+		    prng.state = function() { return copy(xg, {}); };
+		  }
+		  return prng;
+		}
+
+		if (module && module.exports) {
+		  module.exports = impl;
+		} else {
+		  this.tychei = impl;
+		}
+
+		})(
+		  commonjsGlobal,
+		  module); 
+	} (tychei$1));
+
+	var tycheiExports = tychei$1.exports;
+
+	var seedrandom$2 = {exports: {}};
+
+	/*
+	Copyright 2019 David Bau.
+
+	Permission is hereby granted, free of charge, to any person obtaining
+	a copy of this software and associated documentation files (the
+	"Software"), to deal in the Software without restriction, including
+	without limitation the rights to use, copy, modify, merge, publish,
+	distribute, sublicense, and/or sell copies of the Software, and to
+	permit persons to whom the Software is furnished to do so, subject to
+	the following conditions:
+
+	The above copyright notice and this permission notice shall be
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+	CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+	TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	*/
+
+	(function (module) {
+		(function (global, pool, math) {
+		//
+		// The following constants are related to IEEE 754 limits.
+		//
+
+		var width = 256,        // each RC4 output is 0 <= x < 256
+		    chunks = 6,         // at least six RC4 outputs for each double
+		    digits = 52,        // there are 52 significant digits in a double
+		    rngname = 'random', // rngname: name for Math.random and Math.seedrandom
+		    startdenom = math.pow(width, chunks),
+		    significance = math.pow(2, digits),
+		    overflow = significance * 2,
+		    mask = width - 1,
+		    nodecrypto;         // node.js crypto module, initialized at the bottom.
+
+		//
+		// seedrandom()
+		// This is the seedrandom function described above.
+		//
+		function seedrandom(seed, options, callback) {
+		  var key = [];
+		  options = (options == true) ? { entropy: true } : (options || {});
+
+		  // Flatten the seed string or build one from local entropy if needed.
+		  var shortseed = mixkey(flatten(
+		    options.entropy ? [seed, tostring(pool)] :
+		    (seed == null) ? autoseed() : seed, 3), key);
+
+		  // Use the seed to initialize an ARC4 generator.
+		  var arc4 = new ARC4(key);
+
+		  // This function returns a random double in [0, 1) that contains
+		  // randomness in every bit of the mantissa of the IEEE 754 value.
+		  var prng = function() {
+		    var n = arc4.g(chunks),             // Start with a numerator n < 2 ^ 48
+		        d = startdenom,                 //   and denominator d = 2 ^ 48.
+		        x = 0;                          //   and no 'extra last byte'.
+		    while (n < significance) {          // Fill up all significant digits by
+		      n = (n + x) * width;              //   shifting numerator and
+		      d *= width;                       //   denominator and generating a
+		      x = arc4.g(1);                    //   new least-significant-byte.
+		    }
+		    while (n >= overflow) {             // To avoid rounding up, before adding
+		      n /= 2;                           //   last byte, shift everything
+		      d /= 2;                           //   right using integer math until
+		      x >>>= 1;                         //   we have exactly the desired bits.
+		    }
+		    return (n + x) / d;                 // Form the number within [0, 1).
+		  };
+
+		  prng.int32 = function() { return arc4.g(4) | 0; };
+		  prng.quick = function() { return arc4.g(4) / 0x100000000; };
+		  prng.double = prng;
+
+		  // Mix the randomness into accumulated entropy.
+		  mixkey(tostring(arc4.S), pool);
+
+		  // Calling convention: what to return as a function of prng, seed, is_math.
+		  return (options.pass || callback ||
+		      function(prng, seed, is_math_call, state) {
+		        if (state) {
+		          // Load the arc4 state from the given state if it has an S array.
+		          if (state.S) { copy(state, arc4); }
+		          // Only provide the .state method if requested via options.state.
+		          prng.state = function() { return copy(arc4, {}); };
+		        }
+
+		        // If called as a method of Math (Math.seedrandom()), mutate
+		        // Math.random because that is how seedrandom.js has worked since v1.0.
+		        if (is_math_call) { math[rngname] = prng; return seed; }
+
+		        // Otherwise, it is a newer calling convention, so return the
+		        // prng directly.
+		        else return prng;
+		      })(
+		  prng,
+		  shortseed,
+		  'global' in options ? options.global : (this == math),
+		  options.state);
+		}
+
+		//
+		// ARC4
+		//
+		// An ARC4 implementation.  The constructor takes a key in the form of
+		// an array of at most (width) integers that should be 0 <= x < (width).
+		//
+		// The g(count) method returns a pseudorandom integer that concatenates
+		// the next (count) outputs from ARC4.  Its return value is a number x
+		// that is in the range 0 <= x < (width ^ count).
+		//
+		function ARC4(key) {
+		  var t, keylen = key.length,
+		      me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
+
+		  // The empty key [] is treated as [0].
+		  if (!keylen) { key = [keylen++]; }
+
+		  // Set up S using the standard key scheduling algorithm.
+		  while (i < width) {
+		    s[i] = i++;
+		  }
+		  for (i = 0; i < width; i++) {
+		    s[i] = s[j = mask & (j + key[i % keylen] + (t = s[i]))];
+		    s[j] = t;
+		  }
+
+		  // The "g" method returns the next (count) outputs as one number.
+		  (me.g = function(count) {
+		    // Using instance members instead of closure state nearly doubles speed.
+		    var t, r = 0,
+		        i = me.i, j = me.j, s = me.S;
+		    while (count--) {
+		      t = s[i = mask & (i + 1)];
+		      r = r * width + s[mask & ((s[i] = s[j = mask & (j + t)]) + (s[j] = t))];
+		    }
+		    me.i = i; me.j = j;
+		    return r;
+		    // For robust unpredictability, the function call below automatically
+		    // discards an initial batch of values.  This is called RC4-drop[256].
+		    // See http://google.com/search?q=rsa+fluhrer+response&btnI
+		  })(width);
+		}
+
+		//
+		// copy()
+		// Copies internal state of ARC4 to or from a plain object.
+		//
+		function copy(f, t) {
+		  t.i = f.i;
+		  t.j = f.j;
+		  t.S = f.S.slice();
+		  return t;
+		}
+		//
+		// flatten()
+		// Converts an object tree to nested arrays of strings.
+		//
+		function flatten(obj, depth) {
+		  var result = [], typ = (typeof obj), prop;
+		  if (depth && typ == 'object') {
+		    for (prop in obj) {
+		      try { result.push(flatten(obj[prop], depth - 1)); } catch (e) {}
+		    }
+		  }
+		  return (result.length ? result : typ == 'string' ? obj : obj + '\0');
+		}
+
+		//
+		// mixkey()
+		// Mixes a string seed into a key that is an array of integers, and
+		// returns a shortened string seed that is equivalent to the result key.
+		//
+		function mixkey(seed, key) {
+		  var stringseed = seed + '', smear, j = 0;
+		  while (j < stringseed.length) {
+		    key[mask & j] =
+		      mask & ((smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++));
+		  }
+		  return tostring(key);
+		}
+
+		//
+		// autoseed()
+		// Returns an object for autoseeding, using window.crypto and Node crypto
+		// module if available.
+		//
+		function autoseed() {
+		  try {
+		    var out;
+		    if (nodecrypto && (out = nodecrypto.randomBytes)) {
+		      // The use of 'out' to remember randomBytes makes tight minified code.
+		      out = out(width);
+		    } else {
+		      out = new Uint8Array(width);
+		      (global.crypto || global.msCrypto).getRandomValues(out);
+		    }
+		    return tostring(out);
+		  } catch (e) {
+		    var browser = global.navigator,
+		        plugins = browser && browser.plugins;
+		    return [+new Date, global, plugins, global.screen, tostring(pool)];
+		  }
+		}
+
+		//
+		// tostring()
+		// Converts an array of charcodes to a string
+		//
+		function tostring(a) {
+		  return String.fromCharCode.apply(0, a);
+		}
+
+		//
+		// When seedrandom.js is loaded, we immediately mix a few bits
+		// from the built-in RNG into the entropy pool.  Because we do
+		// not want to interfere with deterministic PRNG state later,
+		// seedrandom will not call math.random on its own again after
+		// initialization.
+		//
+		mixkey(math.random(), pool);
+
+		//
+		// Nodejs and AMD support: export the implementation as a module using
+		// either convention.
+		//
+		if (module.exports) {
+		  module.exports = seedrandom;
+		  // When in node.js, try using crypto package for autoseeding.
+		  try {
+		    nodecrypto = require('crypto');
+		  } catch (ex) {}
+		} else {
+		  // When included as a plain script, set up Math.seedrandom global.
+		  math['seed' + rngname] = seedrandom;
+		}
+
+
+		// End anonymous scope, and pass initial values.
+		})(
+		  // global: `self` in browsers (including strict mode and web workers),
+		  // otherwise `this` in Node and other environments
+		  (typeof self !== 'undefined') ? self : commonjsGlobal,
+		  [],     // pool: entropy pool starts empty
+		  Math    // math: package containing random, pow, and seedrandom
+		); 
+	} (seedrandom$2));
+
+	var seedrandomExports = seedrandom$2.exports;
+
+	// A library of seedable RNGs implemented in Javascript.
+	//
+	// Usage:
+	//
+	// var seedrandom = require('seedrandom');
+	// var random = seedrandom(1); // or any seed.
+	// var x = random();       // 0 <= x < 1.  Every bit is random.
+	// var x = random.quick(); // 0 <= x < 1.  32 bits of randomness.
+
+	// alea, a 53-bit multiply-with-carry generator by Johannes Baagøe.
+	// Period: ~2^116
+	// Reported to pass all BigCrush tests.
+	var alea = aleaExports;
+
+	// xor128, a pure xor-shift generator by George Marsaglia.
+	// Period: 2^128-1.
+	// Reported to fail: MatrixRank and LinearComp.
+	var xor128 = xor128Exports;
+
+	// xorwow, George Marsaglia's 160-bit xor-shift combined plus weyl.
+	// Period: 2^192-2^32
+	// Reported to fail: CollisionOver, SimpPoker, and LinearComp.
+	var xorwow = xorwowExports;
+
+	// xorshift7, by François Panneton and Pierre L'ecuyer, takes
+	// a different approach: it adds robustness by allowing more shifts
+	// than Marsaglia's original three.  It is a 7-shift generator
+	// with 256 bits, that passes BigCrush with no systmatic failures.
+	// Period 2^256-1.
+	// No systematic BigCrush failures reported.
+	var xorshift7 = xorshift7Exports;
+
+	// xor4096, by Richard Brent, is a 4096-bit xor-shift with a
+	// very long period that also adds a Weyl generator. It also passes
+	// BigCrush with no systematic failures.  Its long period may
+	// be useful if you have many generators and need to avoid
+	// collisions.
+	// Period: 2^4128-2^32.
+	// No systematic BigCrush failures reported.
+	var xor4096 = xor4096Exports;
+
+	// Tyche-i, by Samuel Neves and Filipe Araujo, is a bit-shifting random
+	// number generator derived from ChaCha, a modern stream cipher.
+	// https://eden.dei.uc.pt/~sneves/pubs/2011-snfa2.pdf
+	// Period: ~2^127
+	// No systematic BigCrush failures reported.
+	var tychei = tycheiExports;
+
+	// The original ARC4-based prng included in this library.
+	// Period: ~2^1600
+	var sr = seedrandomExports;
+
+	sr.alea = alea;
+	sr.xor128 = xor128;
+	sr.xorwow = xorwow;
+	sr.xorshift7 = xorshift7;
+	sr.xor4096 = xor4096;
+	sr.tychei = tychei;
+
+	var seedrandom$1 = sr;
+
+	var seedrandom = seedrandom$1;
 
 	var wordList = [
 	  // Borrowed from xkcd password generator which borrowed it from wherever
@@ -1497,6 +2456,8 @@ var jsPsychModule = (function (exports) {
 	];
 
 	function words(options) {
+	  // initalize random number generator for words if options.seed is provided
+	  const random = options?.seed ? new seedrandom(options.seed) : null;
 
 	  function word() {
 	    if (options && options.maxLength > 1) {
@@ -1523,8 +2484,10 @@ var jsPsychModule = (function (exports) {
 	    return wordList[randInt(wordList.length)];
 	  }
 
+	  // random int as seeded by options.seed if applicable, or Math.random() otherwise
 	  function randInt(lessThan) {
-	    return Math.floor(Math.random() * lessThan);
+	    const r = random ? random() : Math.random();
+	    return Math.floor(r * lessThan);
 	  }
 
 	  // No arguments = generate one word
@@ -1591,130 +2554,8 @@ var jsPsychModule = (function (exports) {
 
 	var rw = /*@__PURE__*/getDefaultExportFromCjs(randomWords$1);
 
-	var alea = {exports: {}};
-
-	alea.exports;
-
-	(function (module) {
-		// A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
-		// http://baagoe.com/en/RandomMusings/javascript/
-		// https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
-		// Original work is under MIT license -
-
-		// Copyright (C) 2010 by Johannes Baagøe <baagoe@baagoe.org>
-		//
-		// Permission is hereby granted, free of charge, to any person obtaining a copy
-		// of this software and associated documentation files (the "Software"), to deal
-		// in the Software without restriction, including without limitation the rights
-		// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-		// copies of the Software, and to permit persons to whom the Software is
-		// furnished to do so, subject to the following conditions:
-		//
-		// The above copyright notice and this permission notice shall be included in
-		// all copies or substantial portions of the Software.
-		//
-		// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-		// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-		// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-		// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-		// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-		// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-		// THE SOFTWARE.
-
-
-
-		(function(global, module, define) {
-
-		function Alea(seed) {
-		  var me = this, mash = Mash();
-
-		  me.next = function() {
-		    var t = 2091639 * me.s0 + me.c * 2.3283064365386963e-10; // 2^-32
-		    me.s0 = me.s1;
-		    me.s1 = me.s2;
-		    return me.s2 = t - (me.c = t | 0);
-		  };
-
-		  // Apply the seeding algorithm from Baagoe.
-		  me.c = 1;
-		  me.s0 = mash(' ');
-		  me.s1 = mash(' ');
-		  me.s2 = mash(' ');
-		  me.s0 -= mash(seed);
-		  if (me.s0 < 0) { me.s0 += 1; }
-		  me.s1 -= mash(seed);
-		  if (me.s1 < 0) { me.s1 += 1; }
-		  me.s2 -= mash(seed);
-		  if (me.s2 < 0) { me.s2 += 1; }
-		  mash = null;
-		}
-
-		function copy(f, t) {
-		  t.c = f.c;
-		  t.s0 = f.s0;
-		  t.s1 = f.s1;
-		  t.s2 = f.s2;
-		  return t;
-		}
-
-		function impl(seed, opts) {
-		  var xg = new Alea(seed),
-		      state = opts && opts.state,
-		      prng = xg.next;
-		  prng.int32 = function() { return (xg.next() * 0x100000000) | 0; };
-		  prng.double = function() {
-		    return prng() + (prng() * 0x200000 | 0) * 1.1102230246251565e-16; // 2^-53
-		  };
-		  prng.quick = prng;
-		  if (state) {
-		    if (typeof(state) == 'object') copy(state, xg);
-		    prng.state = function() { return copy(xg, {}); };
-		  }
-		  return prng;
-		}
-
-		function Mash() {
-		  var n = 0xefc8249d;
-
-		  var mash = function(data) {
-		    data = String(data);
-		    for (var i = 0; i < data.length; i++) {
-		      n += data.charCodeAt(i);
-		      var h = 0.02519603282416938 * n;
-		      n = h >>> 0;
-		      h -= n;
-		      h *= n;
-		      n = h >>> 0;
-		      h -= n;
-		      n += h * 0x100000000; // 2^32
-		    }
-		    return (n >>> 0) * 2.3283064365386963e-10; // 2^-32
-		  };
-
-		  return mash;
-		}
-
-
-		if (module && module.exports) {
-		  module.exports = impl;
-		} else if (define && define.amd) {
-		  define(function() { return impl; });
-		} else {
-		  this.alea = impl;
-		}
-
-		})(
-		  commonjsGlobal,
-		  module,    // present in node.js
-		  (typeof undefined) == 'function'    // present with an AMD loader
-		); 
-	} (alea));
-
-	var aleaExports = alea.exports;
-	var seedrandom = /*@__PURE__*/getDefaultExportFromCjs(aleaExports);
-
 	function setSeed(seed = Math.random().toString()) {
-	  Math.random = seedrandom(seed);
+	  Math.random = seedrandom$3(seed);
 	  return seed;
 	}
 	function repeat(array, repetitions, unpack = false) {
@@ -1940,10 +2781,8 @@ var jsPsychModule = (function (exports) {
 	}
 	function randn_bm() {
 	  var u = 0, v = 0;
-	  while (u === 0)
-	    u = Math.random();
-	  while (v === 0)
-	    v = Math.random();
+	  while (u === 0) u = Math.random();
+	  while (v === 0) v = Math.random();
 	  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 	}
 	function unpackArray(array) {
@@ -1961,21 +2800,21 @@ var jsPsychModule = (function (exports) {
 
 	var randomization = /*#__PURE__*/Object.freeze({
 		__proto__: null,
-		setSeed: setSeed,
-		repeat: repeat,
-		shuffle: shuffle,
-		shuffleNoRepeats: shuffleNoRepeats,
-		shuffleAlternateGroups: shuffleAlternateGroups,
-		sampleWithoutReplacement: sampleWithoutReplacement,
-		sampleWithReplacement: sampleWithReplacement,
 		factorial: factorial,
 		randomID: randomID,
 		randomInt: randomInt,
+		randomWords: randomWords,
+		repeat: repeat,
 		sampleBernoulli: sampleBernoulli,
-		sampleNormal: sampleNormal,
-		sampleExponential: sampleExponential,
 		sampleExGaussian: sampleExGaussian,
-		randomWords: randomWords
+		sampleExponential: sampleExponential,
+		sampleNormal: sampleNormal,
+		sampleWithReplacement: sampleWithReplacement,
+		sampleWithoutReplacement: sampleWithoutReplacement,
+		setSeed: setSeed,
+		shuffle: shuffle,
+		shuffleAlternateGroups: shuffleAlternateGroups,
+		shuffleNoRepeats: shuffleNoRepeats
 	});
 
 	function turkInfo() {
@@ -2007,8 +2846,7 @@ var jsPsychModule = (function (exports) {
 	  const turk = turkInfo();
 	  const assignmentId = turk.assignmentId;
 	  const turkSubmitTo = turk.turkSubmitTo;
-	  if (!assignmentId || !turkSubmitTo)
-	    return;
+	  if (!assignmentId || !turkSubmitTo) return;
 	  const form = document.createElement("form");
 	  form.method = "POST";
 	  form.action = turkSubmitTo + "/mturk/externalSubmit?assignmentId=" + assignmentId;
@@ -2028,19 +2866,18 @@ var jsPsychModule = (function (exports) {
 
 	var turk = /*#__PURE__*/Object.freeze({
 		__proto__: null,
-		turkInfo: turkInfo,
-		submitToTurk: submitToTurk
+		submitToTurk: submitToTurk,
+		turkInfo: turkInfo
 	});
 
 	class ProgressBar {
 	  constructor(containerElement, message) {
 	    this.containerElement = containerElement;
 	    this.message = message;
+	    this._progress = 0;
 	    this.setupElements();
 	  }
-	  _progress = 0;
-	  innerDiv;
-	  messageSpan;
+	  /** Adds the progress bar HTML code into `this.containerElement` */
 	  setupElements() {
 	    this.messageSpan = document.createElement("span");
 	    this.innerDiv = document.createElement("div");
@@ -2052,6 +2889,7 @@ var jsPsychModule = (function (exports) {
 	    this.containerElement.appendChild(this.messageSpan);
 	    this.containerElement.appendChild(outerDiv);
 	  }
+	  /** Updates the progress bar according to `this.progress` */
 	  update() {
 	    this.innerDiv.style.width = this._progress * 100 + "%";
 	    if (typeof this.message === "function") {
@@ -2060,6 +2898,10 @@ var jsPsychModule = (function (exports) {
 	      this.messageSpan.innerHTML = this.message;
 	    }
 	  }
+	  /**
+	   * The bar's current position as a number in the closed interval [0, 1]. Set this to update the
+	   * progress bar accordingly.
+	   */
 	  set progress(progress) {
 	    if (typeof progress !== "number" || progress < 0 || progress > 1) {
 	      throw new Error("jsPsych.progressBar.progress must be a number between 0 and 1");
@@ -2108,8 +2950,6 @@ var jsPsychModule = (function (exports) {
 	  constructor() {
 	    this.reset();
 	  }
-	  promise;
-	  resolvePromise;
 	  reset() {
 	    this.promise = new Promise((resolve) => {
 	      this.resolvePromise = resolve;
@@ -2140,6 +2980,9 @@ var jsPsychModule = (function (exports) {
 	  return typeof value === "object" && value !== null;
 	}
 	class ParameterObjectPathCache {
+	  constructor() {
+	    this.cache = /* @__PURE__ */ new Map();
+	  }
 	  static lookupChild(objectOrArray, childName) {
 	    let doesPathExist = false;
 	    let childValue;
@@ -2156,15 +2999,11 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return { doesPathExist, value: childValue };
 	  }
-	  cache = /* @__PURE__ */ new Map();
-	  rootObject;
 	  get(path) {
 	    return this.cache.get(path.join("."));
 	  }
 	  has(path) {
 	    return this.cache.has(path.join("."));
-	  }
-	  constructor() {
 	  }
 	  initialize(rootObject) {
 	    this.rootObject = rootObject;
@@ -2206,20 +3045,42 @@ var jsPsychModule = (function (exports) {
 	class TimelineNode {
 	  constructor(dependencies) {
 	    this.dependencies = dependencies;
+	    this.status = TimelineNodeStatus.PENDING;
+	    this.parameterValueCache = new ParameterObjectPathCache();
 	  }
-	  index;
-	  status = TimelineNodeStatus.PENDING;
 	  getStatus() {
 	    return this.status;
 	  }
-	  parameterValueCache = new ParameterObjectPathCache();
+	  /**
+	   * Initializes the parameter value cache with `this.description`. To be called by subclass
+	   * constructors after setting `this.description`.
+	   */
 	  initializeParameterValueCache() {
 	    this.parameterValueCache.initialize(this.description);
 	  }
+	  /**
+	   * Resets all cached parameter values in this timeline node and all of its parents. This is
+	   * necessary to re-evaluate function parameters and timeline variables at each new trial.
+	   */
 	  resetParameterValueCache() {
 	    this.parameterValueCache.reset();
 	    this.parent?.resetParameterValueCache();
 	  }
+	  /**
+	   * Retrieves a parameter value from the description of this timeline node, recursively falling
+	   * back to the description of each parent timeline node unless `recursive` is set to `false`. If
+	   * the parameter...
+	   *
+	   * * is a timeline variable, evaluates the variable and returns the result.
+	   * * is not specified, returns `undefined`.
+	   * * is a function and `evaluateFunctions` is not set to `false`, invokes the function and returns
+	   *   its return value
+	   * * has previously been looked up, return the cached result of the previous lookup
+	   *
+	   * @param parameterPath The path of the respective parameter in the timeline node description. If
+	   * the path is an array, nested object properties or array items will be looked up.
+	   * @param options See {@link GetParameterValueOptions}
+	   */
 	  getParameterValue(parameterPath, options = {}) {
 	    const {
 	      evaluateFunctions = true,
@@ -2248,6 +3109,11 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return result;
 	  }
+	  /**
+	   * Retrieves and evaluates the `data` parameter. It is different from other parameters in that
+	   * it's properties may be functions that have to be evaluated, and parent nodes' data parameter
+	   * properties are merged into the result.
+	   */
 	  getDataParameter() {
 	    const data = this.getParameterValue("data", { recursive: false });
 	    return {
@@ -2264,10 +3130,19 @@ var jsPsychModule = (function (exports) {
 	    super(dependencies);
 	    this.description = description;
 	    this.parent = parent;
+	    this.onLoad = () => {
+	      this.runParameterCallback("on_load");
+	      this.dependencies.runOnLoadExtensionCallbacks(this.getParameterValue("extensions"));
+	    };
 	    this.initializeParameterValueCache();
 	    this.trialObject = deepCopy(description);
 	    this.pluginClass = this.getParameterValue("type", { evaluateFunctions: false });
-	    this.pluginInfo = this.pluginClass["info"];
+	    this.pluginInfo = this.pluginClass?.["info"];
+	    if (!this.pluginInfo) {
+	      throw new Error(
+	        "Plugin not recognized. Please provide a valid plugin using the 'type' parameter."
+	      );
+	    }
 	    if (!("version" in this.pluginInfo) && !("data" in this.pluginInfo)) {
 	      console.warn(
 	        this.pluginInfo["name"],
@@ -2285,12 +3160,6 @@ var jsPsychModule = (function (exports) {
 	      );
 	    }
 	  }
-	  pluginClass;
-	  pluginInstance;
-	  trialObject;
-	  index;
-	  result;
-	  pluginInfo;
 	  async run() {
 	    this.status = TimelineNodeStatus.RUNNING;
 	    this.processParameters();
@@ -2355,10 +3224,16 @@ var jsPsychModule = (function (exports) {
 	      )
 	    };
 	  }
+	  /**
+	   * Cleanup the trial by removing the display element and removing event listeners
+	   */
 	  cleanupTrial() {
 	    this.dependencies.clearAllTimeouts();
 	    this.dependencies.getDisplayElement().innerHTML = "";
 	  }
+	  /**
+	   * Add the CSS classes from the `css_classes` parameter to the display element
+	   */
 	  addCssClasses() {
 	    const classes = this.getParameterValue("css_classes");
 	    const classList = this.dependencies.getDisplayElement().classList;
@@ -2368,6 +3243,9 @@ var jsPsychModule = (function (exports) {
 	      classList.add(...classes);
 	    }
 	  }
+	  /**
+	   * Removes the provided css classes from the display element
+	   */
 	  removeCssClasses() {
 	    const classes = this.getParameterValue("css_classes");
 	    if (classes) {
@@ -2416,6 +3294,12 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return result;
 	  }
+	  /**
+	   * Runs a callback function retrieved from a parameter value and returns its result.
+	   *
+	   * @param parameterName The name of the parameter to retrieve the callback function from.
+	   * @param callbackParameters The parameters (if any) to be passed to the callback function
+	   */
 	  runParameterCallback(parameterName, ...callbackParameters) {
 	    const callback = this.getParameterValue(parameterName, { evaluateFunctions: false });
 	    if (callback) {
@@ -2427,10 +3311,6 @@ var jsPsychModule = (function (exports) {
 	    this.runParameterCallback("on_start", this.trialObject);
 	    this.dependencies.runOnStartExtensionCallbacks(this.getParameterValue("extensions"));
 	  }
-	  onLoad = () => {
-	    this.runParameterCallback("on_load");
-	    this.dependencies.runOnLoadExtensionCallbacks(this.getParameterValue("extensions"));
-	  };
 	  async onFinish() {
 	    const extensionResults = await this.dependencies.runOnFinishExtensionCallbacks(
 	      this.getParameterValue("extensions")
@@ -2450,6 +3330,10 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return super.getParameterValue(parameterPath, options);
 	  }
+	  /**
+	   * Retrieves and evaluates the `simulation_options` parameter, considering nested properties and
+	   * global simulation options.
+	   */
 	  getSimulationOptions() {
 	    const simulationOptions = this.getParameterValue("simulation_options", {
 	      replaceResult: (result = {}) => {
@@ -2479,6 +3363,10 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return simulationOptions;
 	  }
+	  /**
+	   * Returns the result object of this trial or `undefined` if the result is not yet known or the
+	   * `record_data` trial parameter is `false`.
+	   */
 	  getResult() {
 	    return this.getParameterValue("record_data") === false ? void 0 : this.result;
 	  }
@@ -2486,6 +3374,12 @@ var jsPsychModule = (function (exports) {
 	    const result = this.getResult();
 	    return result ? [result] : [];
 	  }
+	  /**
+	   * Checks that the parameters provided in the trial description align with the plugin's info
+	   * object, resolves missing parameter values from the parent timeline, resolves timeline variable
+	   * parameters, evaluates parameter functions if the expected parameter type is not `FUNCTION`, and
+	   * sets default values for optional parameters.
+	   */
 	  processParameters() {
 	    const assignParameterValues = (parameterObject, parameterInfos, parentParameterPath = []) => {
 	      for (const [parameterName, parameterConfig] of Object.entries(parameterInfos)) {
@@ -2545,13 +3439,12 @@ var jsPsychModule = (function (exports) {
 	  constructor(dependencies, description, parent) {
 	    super(dependencies);
 	    this.parent = parent;
+	    this.children = [];
+	    this.shouldAbort = false;
+	    this.resumePromise = new PromiseWrapper();
 	    this.description = Array.isArray(description) ? { timeline: description } : description;
 	    this.initializeParameterValueCache();
 	  }
-	  children = [];
-	  description;
-	  currentChild;
-	  shouldAbort = false;
 	  async run() {
 	    if (typeof this.index === "undefined") {
 	      this.index = 0;
@@ -2574,7 +3467,8 @@ var jsPsychModule = (function (exports) {
 	          }
 	          for (const timelineVariableIndex of timelineVariableOrder) {
 	            this.setCurrentTimelineVariablesByIndex(timelineVariableIndex);
-	            for (const childNode of this.instantiateChildNodes()) {
+	            for (const childNodeDescription of this.description.timeline) {
+	              const childNode = this.instantiateChildNode(childNodeDescription);
 	              const previousChild = this.currentChild;
 	              this.currentChild = childNode;
 	              childNode.index = previousChild ? previousChild.getLatestNode().index + 1 : this.index;
@@ -2611,7 +3505,6 @@ var jsPsychModule = (function (exports) {
 	    }
 	    this.status = TimelineNodeStatus.PAUSED;
 	  }
-	  resumePromise = new PromiseWrapper();
 	  resume() {
 	    if (this.status == TimelineNodeStatus.PAUSED) {
 	      if (this.currentChild instanceof Timeline) {
@@ -2621,6 +3514,9 @@ var jsPsychModule = (function (exports) {
 	      this.resumePromise.resolve();
 	    }
 	  }
+	  /**
+	   * If the timeline is running or paused, aborts the timeline after the current trial has completed
+	   */
 	  abort() {
 	    if (this.status === TimelineNodeStatus.RUNNING || this.status === TimelineNodeStatus.PAUSED) {
 	      if (this.currentChild instanceof Timeline) {
@@ -2632,20 +3528,22 @@ var jsPsychModule = (function (exports) {
 	      }
 	    }
 	  }
-	  instantiateChildNodes() {
-	    const newChildNodes = this.description.timeline.map((childDescription) => {
-	      return isTimelineDescription(childDescription) ? new Timeline(this.dependencies, childDescription, this) : new Trial(this.dependencies, childDescription, this);
-	    });
-	    this.children.push(...newChildNodes);
-	    return newChildNodes;
+	  instantiateChildNode(childDescription) {
+	    const newChildNode = isTimelineDescription(childDescription) ? new Timeline(this.dependencies, childDescription, this) : new Trial(this.dependencies, childDescription, this);
+	    this.children.push(newChildNode);
+	    return newChildNode;
 	  }
-	  currentTimelineVariables;
 	  setCurrentTimelineVariablesByIndex(index) {
 	    this.currentTimelineVariables = {
 	      ...this.parent?.getAllTimelineVariables(),
 	      ...index === null ? void 0 : this.description.timeline_variables[index]
 	    };
 	  }
+	  /**
+	   * If the timeline has timeline variables, returns the order of `timeline_variables` array indices
+	   * to be used, according to the timeline's `sample` setting. If the timeline has no timeline
+	   * variables, returns `[null]`.
+	   */
 	  generateTimelineVariableOrder() {
 	    const timelineVariableLength = this.description.timeline_variables?.length;
 	    if (!timelineVariableLength) {
@@ -2672,7 +3570,8 @@ var jsPsychModule = (function (exports) {
 	          break;
 	        default:
 	          throw new Error(
-	            `Invalid type "${sample.type}" in timeline sample parameters. Valid options for type are "custom", "with-replacement", "without-replacement", "fixed-repetitions", and "alternate-groups"`
+	            `Invalid type "${// @ts-expect-error TS doesn't have a type for `sample` in this case
+            sample.type}" in timeline sample parameters. Valid options for type are "custom", "with-replacement", "without-replacement", "fixed-repetitions", and "alternate-groups"`
 	          );
 	      }
 	    }
@@ -2681,6 +3580,9 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return order;
 	  }
+	  /**
+	   * Returns the current values of all timeline variables, including those from parent timelines
+	   */
 	  getAllTimelineVariables() {
 	    return this.currentTimelineVariables;
 	  }
@@ -2704,6 +3606,10 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return results;
 	  }
+	  /**
+	   * Returns the naive progress of the timeline (as a fraction), without considering conditional or
+	   * loop functions.
+	   */
 	  getNaiveProgress() {
 	    if (this.status === TimelineNodeStatus.PENDING) {
 	      return 0;
@@ -2718,6 +3624,10 @@ var jsPsychModule = (function (exports) {
 	    }
 	    return Math.min(completedTrials / this.getNaiveTrialCount(), 1);
 	  }
+	  /**
+	   * Recursively computes the naive number of trials in the timeline, without considering
+	   * conditional or loop functions.
+	   */
 	  getNaiveTrialCount() {
 	    const getTrialCount = (description) => {
 	      const getTimelineArrayTrialCount = (description2) => description2.map((childDescription) => getTrialCount(childDescription)).reduce((a, b) => a + b);
@@ -2759,24 +3669,70 @@ var jsPsychModule = (function (exports) {
 	}
 
 	class JsPsych {
-	  turk = turk;
-	  randomization = randomization;
-	  utils = utils;
-	  data;
-	  pluginAPI;
-	  version() {
-	    return _package.version;
-	  }
-	  options = {};
-	  timeline;
-	  displayContainerElement;
-	  displayElement;
-	  experimentStartTime;
-	  isFileProtocolUsed = false;
-	  simulationMode;
-	  simulationOptions;
-	  extensionManager;
 	  constructor(options) {
+	    this.turk = turk;
+	    this.randomization = randomization;
+	    this.utils = utils;
+	    // prettier-ignore
+	    this.citation = {
+	      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+	      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
+	    };
+	    /** Options */
+	    this.options = {};
+	    /**
+	     * Whether the page is retrieved directly via the `file://` protocol (true) or hosted on a web
+	     * server (false)
+	     */
+	    this.isFileProtocolUsed = false;
+	    this.finishTrialPromise = new PromiseWrapper();
+	    this.timelineDependencies = {
+	      onTrialStart: (trial) => {
+	        this.options.on_trial_start(trial.trialObject);
+	        this.getDisplayContainerElement().focus();
+	        this.getDisplayElement().scrollTop = 0;
+	      },
+	      onTrialResultAvailable: (trial) => {
+	        const result = trial.getResult();
+	        if (result) {
+	          result.time_elapsed = this.getTotalTime();
+	          this.data.write(trial);
+	        }
+	      },
+	      onTrialFinished: (trial) => {
+	        const result = trial.getResult();
+	        this.options.on_trial_finish(result);
+	        if (result) {
+	          this.options.on_data_update(result);
+	        }
+	        if (this.progressBar && this.options.auto_update_progress_bar) {
+	          this.progressBar.progress = this.timeline.getNaiveProgress();
+	        }
+	      },
+	      runOnStartExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onStart(extensionsConfiguration),
+	      runOnLoadExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onLoad(extensionsConfiguration),
+	      runOnFinishExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onFinish(extensionsConfiguration),
+	      getSimulationMode: () => this.simulationMode,
+	      getGlobalSimulationOptions: () => this.simulationOptions,
+	      instantiatePlugin: (pluginClass) => new pluginClass(this),
+	      getDisplayElement: () => this.getDisplayElement(),
+	      getDefaultIti: () => this.getInitSettings().default_iti,
+	      finishTrialPromise: this.finishTrialPromise,
+	      clearAllTimeouts: () => this.pluginAPI.clearAllTimeouts()
+	    };
+	    this.extensionManagerDependencies = {
+	      instantiateExtension: (extensionClass) => new extensionClass(this)
+	    };
+	    this.dataDependencies = {
+	      getProgress: () => ({
+	        time: this.getTotalTime(),
+	        trial: this.timeline?.getLatestNode().index ?? 0
+	      }),
+	      onInteractionRecordAdded: (record) => {
+	        this.options.on_interaction_data_update(record);
+	      },
+	      getDisplayElement: () => this.getDisplayElement()
+	    };
 	    options = {
 	      display_element: void 0,
 	      on_finish: () => {
@@ -2819,7 +3775,15 @@ var jsPsychModule = (function (exports) {
 	      options.extensions
 	    );
 	  }
-	  endMessage;
+	  version() {
+	    return version;
+	  }
+	  /**
+	   * Starts an experiment using the provided timeline and returns a promise that is resolved when
+	   * the experiment is finished.
+	   *
+	   * @param timeline The timeline to be run
+	   */
 	  async run(timeline) {
 	    if (typeof timeline === "undefined") {
 	      console.error("No timeline declared in jsPsych.run(). Cannot start experiment.");
@@ -2833,7 +3797,7 @@ var jsPsychModule = (function (exports) {
 	    await this.prepareDom();
 	    await this.extensionManager.initializeExtensions();
 	    document.documentElement.setAttribute("jspsych", "present");
-	    this.experimentStartTime = new Date();
+	    this.experimentStartTime = /* @__PURE__ */ new Date();
 	    await this.timeline.run();
 	    await Promise.resolve(this.options.on_finish(this.data.get()));
 	    if (this.endMessage) {
@@ -2846,7 +3810,6 @@ var jsPsychModule = (function (exports) {
 	    this.simulationOptions = simulation_options;
 	    await this.run(timeline);
 	  }
-	  progressBar;
 	  getProgress() {
 	    return {
 	      total_trials: this.timeline?.getNaiveTrialCount(),
@@ -2861,7 +3824,7 @@ var jsPsychModule = (function (exports) {
 	    if (!this.experimentStartTime) {
 	      return 0;
 	    }
-	    return new Date().getTime() - this.experimentStartTime.getTime();
+	    return (/* @__PURE__ */ new Date()).getTime() - this.experimentStartTime.getTime();
 	  }
 	  getDisplayElement() {
 	    return this.displayElement;
@@ -2885,6 +3848,11 @@ var jsPsychModule = (function (exports) {
 	      currentTimeline.abort();
 	    }
 	  }
+	  /**
+	   * Aborts a named timeline. The timeline must be currently running in order to abort it.
+	   *
+	   * @param name The name of the timeline to abort. Timelines can be given names by setting the `name` parameter in the description of the timeline.
+	   */
 	  abortTimelineByName(name) {
 	    const timeline = this.timeline?.getActiveTimelineByName(name);
 	    if (timeline) {
@@ -2918,6 +3886,36 @@ var jsPsychModule = (function (exports) {
 	  }
 	  getTimeline() {
 	    return this.timeline?.description.timeline;
+	  }
+	  /**
+	   * Prints out a string containing citations for the jsPsych library and all input plugins/extensions in the specified format.
+	   * If called without input, prints citation for jsPsych library.
+	   *
+	   * @param plugins The plugins/extensions to generate citations for. Always prints the citation for the jsPsych library at the top.
+	   * @param format The desired output citation format. Currently supports "apa" and "bibtex".
+	   * @returns String containing citations separated with newline character.
+	   */
+	  getCitations(plugins = [], format = "apa") {
+	    const formatOptions = ["apa", "bibtex"];
+	    format = format.toLowerCase();
+	    if (!Array.isArray(plugins)) {
+	      throw new Error("Expected array of plugins/extensions");
+	    } else if (!formatOptions.includes(format)) {
+	      throw new Error("Unsupported citation format");
+	    } else {
+	      const jsPsychCitation = this.citation[format];
+	      const citationSet = /* @__PURE__ */ new Set([jsPsychCitation]);
+	      for (const plugin of plugins) {
+	        try {
+	          const pluginCitation = plugin["info"].citations[format];
+	          citationSet.add(pluginCitation);
+	        } catch {
+	          console.error(`${plugin} does not have citation in ${format} format.`);
+	        }
+	      }
+	      const citationList = Array.from(citationSet).join("\n");
+	      return citationList;
+	    }
 	  }
 	  get extensions() {
 	    return this.extensionManager?.extensions ?? {};
@@ -2971,57 +3969,9 @@ var jsPsychModule = (function (exports) {
 	      this.getDisplayContainerElement().insertAdjacentElement("afterbegin", progressBarContainer);
 	    }
 	  }
-	  finishTrialPromise = new PromiseWrapper();
 	  finishTrial(data) {
 	    this.finishTrialPromise.resolve(data);
 	  }
-	  timelineDependencies = {
-	    onTrialStart: (trial) => {
-	      this.options.on_trial_start(trial.trialObject);
-	      this.getDisplayContainerElement().focus();
-	      this.getDisplayElement().scrollTop = 0;
-	    },
-	    onTrialResultAvailable: (trial) => {
-	      const result = trial.getResult();
-	      if (result) {
-	        result.time_elapsed = this.getTotalTime();
-	        this.data.write(trial);
-	      }
-	    },
-	    onTrialFinished: (trial) => {
-	      const result = trial.getResult();
-	      this.options.on_trial_finish(result);
-	      if (result) {
-	        this.options.on_data_update(result);
-	      }
-	      if (this.progressBar && this.options.auto_update_progress_bar) {
-	        this.progressBar.progress = this.timeline.getNaiveProgress();
-	      }
-	    },
-	    runOnStartExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onStart(extensionsConfiguration),
-	    runOnLoadExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onLoad(extensionsConfiguration),
-	    runOnFinishExtensionCallbacks: (extensionsConfiguration) => this.extensionManager.onFinish(extensionsConfiguration),
-	    getSimulationMode: () => this.simulationMode,
-	    getGlobalSimulationOptions: () => this.simulationOptions,
-	    instantiatePlugin: (pluginClass) => new pluginClass(this),
-	    getDisplayElement: () => this.getDisplayElement(),
-	    getDefaultIti: () => this.getInitSettings().default_iti,
-	    finishTrialPromise: this.finishTrialPromise,
-	    clearAllTimeouts: () => this.pluginAPI.clearAllTimeouts()
-	  };
-	  extensionManagerDependencies = {
-	    instantiateExtension: (extensionClass) => new extensionClass(this)
-	  };
-	  dataDependencies = {
-	    getProgress: () => ({
-	      time: this.getTotalTime(),
-	      trial: this.timeline?.getLatestNode().index ?? 0
-	    }),
-	    onInteractionRecordAdded: (record) => {
-	      this.options.on_interaction_data_update(record);
-	    },
-	    getDisplayElement: () => this.getDisplayElement()
-	  };
 	}
 
 	class MigrationError extends Error {
@@ -3067,6 +4017,7 @@ var jsPsychModule = (function (exports) {
 	    init: "`jsPsych.init()` was replaced by `initJsPsych()` in jsPsych v7.",
 	    ALL_KEYS: 'jsPsych.ALL_KEYS was replaced by the "ALL_KEYS" string in jsPsych v7.',
 	    NO_KEYS: 'jsPsych.NO_KEYS was replaced by the "NO_KEYS" string in jsPsych v7.',
+	    // Getter functions that were renamed
 	    currentTimelineNodeID: "`currentTimelineNodeID()` was renamed to `getCurrentTimelineNodeID()` in jsPsych v7.",
 	    progress: "`progress()` was renamed to `getProgress()` in jsPsych v7.",
 	    startTime: "`startTime()` was renamed to `getStartTime()` in jsPsych v7.",

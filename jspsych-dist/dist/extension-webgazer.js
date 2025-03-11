@@ -1,133 +1,87 @@
 var jsPsychExtensionWebgazer = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/extension-webgazer",
-    version: "1.1.0",
-    description: "jsPsych extension for eye tracking using WebGazer.js",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/extension-webgazer"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/extensions/webgazer",
-    peerDependencies: {
-      jspsych: ">=7.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "1.2.0";
 
   class WebGazerExtension {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
-    }
-    static info = {
-      name: "webgazer",
-      version: _package.version,
-      data: {
-        webgazer_data: {
-          type: jspsych.ParameterType.INT,
-          array: true
-        },
-        webgazer_targets: {
-          type: jspsych.ParameterType.COMPLEX,
-          nested: {
-            x: {
-              type: jspsych.ParameterType.INT
-            },
-            y: {
-              type: jspsych.ParameterType.INT
-            },
-            width: {
-              type: jspsych.ParameterType.INT
-            },
-            height: {
-              type: jspsych.ParameterType.INT
-            },
-            top: {
-              type: jspsych.ParameterType.INT
-            },
-            bottom: {
-              type: jspsych.ParameterType.INT
-            },
-            left: {
-              type: jspsych.ParameterType.INT
-            },
-            right: {
-              type: jspsych.ParameterType.INT
+      // private state for the extension
+      // extension authors can define public functions to interact
+      // with the state. recommend not exposing state directly
+      // so that state manipulations are checked.
+      this.currentTrialData = [];
+      this.currentTrialTargets = {};
+      this.initialized = false;
+      this.activeTrial = false;
+      this.initialize = ({
+        round_predictions = true,
+        auto_initialize = false,
+        sampling_interval = 34,
+        webgazer
+      }) => {
+        this.round_predictions = round_predictions;
+        this.sampling_interval = sampling_interval;
+        this.gazeUpdateCallbacks = [];
+        this.domObserver = new MutationObserver(this.mutationObserverCallback);
+        return new Promise((resolve, reject) => {
+          if (typeof webgazer === "undefined") {
+            if (window.webgazer) {
+              this.webgazer = window.webgazer;
+            } else {
+              reject(
+                new Error(
+                  "Webgazer extension failed to initialize. webgazer.js not loaded. Load webgazer.js before calling initJsPsych()"
+                )
+              );
             }
-          }
-        }
-      }
-    };
-    currentTrialData = [];
-    currentTrialTargets = {};
-    currentTrialSelectors;
-    domObserver;
-    webgazer;
-    initialized = false;
-    currentTrialStart;
-    activeTrial = false;
-    sampling_interval;
-    round_predictions;
-    gazeInterval;
-    gazeUpdateCallbacks;
-    currentGaze;
-    initialize = ({
-      round_predictions = true,
-      auto_initialize = false,
-      sampling_interval = 34,
-      webgazer
-    }) => {
-      this.round_predictions = round_predictions;
-      this.sampling_interval = sampling_interval;
-      this.gazeUpdateCallbacks = [];
-      this.domObserver = new MutationObserver(this.mutationObserverCallback);
-      return new Promise((resolve, reject) => {
-        if (typeof webgazer === "undefined") {
-          if (window.webgazer) {
-            this.webgazer = window.webgazer;
           } else {
-            reject(
-              new Error(
-                "Webgazer extension failed to initialize. webgazer.js not loaded. Load webgazer.js before calling initJsPsych()"
-              )
-            );
+            this.webgazer = webgazer;
           }
-        } else {
-          this.webgazer = webgazer;
-        }
-        this.hideVideo();
-        this.hidePredictions();
-        if (auto_initialize) {
+          this.hideVideo();
+          this.hidePredictions();
+          if (auto_initialize) {
+            this.webgazer.begin().then(() => {
+              this.initialized = true;
+              this.stopMouseCalibration();
+              this.pause();
+              resolve();
+            }).catch((error) => {
+              console.error(error);
+              reject(error);
+            });
+          } else {
+            resolve();
+          }
+        });
+      };
+      this.on_start = (params) => {
+        this.currentTrialData = [];
+        this.currentTrialTargets = {};
+        this.currentTrialSelectors = params.targets;
+        this.domObserver.observe(this.jsPsych.getDisplayElement(), { childList: true });
+      };
+      this.on_load = () => {
+        this.currentTrialStart = performance.now();
+        this.startSampleInterval();
+        this.activeTrial = true;
+      };
+      this.on_finish = () => {
+        this.stopSampleInterval();
+        this.domObserver.disconnect();
+        this.activeTrial = false;
+        return {
+          webgazer_data: this.currentTrialData,
+          webgazer_targets: this.currentTrialTargets
+        };
+      };
+      this.start = () => {
+        return new Promise((resolve, reject) => {
+          if (typeof this.webgazer == "undefined") {
+            const error = "Failed to start webgazer. Things to check: Is webgazer.js loaded? Is the webgazer extension included in initJsPsych?";
+            console.error(error);
+            reject(error);
+          }
           this.webgazer.begin().then(() => {
             this.initialized = true;
             this.stopMouseCalibration();
@@ -137,151 +91,165 @@ var jsPsychExtensionWebgazer = (function (jspsych) {
             console.error(error);
             reject(error);
           });
-        } else {
-          resolve();
-        }
-      });
-    };
-    on_start = (params) => {
-      this.currentTrialData = [];
-      this.currentTrialTargets = {};
-      this.currentTrialSelectors = params.targets;
-      this.domObserver.observe(this.jsPsych.getDisplayElement(), { childList: true });
-    };
-    on_load = () => {
-      this.currentTrialStart = performance.now();
-      this.startSampleInterval();
-      this.activeTrial = true;
-    };
-    on_finish = () => {
-      this.stopSampleInterval();
-      this.domObserver.disconnect();
-      this.activeTrial = false;
-      return {
-        webgazer_data: this.currentTrialData,
-        webgazer_targets: this.currentTrialTargets
-      };
-    };
-    start = () => {
-      return new Promise((resolve, reject) => {
-        if (typeof this.webgazer == "undefined") {
-          const error = "Failed to start webgazer. Things to check: Is webgazer.js loaded? Is the webgazer extension included in initJsPsych?";
-          console.error(error);
-          reject(error);
-        }
-        this.webgazer.begin().then(() => {
-          this.initialized = true;
-          this.stopMouseCalibration();
-          this.pause();
-          resolve();
-        }).catch((error) => {
-          console.error(error);
-          reject(error);
         });
-      });
-    };
-    startSampleInterval = (interval = this.sampling_interval) => {
-      this.gazeInterval = setInterval(() => {
+      };
+      this.startSampleInterval = (interval = this.sampling_interval) => {
+        this.gazeInterval = setInterval(() => {
+          this.webgazer.getCurrentPrediction().then(this.handleGazeDataUpdate);
+        }, interval);
         this.webgazer.getCurrentPrediction().then(this.handleGazeDataUpdate);
-      }, interval);
-      this.webgazer.getCurrentPrediction().then(this.handleGazeDataUpdate);
-    };
-    stopSampleInterval = () => {
-      clearInterval(this.gazeInterval);
-    };
-    isInitialized = () => {
-      return this.initialized;
-    };
-    faceDetected = () => {
-      return this.webgazer.getTracker().predictionReady;
-    };
-    showPredictions = () => {
-      this.webgazer.showPredictionPoints(true);
-    };
-    hidePredictions = () => {
-      this.webgazer.showPredictionPoints(false);
-    };
-    showVideo = () => {
-      this.webgazer.showVideo(true);
-      this.webgazer.showFaceOverlay(true);
-      this.webgazer.showFaceFeedbackBox(true);
-    };
-    hideVideo = () => {
-      this.webgazer.showVideo(false);
-      this.webgazer.showFaceOverlay(false);
-      this.webgazer.showFaceFeedbackBox(false);
-    };
-    resume = () => {
-      this.webgazer.resume();
-    };
-    pause = () => {
-      this.webgazer.pause();
-      if (document.querySelector("#webgazerGazeDot")) {
-        document.querySelector("#webgazerGazeDot").style.display = "none";
-      }
-    };
-    resetCalibration = () => {
-      this.webgazer.clearData();
-    };
-    stopMouseCalibration = () => {
-      this.webgazer.removeMouseEventListeners();
-    };
-    startMouseCalibration = () => {
-      this.webgazer.addMouseEventListeners();
-    };
-    calibratePoint = (x, y) => {
-      this.webgazer.recordScreenPosition(x, y, "click");
-    };
-    setRegressionType = (regression_type) => {
-      var valid_regression_models = ["ridge", "weightedRidge", "threadedRidge"];
-      if (valid_regression_models.includes(regression_type)) {
-        this.webgazer.setRegression(regression_type);
-      } else {
-        console.warn(
-          "Invalid regression_type parameter for webgazer.setRegressionType. Valid options are ridge, weightedRidge, and threadedRidge."
-        );
-      }
-    };
-    getCurrentPrediction = () => {
-      return this.webgazer.getCurrentPrediction();
-    };
-    onGazeUpdate = (callback) => {
-      this.gazeUpdateCallbacks.push(callback);
-      return () => {
-        this.gazeUpdateCallbacks = this.gazeUpdateCallbacks.filter((item) => {
-          return item !== callback;
-        });
       };
-    };
-    handleGazeDataUpdate = (gazeData, elapsedTime) => {
-      if (gazeData !== null) {
-        var d = {
-          x: this.round_predictions ? Math.round(gazeData.x) : gazeData.x,
-          y: this.round_predictions ? Math.round(gazeData.y) : gazeData.y,
-          t: gazeData.t
+      this.stopSampleInterval = () => {
+        clearInterval(this.gazeInterval);
+      };
+      this.isInitialized = () => {
+        return this.initialized;
+      };
+      this.faceDetected = () => {
+        return this.webgazer.getTracker().predictionReady;
+      };
+      this.showPredictions = () => {
+        this.webgazer.showPredictionPoints(true);
+      };
+      this.hidePredictions = () => {
+        this.webgazer.showPredictionPoints(false);
+      };
+      this.showVideo = () => {
+        this.webgazer.showVideo(true);
+        this.webgazer.showFaceOverlay(true);
+        this.webgazer.showFaceFeedbackBox(true);
+      };
+      this.hideVideo = () => {
+        this.webgazer.showVideo(false);
+        this.webgazer.showFaceOverlay(false);
+        this.webgazer.showFaceFeedbackBox(false);
+      };
+      this.resume = () => {
+        this.webgazer.resume();
+      };
+      this.pause = () => {
+        this.webgazer.pause();
+        if (document.querySelector("#webgazerGazeDot")) {
+          document.querySelector("#webgazerGazeDot").style.display = "none";
+        }
+      };
+      this.resetCalibration = () => {
+        this.webgazer.clearData();
+      };
+      this.stopMouseCalibration = () => {
+        this.webgazer.removeMouseEventListeners();
+      };
+      this.startMouseCalibration = () => {
+        this.webgazer.addMouseEventListeners();
+      };
+      this.calibratePoint = (x, y) => {
+        this.webgazer.recordScreenPosition(x, y, "click");
+      };
+      this.setRegressionType = (regression_type) => {
+        var valid_regression_models = ["ridge", "weightedRidge", "threadedRidge"];
+        if (valid_regression_models.includes(regression_type)) {
+          this.webgazer.setRegression(regression_type);
+        } else {
+          console.warn(
+            "Invalid regression_type parameter for webgazer.setRegressionType. Valid options are ridge, weightedRidge, and threadedRidge."
+          );
+        }
+      };
+      this.getCurrentPrediction = () => {
+        return this.webgazer.getCurrentPrediction();
+      };
+      this.onGazeUpdate = (callback) => {
+        this.gazeUpdateCallbacks.push(callback);
+        return () => {
+          this.gazeUpdateCallbacks = this.gazeUpdateCallbacks.filter((item) => {
+            return item !== callback;
+          });
         };
-        if (this.activeTrial) {
-          d.t = Math.round(gazeData.t - this.currentTrialStart);
-          this.currentTrialData.push(d);
+      };
+      this.handleGazeDataUpdate = (gazeData, elapsedTime) => {
+        if (gazeData !== null) {
+          var d = {
+            x: this.round_predictions ? Math.round(gazeData.x) : gazeData.x,
+            y: this.round_predictions ? Math.round(gazeData.y) : gazeData.y,
+            t: gazeData.t
+          };
+          if (this.activeTrial) {
+            d.t = Math.round(gazeData.t - this.currentTrialStart);
+            this.currentTrialData.push(d);
+          }
+          this.currentGaze = d;
+          for (var i = 0; i < this.gazeUpdateCallbacks.length; i++) {
+            this.gazeUpdateCallbacks[i](d);
+          }
+        } else {
+          this.currentGaze = null;
         }
-        this.currentGaze = d;
-        for (var i = 0; i < this.gazeUpdateCallbacks.length; i++) {
-          this.gazeUpdateCallbacks[i](d);
-        }
-      } else {
-        this.currentGaze = null;
-      }
-    };
-    mutationObserverCallback = (mutationsList, observer) => {
-      for (const selector of this.currentTrialSelectors) {
-        if (!this.currentTrialTargets[selector]) {
-          if (this.jsPsych.getDisplayElement().querySelector(selector)) {
-            var coords = this.jsPsych.getDisplayElement().querySelector(selector).getBoundingClientRect();
-            this.currentTrialTargets[selector] = coords;
+      };
+      this.mutationObserverCallback = (mutationsList, observer) => {
+        for (const selector of this.currentTrialSelectors) {
+          if (!this.currentTrialTargets[selector]) {
+            if (this.jsPsych.getDisplayElement().querySelector(selector)) {
+              var coords = this.jsPsych.getDisplayElement().querySelector(selector).getBoundingClientRect();
+              this.currentTrialTargets[selector] = coords;
+            }
           }
         }
-      }
-    };
+      };
+    }
+    static {
+      this.info = {
+        name: "webgazer",
+        version,
+        data: {
+          /** An array of objects containing gaze data for the trial. Each object has an `x`, a `y`, and a `t` property. The `x` and
+           * `y` properties specify the gaze location in pixels and `t` specifies the time in milliseconds since the start of the trial.
+           */
+          webgazer_data: {
+            type: jspsych.ParameterType.INT,
+            array: true
+          },
+          /** An object contain the pixel coordinates of elements on the screen specified by the `.targets` parameter. Each key in this
+           * object will be a `selector` property, containing the CSS selector string used to find the element. The object corresponding
+           * to each key will contain `x` and `y` properties specifying the top-left corner of the object, `width` and `height` values,
+           * plus `top`, `bottom`, `left`, and `right` parameters which specify the [bounding rectangle](https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect) of the element.
+           */
+          webgazer_targets: {
+            type: jspsych.ParameterType.COMPLEX,
+            nested: {
+              x: {
+                type: jspsych.ParameterType.INT
+              },
+              y: {
+                type: jspsych.ParameterType.INT
+              },
+              width: {
+                type: jspsych.ParameterType.INT
+              },
+              height: {
+                type: jspsych.ParameterType.INT
+              },
+              top: {
+                type: jspsych.ParameterType.INT
+              },
+              bottom: {
+                type: jspsych.ParameterType.INT
+              },
+              left: {
+                type: jspsych.ParameterType.INT
+              },
+              right: {
+                type: jspsych.ParameterType.INT
+              }
+            }
+          }
+        },
+        // prettier-ignore
+        citations: {
+          "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+          "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
+        }
+      };
+    }
   }
 
   return WebGazerExtension;

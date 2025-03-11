@@ -130,9 +130,6 @@ var jsPsychBrowserCheck = (function (jspsych) {
         ['OS/2', /OS\/2/],
     ];
     function detect(userAgent) {
-        if (!!userAgent) {
-            return parseUserAgent(userAgent);
-        }
         if (typeof document === 'undefined' &&
             typeof navigator !== 'undefined' &&
             navigator.product === 'ReactNative') {
@@ -207,57 +204,15 @@ var jsPsychBrowserCheck = (function (jspsych) {
         return output;
     }
 
-    var _package = {
-      name: "@jspsych/plugin-browser-check",
-      version: "2.0.0",
-      description: "jsPsych plugin for checking browser features",
-      type: "module",
-      main: "dist/index.cjs",
-      exports: {
-        import: "./dist/index.js",
-        require: "./dist/index.cjs"
-      },
-      typings: "dist/index.d.ts",
-      unpkg: "dist/index.browser.min.js",
-      files: [
-        "src",
-        "dist"
-      ],
-      source: "src/index.ts",
-      scripts: {
-        test: "jest",
-        "test:watch": "npm test -- --watch",
-        tsc: "tsc",
-        build: "rollup --config",
-        "build:watch": "npm run build -- --watch"
-      },
-      repository: {
-        type: "git",
-        url: "git+https://github.com/jspsych/jsPsych.git",
-        directory: "packages/plugin-html-keyboard-response"
-      },
-      author: "Josh de Leeuw",
-      license: "MIT",
-      bugs: {
-        url: "https://github.com/jspsych/jsPsych/issues"
-      },
-      homepage: "https://www.jspsych.org/latest/plugins/html-keyboard-response",
-      peerDependencies: {
-        jspsych: ">=7.1.0"
-      },
-      devDependencies: {
-        "@jspsych/config": "^3.0.0",
-        "@jspsych/test-utils": "^1.2.0"
-      },
-      dependencies: {
-        "detect-browser": "^5.2.1"
-      }
-    };
+    var version = "2.1.0";
 
     const info = {
       name: "browser-check",
-      version: _package.version,
+      version,
       parameters: {
+        /**
+         * The list of browser features to record. The default value includes all of the available options.
+         */
         features: {
           type: jspsych.ParameterType.STRING,
           array: true,
@@ -275,27 +230,62 @@ var jsPsychBrowserCheck = (function (jspsych) {
             "microphone"
           ]
         },
+        /**
+         * Any features listed here will be skipped, even if they appear in `features`. Use this when you want to run most of the defaults.
+         */
         skip_features: {
           type: jspsych.ParameterType.STRING,
           array: true,
           default: []
         },
+        /**
+         * The number of frames to sample when measuring the display refresh rate (`"vsync_rate"`).
+         * Increasing the number will potenially improve the stability of the estimate at the cost of
+         * increasing the amount of time the plugin takes during this test. On most devices, 60 frames takes
+         * about 1 second to measure.
+         */
         vsync_frame_count: {
           type: jspsych.ParameterType.INT,
           default: 60
         },
+        /**
+         * Whether to allow the participant to resize the browser window if the window is smaller than `minimum_width`
+         * and/or `minimum_height`. If `false`, then the `minimum_width` and `minimum_height` parameters are ignored
+         * and you can validate the size in the `inclusion_function`.
+         */
         allow_window_resize: {
           type: jspsych.ParameterType.BOOL,
           default: true
         },
+        /**
+         * If `allow_window_resize` is `true`, then this is the minimum width of the window (in pixels)
+         * that must be met before continuing.
+         */
         minimum_width: {
           type: jspsych.ParameterType.INT,
           default: 0
         },
+        /**
+         * If `allow_window_resize` is `true`, then this is the minimum height of the window (in pixels) that
+         * must be met before continuing.
+         */
         minimum_height: {
           type: jspsych.ParameterType.INT,
           default: 0
         },
+        /**
+         * The message that will be displayed during the interactive resize when `allow_window_resize` is `true`
+         * and the window is too small. If the message contains HTML elements with the special IDs `browser-check-min-width`,
+         * `browser-check-min-height`, `browser-check-actual-height`, and/or `browser-check-actual-width`, then the
+         * contents of those elements will be dynamically updated to reflect the `minimum_width`, `minimum_height` and
+         * measured width and height of the browser.
+         * The default message is:
+         * `<p>Your browser window is too small to complete this experiment. Please maximize the size of your browser window. If your browser window is already maximized, you will not be able to complete this experiment.</p>
+         * <p>The minimum window width is <span id="browser-check-min-width"></span> px.</p>
+         * <p>Your current window width is <span id="browser-check-actual-width"></span> px.</p>
+         * <p>The minimum window height is <span id="browser-check-min-height"></span> px.</p>
+         * <p>Your current window height is <span id="browser-check-actual-height"></span> px.</p>`.
+         */
         window_resize_message: {
           type: jspsych.ParameterType.HTML_STRING,
           default: `<p>Your browser window is too small to complete this experiment. Please maximize the size of your browser window. 
@@ -305,16 +295,34 @@ var jsPsychBrowserCheck = (function (jspsych) {
         <p>The minimum window height is <span id="browser-check-min-height"></span> px.</p>
         <p>Your current window height is <span id="browser-check-actual-height"></span> px.</p>`
         },
+        /**
+         * During the interactive resize, a button with this text will be displayed below the
+         * `window_resize_message` for the participant to click if the window cannot meet the
+         * minimum size needed. When the button is clicked, the experiment will end and
+         * `exclusion_message` will be displayed.
+         */
         resize_fail_button_text: {
           type: jspsych.ParameterType.STRING,
           default: "I cannot make the window any larger"
         },
+        /**
+         * A function that evaluates to `true` if the browser meets all of the inclusion criteria
+         * for the experiment, and `false` otherwise. The first argument to the function will be
+         * an object containing key value pairs with the measured features of the browser. The
+         * keys will be the same as those listed in `features`.
+         */
         inclusion_function: {
           type: jspsych.ParameterType.FUNCTION,
           default: () => {
             return true;
           }
         },
+        /**
+         * A function that returns the message to display if `inclusion_function` evaluates to `false` or if the participant
+         * clicks on the resize fail button during the interactive resize. In order to allow customization of the message,
+         * the first argument to the function will be an object containing key value pairs with the measured features of the
+         * browser. The keys will be the same as those listed in `features`. See example below.
+         */
         exclusion_message: {
           type: jspsych.ParameterType.FUNCTION,
           default: () => {
@@ -323,48 +331,65 @@ var jsPsychBrowserCheck = (function (jspsych) {
         }
       },
       data: {
+        /** The width of the browser window in pixels. If interactive resizing happens, this is the width *after* resizing. */
         width: {
           type: jspsych.ParameterType.INT
         },
+        /** The height of the browser window in pixels. If interactive resizing happens, this is the height *after* resizing.*/
         height: {
           type: jspsych.ParameterType.INT
         },
+        /** The browser used. */
         browser: {
           type: jspsych.ParameterType.STRING
         },
+        /** The version of the browser used. */
         browser_version: {
           type: jspsych.ParameterType.STRING
         },
+        /** The operating system used. */
         os: {
           type: jspsych.ParameterType.STRING
         },
+        /** Whether the browser is a mobile device. */
         mobile: {
           type: jspsych.ParameterType.BOOL
         },
+        /** Whether the browser supports the WebAudio API. */
         webaudio: {
           type: jspsych.ParameterType.BOOL
         },
+        /** Whether the browser supports the Fullscreen API. */
         fullscreen: {
           type: jspsych.ParameterType.BOOL
         },
+        /** An estimate of the refresh rate of the screen, in frames per second. */
         vsync_rate: {
           type: jspsych.ParameterType.FLOAT
         },
+        /** Whether there is a webcam device available. Note that the participant still must grant permission to access the device before it can be used. */
         webcam: {
           type: jspsych.ParameterType.BOOL
         },
+        /** Whether there is an audio input device available. Note that the participant still must grant permission to access the device before it can be used. */
         microphone: {
           type: jspsych.ParameterType.BOOL
         }
+      },
+      // prettier-ignore
+      citations: {
+        "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+        "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
       }
     };
     class BrowserCheckPlugin {
       constructor(jsPsych) {
         this.jsPsych = jsPsych;
+        this.end_flag = false;
       }
-      static info = info;
-      end_flag = false;
-      t;
+      static {
+        this.info = info;
+      }
       delay(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
       }
@@ -393,7 +418,11 @@ var jsPsychBrowserCheck = (function (jspsych) {
               return window.innerHeight;
             },
             webaudio: () => {
-              if (window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.oAudioContext || window.msAudioContext) {
+              if (window.AudioContext || // @ts-ignore because prefixed not in document type
+              window.webkitAudioContext || // @ts-ignore because prefixed not in document type
+              window.mozAudioContext || // @ts-ignore because prefixed not in document type
+              window.oAudioContext || // @ts-ignore because prefixed not in document type
+              window.msAudioContext) {
                 return true;
               } else {
                 return false;
@@ -412,7 +441,9 @@ var jsPsychBrowserCheck = (function (jspsych) {
               return detect().os;
             },
             fullscreen: () => {
-              if (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen) {
+              if (document.exitFullscreen || // @ts-ignore because prefixed not in document type
+              document.webkitExitFullscreen || // @ts-ignore because prefixed not in document type
+              document.msExitFullscreen) {
                 return true;
               } else {
                 return false;

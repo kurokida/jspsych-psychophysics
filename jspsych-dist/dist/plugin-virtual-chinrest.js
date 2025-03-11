@@ -1,63 +1,38 @@
 var jsPsychVirtualChinrest = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-virtual-chinrest",
-    version: "3.0.0",
-    description: "virtual chinrest plugin for jsPsych",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest  --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-virtual-chinrest"
-    },
-    author: "Qisheng Li, Gustavo Juantorena",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/virtual-chinrest",
-    peerDependencies: {
-      jspsych: ">=7.0.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "3.1.0";
 
   const info = {
     name: "virtual-chinrest",
-    version: _package.version,
+    version,
     parameters: {
+      /**
+       * Units to resize the jsPsych content to after the trial is over: `"none"` `"cm"` `"inch"` or `"deg"`.
+       * If `"none"`, no resizing will be done to the jsPsych content after the virtual-chinrest trial ends.
+       */
       resize_units: {
         type: jspsych.ParameterType.SELECT,
         options: ["none", "cm", "inch", "deg"],
         default: "none"
       },
+      /**
+       * After the scaling factor is applied, this many pixels will equal one unit of measurement, where
+       * the units are indicated by `resize_units`. This is only used when resizing is done after the
+       * trial ends (i.e. the `resize_units` parameter is not "none").
+       */
       pixels_per_unit: {
         type: jspsych.ParameterType.INT,
         default: 100
       },
+      // mouse_adjustment: {
+      //   type: ParameterType.BOOL,
+      //   pretty_name: "Adjust Using Mouse?",
+      //   default: true,
+      // },
+      /** This string can contain HTML markup. Any content here will be displayed
+       * **below the card stimulus** during the resizing phase.
+       */
       adjustment_prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: `
@@ -67,31 +42,41 @@ var jsPsychVirtualChinrest = (function (jspsych) {
           <p>If you do not have access to a real card you can use a ruler to measure the image width to 3.37 inches or 85.6 mm.</p>
           </div>`
       },
+      /** Content of the button displayed below the card stimulus during the resizing phase. */
       adjustment_button_prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "Click here when the image is the correct size"
       },
+      /** Path of the item to be presented in the card stimulus during the resizing phase. If `null` then no
+       * image is shown, and a solid color background is used instead. _An example image is available in
+       * `/examples/img/card.png`_
+       */
       item_path: {
         type: jspsych.ParameterType.IMAGE,
         default: null,
         preload: false
       },
+      /** The known height of the physical item (e.g. credit card) to be measured, in mm. */
       item_height_mm: {
         type: jspsych.ParameterType.FLOAT,
         default: 53.98
       },
+      /** The known width of the physical item (e.g. credit card) to be measured, in mm. */
       item_width_mm: {
         type: jspsych.ParameterType.FLOAT,
         default: 85.6
       },
+      /** The initial size of the card stimulus, in pixels, along its largest dimension. */
       item_init_size: {
         type: jspsych.ParameterType.INT,
         default: 250
       },
+      /** How many times to measure the blindspot location. If `0`, blindspot will not be detected, and viewing distance and degree data will not be computed. */
       blindspot_reps: {
         type: jspsych.ParameterType.INT,
         default: 5
       },
+      /** This string can contain HTML markup. Any content here will be displayed **above the blindspot task**. */
       blindspot_prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         pretty_name: "Blindspot prompt",
@@ -108,72 +93,101 @@ var jsPsychVirtualChinrest = (function (jspsych) {
           <p>Press the space bar when you are ready to begin.</p>
           `
       },
+      /** Content of the start button for the blindspot tasks. */
+      // blindspot_start_prompt: {
+      //   type: ParameterType.HTML_STRING,
+      //   pretty_name: "Blindspot start prompt",
+      //   default: "Start"
+      // },
+      /** Text accompanying the remaining measurements counter that appears below the blindspot task. */
       blindspot_measurements_prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "Remaining measurements: "
       },
+      /** Estimated viewing distance data displayed after blindspot task. If `"none"` is given, viewing distance will not be reported to the participant. The HTML `span` element with `id = distance-estimate` returns the distance. */
       viewing_distance_report: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "<p>Based on your responses, you are sitting about <span id='distance-estimate' style='font-weight: bold;'></span> from the screen.</p><p>Does that seem about right?</p>"
       },
+      /** Text for the button on the viewing distance report page to re-do the viewing distance estimate. If the participant click this button, the blindspot task starts again. */
       redo_measurement_button_label: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "No, that is not close. Try again."
       },
+      /** Text for the button on the viewing distance report page that can be clicked to accept the viewing distance estimate. */
       blindspot_done_prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "Yes"
       }
     },
     data: {
+      /** The response time in milliseconds. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** The height in millimeters of the item to be measured. */
       item_height_mm: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** The width in millimeters of the item to be measured. */
       item_width_mm: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Final height of the resizable div container, in degrees. */
       item_height_deg: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Final width of the resizable div container, in degrees. */
       item_width_deg: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Final width of the resizable div container, in pixels. */
       item_width_px: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Pixels to degrees conversion factor. */
       px2deg: {
         type: jspsych.ParameterType.INT
       },
+      /** Pixels to millimeters conversion factor. */
       px2mm: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Scaling factor that will be applied to the div containing jsPsych content. */
       scale_factor: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** The interior width of the window in degrees. */
       win_width_deg: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** The interior height of the window in degrees. */
       win_height_deg: {
         type: jspsych.ParameterType.FLOAT
       },
+      /** Estimated distance to the screen in millimeters. */
       view_dist_mm: {
         type: jspsych.ParameterType.FLOAT
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class VirtualChinrestPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
+      this.ball_size = 30;
+      this.ball = null;
+      this.container = null;
+      this.reps_remaining = 0;
+      this.ball_animation_frame_id = null;
     }
-    static info = info;
-    ball_size = 30;
-    ball = null;
-    container = null;
-    reps_remaining = 0;
-    ball_animation_frame_id = null;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       if (!(trial.blindspot_reps > 0) && (trial.resize_units == "deg" || trial.resize_units == "degrees")) {
         console.error(
@@ -185,6 +199,7 @@ var jsPsychVirtualChinrest = (function (jspsych) {
       let trial_data = {
         item_width_mm: trial.item_width_mm,
         item_height_mm: trial.item_height_mm
+        //card dimension: 85.60 × 53.98 mm (3.370 × 2.125 in)
       };
       let blindspot_config_data = {
         ball_pos: [],

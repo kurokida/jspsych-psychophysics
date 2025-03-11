@@ -1,125 +1,109 @@
 var jsPsychCategorizeAnimation = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-categorize-animation",
-    version: "2.0.0",
-    description: "jspsych plugin for categorization trials with feedback and animated stimuli",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-categorize-animation"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/categorize-animation",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "categorize-animation",
-    version: _package.version,
+    version,
     parameters: {
+      /** Each element of the array is a path to an image file. */
       stimuli: {
         type: jspsych.ParameterType.IMAGE,
         default: void 0,
         array: true
       },
+      /** The key character indicating the correct response. */
       key_answer: {
         type: jspsych.ParameterType.KEY,
         default: void 0
       },
+      /** This array contains the key(s) that the participant is allowed to press in order to respond to the stimulus. Keys should be specified as characters (e.g., `'a'`, `'q'`, `' '`, `'Enter'`, `'ArrowDown'`) - see [this page](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) and [this page (event.key column)](https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/) for more examples. Any key presses that are not listed in the array will be ignored. The default value of `"ALL_KEYS"` means that all keys will be accepted as valid responses. Specifying `"NO_KEYS"` will mean that no responses are allowed. */
       choices: {
         type: jspsych.ParameterType.KEYS,
         default: "ALL_KEYS"
       },
+      /** A text label that describes the correct answer. Used in conjunction with the `correct_text` and `incorrect_text` parameters. */
       text_answer: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /** String to show when the correct answer is given. Can contain HTML formatting. The special string `%ANS%` can be used within the string. If present, the plugin will put the `text_answer` for the trial in place of the %ANS% string (see example below). */
       correct_text: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "Correct."
       },
+      /** String to show when the wrong answer is given. Can contain HTML formatting. The special string `%ANS%` can be used within the string. If present, the plugin will put the `text_answer` for the trial in place of the %ANS% string (see example below). */
       incorrect_text: {
         type: jspsych.ParameterType.HTML_STRING,
         default: "Wrong."
       },
+      /** How long to display each image (in milliseconds). */
       frame_time: {
         type: jspsych.ParameterType.INT,
         default: 500
       },
+      /** How many times to show the entire sequence. */
       sequence_reps: {
         type: jspsych.ParameterType.INT,
         default: 1
       },
+      /** If true, the participant can respond before the animation sequence finishes. */
       allow_response_before_complete: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** How long to show the feedback (milliseconds). */
       feedback_duration: {
         type: jspsych.ParameterType.INT,
         default: 2e3
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus or the end of the animation depending on the allow_response_before_complete parameter. The intention is that it can be used to provide a reminder about the action the participant is supposed to take (e.g., which key to press). */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       },
+      /**
+       * If true, the images will be drawn onto a canvas element. This prevents a blank screen (white flash) between consecutive images in some browsers, like Firefox and Edge.
+       * If false, the image will be shown via an img element, as in previous versions of jsPsych.
+       */
       render_on_canvas: {
         type: jspsych.ParameterType.BOOL,
         default: true
       }
     },
     data: {
+      /** Array of stimuli displayed in the trial. This will be encoded as a JSON string when data is saved using the `.json()` or `.csv()` functions. */
       stimulus: {
         type: jspsych.ParameterType.STRING,
         array: true
       },
+      /** Indicates which key the participant pressed.  */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the stimulus first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** `true` if the participant got the correct answer, `false` otherwise. */
       correct: {
         type: jspsych.ParameterType.BOOL
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class CategorizeAnimationPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       var animate_frame = 0;
       var reps = 0;

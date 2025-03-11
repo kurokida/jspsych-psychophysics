@@ -1,90 +1,67 @@
 var jsPsychInitializeCamera = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-initialize-camera",
-    version: "2.0.0",
-    description: "jsPsych plugin for getting permission to initialize the user's camera",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest --passWithNoTests",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-initialize-camera"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/initialize-camera",
-    peerDependencies: {
-      jspsych: ">=7.2.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "initialize-camera",
-    version: _package.version,
+    version,
     parameters: {
+      /** The message to display when the user is presented with a dropdown list of available devices. */
       device_select_message: {
         type: jspsych.ParameterType.HTML_STRING,
         default: `<p>Please select the camera you would like to use.</p>`
       },
+      /** The label for the select button. */
       button_label: {
         type: jspsych.ParameterType.STRING,
         default: "Use this camera"
       },
+      /** Set to `true` to include an audio track in the recordings. */
       include_audio: {
         type: jspsych.ParameterType.BOOL,
         default: false
       },
+      /** Request a specific width for the recording. This is not a guarantee that this width will be used, as it
+       * depends on the capabilities of the participant's device. Learn more about `MediaRecorder` constraints
+       * [here](https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#requesting_a_specific_value_for_a_setting). */
       width: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Request a specific height for the recording. This is not a guarantee that this height will be used, as it
+       * depends on the capabilities of the participant's device. Learn more about `MediaRecorder` constraints
+       * [here](https://developer.mozilla.org/en-US/docs/Web/API/Media_Streams_API/Constraints#requesting_a_specific_value_for_a_setting). */
       height: {
         type: jspsych.ParameterType.INT,
         default: null
       },
+      /** Set this to use a specific [MIME type](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/mimeType) for the
+       * recording. Set the entire type, e.g., `'video/mp4; codecs="avc1.424028, mp4a.40.2"'`. */
       mime_type: {
         type: jspsych.ParameterType.STRING,
         default: null
       }
     },
     data: {
+      /** The [device ID](https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/deviceId) of the selected camera. */
       device_id: {
         type: jspsych.ParameterType.STRING
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class InitializeCameraPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       this.run_trial(display_element, trial).then((id) => {
         this.jsPsych.finishTrial({

@@ -1,114 +1,95 @@
 var jsPsychSameDifferentHtml = (function (jspsych) {
   'use strict';
 
-  var _package = {
-    name: "@jspsych/plugin-same-different-html",
-    version: "2.0.0",
-    description: "jsPsych plugin for showing two stimuli sequentially and getting a same / different judgment",
-    type: "module",
-    main: "dist/index.cjs",
-    exports: {
-      import: "./dist/index.js",
-      require: "./dist/index.cjs"
-    },
-    typings: "dist/index.d.ts",
-    unpkg: "dist/index.browser.min.js",
-    files: [
-      "src",
-      "dist"
-    ],
-    source: "src/index.ts",
-    scripts: {
-      test: "jest",
-      "test:watch": "npm test -- --watch",
-      tsc: "tsc",
-      build: "rollup --config",
-      "build:watch": "npm run build -- --watch"
-    },
-    repository: {
-      type: "git",
-      url: "git+https://github.com/jspsych/jsPsych.git",
-      directory: "packages/plugin-same-different-html"
-    },
-    author: "Josh de Leeuw",
-    license: "MIT",
-    bugs: {
-      url: "https://github.com/jspsych/jsPsych/issues"
-    },
-    homepage: "https://www.jspsych.org/latest/plugins/same-different-html",
-    peerDependencies: {
-      jspsych: ">=7.1.0"
-    },
-    devDependencies: {
-      "@jspsych/config": "^3.0.0",
-      "@jspsych/test-utils": "^1.2.0"
-    }
-  };
+  var version = "2.1.0";
 
   const info = {
     name: "same-different-html",
-    version: _package.version,
+    version,
     parameters: {
+      /** A pair of stimuli, represented as an array with two entries, one for
+       * each stimulus. A stimulus is a string containing valid HTML markup.
+       * Stimuli will be shown in the order that they are defined in the array. */
       stimuli: {
         type: jspsych.ParameterType.HTML_STRING,
         default: void 0,
         array: true
       },
+      /** Correct answer: either "same" or "different". */
       answer: {
         type: jspsych.ParameterType.SELECT,
         options: ["same", "different"],
         default: void 0
       },
+      /** The key that subjects should press to indicate that the two stimuli are the same. */
       same_key: {
         type: jspsych.ParameterType.KEY,
         default: "q"
       },
+      /** The key that subjects should press to indicate that the two stimuli are different. */
       different_key: {
         type: jspsych.ParameterType.KEY,
         default: "p"
       },
+      /** How long to show the first stimulus for in milliseconds. If the value of this parameter is null then the stimulus will be shown until the participant presses any key. */
       first_stim_duration: {
         type: jspsych.ParameterType.INT,
         default: 1e3
       },
+      /** How long to show a blank screen in between the two stimuli. */
       gap_duration: {
         type: jspsych.ParameterType.INT,
         default: 500
       },
+      /** How long to show the second stimulus for in milliseconds. If null, then the stimulus will remain on the screen until a valid response is made. */
       second_stim_duration: {
         type: jspsych.ParameterType.INT,
         pretty_name: "Second stimulus duration",
         default: 1e3
       },
+      /** This string can contain HTML markup. Any content here will be displayed below the stimulus. The intention is that it can be used to provide a reminder about the action the participant is supposed to take (e.g., which key to press). */
       prompt: {
         type: jspsych.ParameterType.HTML_STRING,
         default: null
       }
     },
     data: {
+      /**  An array of length 2 containing the HTML-formatted content that the participant saw for each trial. This will be encoded as a JSON string
+       * when data is saved using the `.json()` or `.csv()` functions. */
       stimulus: {
         type: jspsych.ParameterType.HTML_STRING,
         array: true
       },
+      /** Indicates which key the participant pressed. */
       response: {
         type: jspsych.ParameterType.STRING
       },
+      /** The response time in milliseconds for the participant to make a response. The time is measured from when the second stimulus first appears on the screen until the participant's response. */
       rt: {
         type: jspsych.ParameterType.INT
       },
+      /** `true` if the participant's response matched the `answer` for this trial.  */
       correct: {
         type: jspsych.ParameterType.BOOL
       },
+      /** The correct answer to the trial, either `'same'` or `'different'`. */
       answer: {
         type: jspsych.ParameterType.STRING
       }
+    },
+    // prettier-ignore
+    citations: {
+      "apa": "de Leeuw, J. R., Gilbert, R. A., & Luchterhandt, B. (2023). jsPsych: Enabling an Open-Source Collaborative Ecosystem of Behavioral Experiments. Journal of Open Source Software, 8(85), 5351. https://doi.org/10.21105/joss.05351 ",
+      "bibtex": '@article{Leeuw2023jsPsych, 	author = {de Leeuw, Joshua R. and Gilbert, Rebecca A. and Luchterhandt, Bj{\\" o}rn}, 	journal = {Journal of Open Source Software}, 	doi = {10.21105/joss.05351}, 	issn = {2475-9066}, 	number = {85}, 	year = {2023}, 	month = {may 11}, 	pages = {5351}, 	publisher = {Open Journals}, 	title = {jsPsych: Enabling an {Open}-{Source} {Collaborative} {Ecosystem} of {Behavioral} {Experiments}}, 	url = {https://joss.theoj.org/papers/10.21105/joss.05351}, 	volume = {8}, }  '
     }
   };
   class SameDifferentHtmlPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
-    static info = info;
+    static {
+      this.info = info;
+    }
     trial(display_element, trial) {
       display_element.innerHTML = '<div class="jspsych-same-different-stimulus">' + trial.stimuli[0] + "</div>";
       var first_stim_info;
