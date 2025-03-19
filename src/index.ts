@@ -9,14 +9,18 @@
  * http://jspsychophysics.hes.kyushu-u.ac.jp/
  * about how to use this plugin.
  *
+ * This application uses following libraries
+ *  ml-matrix: Copyright (c) 2014 Michaël Zasso
+ *  PixiJS: Copyright (c) 2013-2023 Mathew Groves, Chad Engler
  **/
 
-console.log("Psychophysics Version 3.7.0");
 
 import { JsPsych, JsPsychPlugin, ParameterType, TrialType } from "jspsych";
 import { Matrix } from "ml-matrix";
-import numeric from "numeric";
 import * as PIXI from "pixi.js";
+import { version } from "../package.json"; 
+
+console.log(`Psychophysics Version ${version}`);
 
 if (typeof PIXI.VERSION !== "undefined"){
   console.log(`PixiJS Version ${PIXI.VERSION}`)
@@ -24,6 +28,7 @@ if (typeof PIXI.VERSION !== "undefined"){
 
 const info = {
   name: "psychophysics",
+  version: version,
   description:
     "A plugin for conducting online/Web-based psychophysical experiments",
   parameters: {
@@ -218,7 +223,7 @@ const info = {
         method: {
           type: ParameterType.STRING,
           pretty_name: "gabor_drawing_method",
-          default: "numeric",
+          default: "ml-matrix",
           description: "The method of drawing the gabor patch.",
         },
         disableNorm: {
@@ -283,10 +288,8 @@ const info = {
       default: false,
       description: "If true, the main canvas remains for the next trial.",
     },
-
     choices: {
       type: ParameterType.KEYS,
-      array: true,
       pretty_name: "Choices",
       default: "ALL_KEYS",
       description:
@@ -297,6 +300,18 @@ const info = {
       pretty_name: "Prompt",
       default: null,
       description: "Any content here will be displayed below the stimulus.",
+    },
+    upper_prompt: {
+      type: ParameterType.HTML_STRING,
+      pretty_name: "Upper prompt",
+      default: null,
+      description: "Any content here will be displayed above the stimulus.",
+    },
+    lower_prompt: {
+      type: ParameterType.HTML_STRING,
+      pretty_name: "Lower prompt",
+      default: null,
+      description: "This is the same as the prompt.",
     },
     canvas_width: {
       type: ParameterType.INT,
@@ -390,20 +405,61 @@ const info = {
       default: null,
       description: "This function is set to the event listener of the keyup.",
     },
+    touchstart_func: {
+      type: ParameterType.FUNCTION,
+      pretty_name: "Touch start function",
+      default: null,
+      description: "This function is set to the event listener of the CANVAS touchstart.",
+    },
+    touchend_func: {
+      type: ParameterType.FUNCTION,
+      pretty_name: "Touch end function",
+      default: null,
+      description: "This function is set to the event listener of the CANVAS touchend.",
+    },
+    touchcancel_func: {
+      type: ParameterType.FUNCTION,
+      pretty_name: "Touch cancel function",
+      default: null,
+      description: "This function is set to the event listener of the CANVAS touchcancel.",
+    },
+    touchmove_func: {
+      type: ParameterType.FUNCTION,
+      pretty_name: "Touch move function",
+      default: null,
+      description: "This function is set to the event listener of the CANVAS touchmove.",
+    },
     button_choices: {
       type: ParameterType.STRING,
       pretty_name: "Button choices",
-      // default: undefined,
-      default: ["Next"],
-      array: true,
+      default: null,
       description: "The labels for the buttons.",
     },
     button_html: {
-      type: ParameterType.HTML_STRING,
-      pretty_name: "Button HTML",
-      default: '<button class="jspsych-btn">%choice%</button>',
-      array: true,
-      description: "The html of the button. Can create own style.",
+      type: ParameterType.FUNCTION,
+      default: function (choice: string, choice_index: number) {
+        return `<button class="jspsych-btn">${choice}</button>`;
+      },
+    },
+    // These properties refer to https://github.com/jspsych/jsPsych/tree/main/packages/plugin-html-button-response
+    /** Setting to `'grid'` will make the container element have the CSS property `display: grid` and enable the use of `grid_rows` and `grid_columns`. Setting to `'flex'` will make the container element have the CSS property `display: flex`. You can customize how the buttons are laid out by adding inline CSS in the `button_html` parameter. */
+    button_layout: {
+      type: ParameterType.STRING,
+      default: "grid",
+    },
+    /**
+     * The number of rows in the button grid. Only applicable when `button_layout` is set to `'grid'`. If null, the number of rows will be determined automatically based on the number of buttons and the number of columns.
+     */
+    grid_rows: {
+      type: ParameterType.INT,
+      default: 1,
+    },
+    /**
+     * The number of columns in the button grid. Only applicable when `button_layout` is set to `'grid'`. If null, the number of columns will be determined automatically based on the number of buttons and the number of rows.
+     */
+    grid_columns: {
+      type: ParameterType.INT,
+      default: null,
     },
     vert_button_margin: {
       type: ParameterType.STRING,
@@ -424,6 +480,42 @@ const info = {
       description: "Clear the canvas per frame.",
     },
   },
+  data: {
+    rt: {
+      type: ParameterType.INT,
+    },
+    response_type: {
+      type: ParameterType.STRING,
+    },
+    key_press: {
+      type: ParameterType.STRING,
+    },
+    response: {
+      type: ParameterType.STRING,
+    },
+    avg_frame_time: {
+      type: ParameterType.FLOAT,
+    },
+    click_x: {
+      type: ParameterType.FLOAT,
+    },
+    click_y: {
+      type: ParameterType.FLOAT,
+    },
+    center_x: {
+      type: ParameterType.FLOAT,
+    },
+    center_y: {
+      type: ParameterType.FLOAT,
+    },
+    button_pressed: {
+      type: ParameterType.INT,
+    },
+    stimulus: {
+      type: ParameterType.HTML_STRING,
+    },
+  },
+
 };
 
 type Info = typeof info;
@@ -831,7 +923,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             let exp_value;
             const adjusted_sc = this.sc * tmpRatio;
             if (this.method === "math") {
-              alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.")
+              alert("The math method is not supported. Please use the ml-matrix method instead.")
+            } else if (this.method === "numeric") {
+              alert("The numeric method is not supported. Please use the ml-matrix method instead.")
             }
             if (this.method === "ml-matrix") {
               const matrix_x = new Matrix(coord_matrix_x);
@@ -847,19 +941,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
               )
                 .exp()
                 .to2DArray();
-            } else {
-              // numeric
-              const matrix_x = coord_matrix_x;
-              const matrix_y = numeric.transpose(coord_matrix_y);
-              const x_factor = numeric.mul(numeric.pow(matrix_x, 2), -1);
-              const y_factor = numeric.mul(numeric.pow(matrix_y, 2), -1);
-              // @ts-expect-error `numeric.pow` seems to return a vector here which is treated as a number?
-              const varScale = 2 * numeric.pow([adjusted_sc], 2);
-              const tmp = numeric.add(
-                numeric.div(x_factor, varScale),
-                numeric.div(y_factor, varScale)
-              );
-              exp_value = numeric.exp(tmp);
             }
 
             let cnt = 3;
@@ -1219,9 +1300,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         // The following calculation method is based on Psychtoolbox (MATLAB),
         // although it doesn't use procedural texture mapping.
         // I also have referenced the gaborgen-js code: https://github.com/jtth/gaborgen-js
-
-        // You can choose either the numeric.js or the math.js as the method for drawing gabor patches.
-        // The numeric.js is considerably faster than the math.js, but the latter is being developed more aggressively than the former.
         // Note that "Math" and "math" are not the same.
 
         const gabor_width = this.width * window.devicePixelRatio;
@@ -1261,7 +1339,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         this.update_count += 1;
 
         if (this.method === "math") {
-          alert("The math method is not supported. Please consider using the numeric or ml-matrix method instead.")
+          alert("The math method is not supported. Please use the ml-matrix method instead.")
+        } else if (this.method === "numeric") {
+          alert("The numeric method is not supported. Please use the ml-matrix method instead.")
         }
         if (this.method === "ml-matrix") {
           const matrix_x = new Matrix(coord_matrix_x);
@@ -1291,35 +1371,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           );
           const m = Matrix.multiply(Matrix.add(tmp3, 0.5), 256);
           gabor_data = m.to2DArray();
-        } else {
-          // numeric
-          const matrix_x = coord_matrix_x;
-          const matrix_y = numeric.transpose(coord_matrix_y);
-          const x_factor = numeric.mul(numeric.pow(matrix_x, 2), -1);
-          const y_factor = numeric.mul(numeric.pow(matrix_y, 2), -1);
-          const tmp1 = numeric.add(
-            numeric.mul(matrix_x, a),
-            numeric.mul(matrix_y, b),
-            // @ts-expect-eror This doesn't seem to be considered by `numeric.add`
-            phase_rad
-          ); // radians
-          const sinWave = numeric.sin(tmp1);
-          // @ts-expect-error `numeric.pow` seems to return a vector here which is treated as a number?
-          const varScale = 2 * numeric.pow([adjusted_sc], 2);
-          const tmp2 = numeric.add(
-            numeric.div(x_factor, varScale),
-            numeric.div(y_factor, varScale)
-          );
-          const exp_value = this.disableGauss ? 1 : numeric.exp(tmp2);
-          const tmp3 = numeric.mul(exp_value, sinWave);
-          const tmp4 = numeric.mul(multConst, tmp3);
-          const tmp5 = numeric.mul(
-            this.contrast,
-            numeric.mul(tmp4, this.contrastPreMultiplicator)
-          );
-          const m = numeric.mul(256, numeric.add(0.5, tmp5));
-          gabor_data = m;
-        }
+        } 
         // console.log(gabor_data)
         const imageData = ctx.createImageData(gabor_width, gabor_width);
         let cnt = 0;
@@ -1823,36 +1875,21 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           return;
         }
 
-        // setup stimulus
-        this.context = jsPsych.pluginAPI.audioContext();
-
         // load audio file
+        // https://www.jspsych.org/latest/support/migration-v8/
         jsPsych.pluginAPI
-          .getAudioBuffer(this.file)
-          .then(
-            function (buffer) {
-              if (this.context !== null) {
-                this.audio = this.context.createBufferSource();
-                this.audio.buffer = buffer;
-                this.audio.connect(this.context.destination);
-                this.prepared = true;
-                console.log("WebAudio");
-              } else {
-                this.audio = buffer;
-                this.audio.currentTime = 0;
-                this.prepared = true;
-                console.log("HTML5 audio");
-              }
-              // setupTrial();
-            }.bind(this)
-          )
-          .catch(
-            function (err) {
+          .getAudioPlayer(this.file)
+          .then((buffer) => {
+              this.audio = buffer;
+              this.prepared = true;
+              // console.log("New audio");
+            })
+          .catch((err) => {
               console.error(
                 `Failed to load audio file "${this.file}". Try checking the file path. We recommend using the preload plugin to load audio files.`
               );
               console.error(err);
-            }.bind(this)
+            }
           );
 
         // set up end event if trial needs it
@@ -1862,24 +1899,15 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       }
 
       play() {
-        // start audio
-        if (this.context !== null) {
-          //startTime = this.context.currentTime;
-          // オリジナルのjspsychではwebaudioが使えるときは時間のデータとしてcontext.currentTimeを使っている。
-          // psychophysicsプラグインでは、performance.now()で統一している
-          this.audio.start(this.context.currentTime);
-        } else {
-          this.audio.play();
-        }
+        // In the original jsPsych, when WebAudio is available, rt_method: "audio" is used. 
+        // In the psychophysics plugin, since the start of the sound does not necessarily mean the start of the reaction time, 
+        // performance.now() is used consistently."
+        this.audio.play();
+        // }
       }
 
       stop() {
-        if (this.context !== null) {
-          this.audio.stop();
-          // this.source.onended = function() { }
-        } else {
-          this.audio.pause();
-        }
+        this.audio.stop();
         this.audio.removeEventListener("ended", end_trial);
       }
     }
@@ -1903,6 +1931,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     let new_html = "";
     const canvas_exist =
       document.getElementById("myCanvas") === null ? false : true;
+    if (!canvas_exist && trial.upper_prompt !== null) {
+        new_html += trial.upper_prompt;
+    }  
     if (!canvas_exist) {
       if (trial.pixi) {
         pixi_app = new PIXI.Application({
@@ -1915,7 +1946,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
         display_element.appendChild(pixi_app.view);
       } else {
-        new_html =
+        new_html +=
           '<canvas id="myCanvas" class="jspsych-canvas" width=' +
           trial.canvas_width +
           " height=" +
@@ -1929,9 +1960,11 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     const motion_rt_method = "performance"; // 'date' or 'performance'. 'performance' is better.
     let start_time; // used for mouse and button responses.
     let keyboardListener;
+    let response_flag = false;
 
     // allow to respond using keyboard mouse or button
     this.jsPsych.pluginAPI.setTimeout(() => {
+      response_flag = true; // allow to response
       if (trial.response_type === "key") {
         if (trial.choices != "NO_KEYS") {
           keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
@@ -1949,67 +1982,62 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       } else {
         // button
         start_time = performance.now();
-        for (let i = 0; i < trial.button_choices.length; i++) {
-          display_element
-            .querySelector<HTMLButtonElement>(
-              "#jspsych-image-button-response-button-" + i
-            )
-            .addEventListener("click", function (e) {
-              const choice = this.getAttribute("data-choice"); // don't use dataset for jsdom compatibility
-              // after_response(choice);
-              // console.log(performance.now())
-              // console.log(start_time)
-              after_response({
-                key: -1,
-                rt: performance.now() - start_time,
-                button: choice,
-              });
-            });
-        }
       }
     }, trial.response_start_time);
 
-    //display buttons
-    if (!canvas_exist && trial.response_type === "button") {
-      let buttons = [];
-      if (Array.isArray(trial.button_html)) {
-        if (trial.button_html.length == trial.button_choices.length) {
-          buttons = trial.button_html;
-        } else {
-          console.error(
-            "Error: The length of the button_html array does not equal the length of the button_choices array"
-          );
-        }
-      } else {
-        for (let i = 0; i < trial.button_choices.length; i++) {
-          buttons.push(trial.button_html);
-        }
-      }
-      new_html += '<div id="jspsych-image-button-response-btngroup">';
-      for (let i = 0; i < trial.button_choices.length; i++) {
-        let str = buttons[i].replace(/%choice%/g, trial.button_choices[i]);
-        new_html +=
-          '<div class="jspsych-image-button-response-button" style="display: inline-block; margin:' +
-          trial.vert_button_margin +
-          " " +
-          trial.horiz_button_margin +
-          '" id="jspsych-image-button-response-button-' +
-          i +
-          '" data-choice="' +
-          i +
-          '">' +
-          str +
-          "</div>";
-      }
-      new_html += "</div>";
-    }
 
     // add prompt
     if (!canvas_exist && trial.prompt !== null) {
       new_html += trial.prompt;
     }
+    if (!canvas_exist && trial.lower_prompt !== null) {
+      new_html += trial.lower_prompt;
+    }
     display_element.insertAdjacentHTML("beforeend", new_html);
 
+    //display buttons
+    if (!canvas_exist && trial.response_type === "button") {
+      const buttonGroupElement = document.createElement("div");
+      buttonGroupElement.id = "jspsych-html-button-response-btngroup";
+      if (trial.button_layout === "grid") {
+        buttonGroupElement.classList.add("jspsych-btn-group-grid");
+        if (trial.grid_rows === null && trial.grid_columns === null) {
+          throw new Error(
+            "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+          );
+        }
+        const n_cols =
+          trial.grid_columns === null
+            ? Math.ceil(trial.button_choices.length / trial.grid_rows)
+            : trial.grid_columns;
+        const n_rows =
+          trial.grid_rows === null
+            ? Math.ceil(trial.button_choices.length / trial.grid_columns)
+            : trial.grid_rows;
+        buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
+        buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+      } else if (trial.button_layout === "flex") {
+        buttonGroupElement.classList.add("jspsych-btn-group-flex");
+      }
+  
+      for (const [choiceIndex, choice] of trial.button_choices.entries()) {
+        buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
+        const buttonElement = buttonGroupElement.lastChild as HTMLElement;
+        buttonElement.dataset.choice = choiceIndex.toString();
+        buttonElement.addEventListener("click", () => {
+          // after_response(choiceIndex);
+          after_response({
+            key: -1,
+            rt: performance.now() - start_time,
+            button: choiceIndex,
+          });
+
+        });
+      }
+  
+      display_element.appendChild(buttonGroupElement);
+
+    }
     const canvas =
       trial.pixi === true ? pixi_app.view : document.getElementById("myCanvas");
     if (!canvas || !canvas.getContext) {
@@ -2082,6 +2110,23 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       document.addEventListener("keyup", trial.key_up_func);
     }
 
+    // Touch functions are assigned to the CANVAS but not to the document.
+    if (trial.touchstart_func !== null) {
+      canvas.addEventListener("touchstart", trial.touchstart_func);
+    }
+
+    if (trial.touchend_func !== null) {
+      canvas.addEventListener("touchend", trial.touchend_func);
+    }
+
+    if (trial.touchcancel_func !== null) {
+      canvas.addEventListener("touchcancel", trial.touchcancel_func);
+    }
+
+    if (trial.touchmove_func !== null) {
+      canvas.addEventListener("touchmove", trial.touchmove_func);
+    }
+
     if (typeof trial.stimuli === "undefined" && trial.raf_func === null) {
       alert(
         "You have to specify the stimuli/raf_func parameter in the psychophysics plugin."
@@ -2091,7 +2136,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
     /////////////////////////////////////////////////////////
     // make instances
-    const oop_stim = [];
     const set_instance = {
       sound: audio_stimulus,
       image: image_stimulus,
@@ -2116,13 +2160,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           );
           return;
         }
-        oop_stim.push(new set_instance[stim.obj_type](stim));
+        stim.instance = new set_instance[stim.obj_type](stim);
       }
     }
-    trial.stim_array = oop_stim;
-    // for (let i = 0; i < trial.stim_array.length; i++){
-    //   console.log(trial.stim_array[i].is_presented)
-    // }
 
     function mouseDownFunc(e) {
       let click_time;
@@ -2148,8 +2188,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     function step(timestamp) {
       // Wait until all the instance of stimuli are ready.
       if (prepare_check) {
-        for (let i = 0; i < trial.stim_array.length; i++) {
-          if (!trial.stim_array[i].prepared) {
+        for (let i = 0; i < trial.stimuli.length; i++) {
+          if (!trial.stimuli[i].instance.prepared) {
             frameRequestID = window.requestAnimationFrame(step);
             return;
           }
@@ -2174,8 +2214,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         return;
       }
 
-      for (let i = 0; i < trial.stim_array.length; i++) {
-        const stim = trial.stim_array[i];
+      for (let i = 0; i < trial.stimuli.length; i++) {
+        const stim = trial.stimuli[i].instance;
         const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
         const show_start = stim.is_frame
           ? stim.show_start_frame
@@ -2260,6 +2300,22 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         canvas.removeEventListener("mouseup", trial.mouse_up_func);
       }
 
+      if (trial.touchstart_func !== null){
+        canvas.removeEventListener("touchstart", trial.touchstart_func);
+      }
+
+      if (trial.touchend_func !== null) {
+        canvas.removeEventListener("touchend", trial.touchend_func);
+      }
+  
+      if (trial.touchcancel_func !== null) {
+        canvas.removeEventListener("touchcancel", trial.touchcancel_func);
+      }
+  
+      if (trial.touchmove_func !== null) {
+        canvas.removeEventListener("touchmove", trial.touchmove_func);
+      }
+
       if (trial.key_down_func !== null) {
         document.removeEventListener("keydown", trial.key_down_func);
       }
@@ -2270,10 +2326,10 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
       // stop the audio file if it is playing
       // remove end event listeners if they exist
-      if (typeof trial.stim_array !== "undefined") {
+      if (typeof trial.stimuli !== "undefined") {
         // The stimuli could be 'undefined' if the raf_func is specified.
-        for (let i = 0; i < trial.stim_array.length; i++) {
-          const stim = trial.stim_array[i];
+        for (let i = 0; i < trial.stimuli.length; i++) {
+          const stim = trial.stimuli[i].instance;
           if (typeof stim.pixi_obj !== "undefined") stim.pixi_obj.destroy();
 
           // stim.is_presented = false;
@@ -2299,6 +2355,9 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       if (typeof keyboardListener !== "undefined") {
         this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
       }
+
+      // kill keyboard listeners
+      this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
 
       // gather the data to store for the trial //音の再生時からの反応時間をとるわけではないから不要？
       // if(context !== null && response.rt !== null){
@@ -2336,6 +2395,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     // function to handle responses by the subject
     // let after_response = function(info) { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial);
     function after_response(info) {
+      if (!response_flag) return;
+
       // const after_response = info => {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
@@ -2373,6 +2434,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         end_trial();
       }, trial.trial_duration);
     }
+    // on_load();
+
   }
   simulate(trial, simulation_mode, simulation_options, load_callback) {
     if (simulation_mode == "data-only") {
@@ -2423,7 +2486,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         case "button":
           this.jsPsych.pluginAPI.clickTarget(
             display_element.querySelector(
-              `div[data-choice="${data.response}"] button`
+              `#jspsych-html-button-response-btngroup [data-choice="${data.response}"]`
             ),
             data.rt
           );

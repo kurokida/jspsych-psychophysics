@@ -9,7 +9,7 @@ You can present gabor patches using the jspsych-psychophysics plugin.
 
 The calculation method for drawing is almost the same as the one used by [the Psychtoolbox](http://psychtoolbox.org/), although my plugin doesn't use the procedural texture mapping and WebGL. I also have referenced [the gaborgen-js code](https://github.com/jtth/gaborgen-js).
 
-You can choose either [the numeric.js](https://github.com/sloisel/numeric) or [the math.js](https://mathjs.org/) for the calculation library. The numeric.js is considerably faster than the math.js, but the latter is being developed more aggressively than the former. The default is the numeric.js.
+[The ml-matrix](https://www.npmjs.com/package/ml-matrix) is used for the calculation library. The `numeric` has been discontinued since the psychophysics plugin V4.X.
 
 There are still the issues of display calibration and luminance resolution. Unfortunately, my plugin does not provide a solution to this problem.
 
@@ -17,9 +17,9 @@ See the Gabor section of [Parameters of stimuli](https://jspsychophysics.hes.kyu
 
 # The drifting gabor patch
 
-You are capable of making a gabor patch drift. The Gabor patch drifts more smoothly when it is presented using the numeric.js more than using the math.js. However, its speed is not accurate when using either library.
+You are capable of making a gabor patch drift. However, its speed is not probably accurate.
 
-By checking the averaged time of a frame, you can see how accurately the stimulus has been presented. The psychophysics plugin records the time (avg_frame_time). When using a display with a refresh rate of 60 Hz, theoretically this would be 16.7 ms. However, in my PC, the avg_frame_time was about 27 ms when the drifting patch was drawn using the numeric.js, and was about 440 ms using the math.js.
+By checking the averaged time of a frame, you can see how accurately the stimulus has been presented. The psychophysics plugin records the time (avg_frame_time). When using a display with a refresh rate of 60 Hz, theoretically this would be 16.7 ms.
 
 The avg_frame_time is the value of an elapsed time divided by the number of times the requestAnimationFrame was called. The elapsed time is the time when the requestAnimationFrame was last called minus the time when the requestAnimationFrame was first called. 
 

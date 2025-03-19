@@ -107,7 +107,7 @@ jsPsych.run([trial])
 
 ```
 
-Note that since jsPsych V7, you need to specify type: jsPsychPsychophysics.
+Since jsPsych V7, you need to specify type: jsPsychPsychophysics.
 
 The **stimuli** array must include all the stimulus objects to be presented in the trial.
 
@@ -116,6 +116,18 @@ This trial object must be passed as an argument to the `jsPsych.run` function.
 If you use image and audio files in a trial, please preload them at the begging of the program using [the preload plugin](https://www.jspsych.org/7.1/plugins/preload/). See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
 
 The other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
+
+## Using with jsPsych V8
+
+- Use the psychophysics plugin V4.X.
+- When using `getCurrentTrial().stim_array`, it needs to be rewritten like `getCurrentTrial().stimuli[n].instance`."
+- If you want to manually complete the plugin, see [touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html). 
+- When `obj_type` is set to `gabor`, the method is now only `ml-matrix` (`numeric` has been discontinued)."
+
+## Using with jsPsych V7
+
+- Use the psychophysics plugin V3.X.
+- Specify `type: jsPsychPsychophysics`.
 
 ## Demonstrations
 [The jspsych-psychophysics package includes a lot of demonstration files.](/demo_explanation/)

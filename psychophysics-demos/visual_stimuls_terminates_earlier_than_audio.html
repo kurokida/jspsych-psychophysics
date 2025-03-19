@@ -74,8 +74,8 @@
               if (event.key === 'ArrowUp') resp_key = 'ArrowUp';
               if (event.key === 'ArrowDown') resp_key = 'ArrowDown';
 
-              const stim = jsPsych.getCurrentTrial().stim_array;
-              stim[0].show_end_time = 0; // This make the circle invisible.
+              const stim = jsPsych.getCurrentTrial().stimuli[0].instance;
+              stim.show_end_time = 0; // This make the circle invisible.
             }
           },
           on_start: function(trial){

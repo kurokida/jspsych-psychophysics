@@ -41,7 +41,7 @@
         pixi: true,
         key_down_func: function(event){
             // See https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties/#obj_type-gabor for uniforms
-            const uniforms = jsPsych.getCurrentTrial().stim_array[0].pixi_obj.filters[0].uniforms;
+            const uniforms = jsPsych.getCurrentTrial().stimuli[0].instance.pixi_obj.filters[0].uniforms;
             if (event.key === 'ArrowLeft'){
                 uniforms.angle_in_degrees += 2;
                 uniforms.modulateColor_R += 0.1;                 

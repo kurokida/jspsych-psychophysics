@@ -55,7 +55,9 @@
                     },
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('fileName'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('fileName')
+                        },
                         show_start_time: 500 // ms after the start of the trial
                     }
                 ],

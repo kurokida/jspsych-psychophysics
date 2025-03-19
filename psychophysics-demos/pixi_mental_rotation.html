@@ -35,10 +35,14 @@
 
     const stim_char = {
         obj_type: 'text',
-        content: jsPsych.timelineVariable('char'),
+        content: function(){
+            return jsPsych.evaluateTimelineVariable('char')
+        },
         fontSize: 60,
         text_color: 'white',
-        pixi_angle: jsPsych.timelineVariable('rotAngle'),
+        pixi_angle: function(){
+            return jsPsych.evaluateTimelineVariable('rotAngle')
+        },
         show_start_time: 1000,
     }
 

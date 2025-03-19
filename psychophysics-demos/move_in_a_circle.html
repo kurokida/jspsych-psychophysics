@@ -25,6 +25,14 @@
         prompt: "This is a sample program for the jspsych-psychophysics plugin.",
     }
 
+    const cross = {
+        obj_type: 'cross',        
+        // startX: 400, // location of the cross's center in the canvas
+        // startY: 400,
+        line_length: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        // fill_color: 'white',        
+    }
     const circle = {
         obj_type: 'circle',
         radius: 100,
@@ -35,8 +43,8 @@
             const theta = velocity * elapsedTime/1000;
             const radius = 100;
 
-            stim.pixi_obj.x = jsPsych.getCurrentTrial().centerX + radius * Math.cos(theta);
-            stim.pixi_obj.y = jsPsych.getCurrentTrial().centerY + radius * Math.sin(theta);
+            stim.pixi_obj.x = canvas.width/2 + radius * Math.cos(theta); // Considering window.devicePixelRatio is probably unnecessary because PIXI is being used."
+            stim.pixi_obj.y = canvas.height/2 + radius * Math.sin(theta);
             stim.pixi_obj.visible = true
         }
     }
@@ -44,7 +52,7 @@
     const rotation = {
         type: jsPsychPsychophysics,
         pixi: true,
-        stimuli: [circle]
+        stimuli: [cross, circle]
     }
 
     jsPsych.run([instruction, rotation])

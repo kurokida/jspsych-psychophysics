@@ -65,12 +65,12 @@
         clear_canvas: false, // This is specified to prevent the canvas from being cleared in each frame.
         key_down_func: function(event){
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
-                const canvas = jsPsych.getCurrentTrial().canvas;
-                const ctx = jsPsych.getCurrentTrial().context;
+                const canvas = document.getElementById("myCanvas");
+                const ctx = canvas.getContext("2d");
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas manually
 
-                jsPsych.getCurrentTrial().stim_array[image_num].show(); // present the image manually
+                jsPsych.getCurrentTrial().stimuli[image_num].instance.show(); // present the image manually
                 
                 if (event.key === 'ArrowUp'){
                     image_num++;

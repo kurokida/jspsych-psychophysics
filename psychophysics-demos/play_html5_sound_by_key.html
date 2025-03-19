@@ -12,7 +12,7 @@
         // This file demonstrates how to play the HTML5 sound by pressing a key.
 
         const jsPsych = initJsPsych({
-            use_webaudio: false, // required for this demo to run properly.
+            // use_webaudio: false, // This is not required since psychophysics V4 with jsPsych V8. Note that WebAudio is used or not.
             on_finish: function() {
                 jsPsych.data.displayData();
             }
@@ -49,10 +49,10 @@
             choices: [' '],
             key_down_func: function(event){ 
                 if (event.key === 'f'){
-                    jsPsych.getCurrentTrial().stim_array[0].play()
+                    jsPsych.getCurrentTrial().stimuli[0].instance.play()
                 }
                 if (event.key === 'j'){
-                    jsPsych.getCurrentTrial().stim_array[1].play()
+                    jsPsych.getCurrentTrial().stimuli[1].instance.play()
                 }
             },
             raf_func: function(){ // You have to write the empty raf_func to prevent playing the sound automatically.

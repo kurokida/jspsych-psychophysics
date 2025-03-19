@@ -48,7 +48,9 @@
 
       const stim_image = {
         obj_type: 'image',
-        file: jsPsych.timelineVariable('fileName')
+        file: () => {
+          return jsPsych.evaluateTimelineVariable('fileName')
+        }
       }
 
       const trial = {
@@ -65,7 +67,7 @@
             image_scale -= 0.01;
           }
 
-          jsPsych.getCurrentTrial().stim_array[0].scale = image_scale;
+          jsPsych.getCurrentTrial().stimuli[0].instance.scale = image_scale;
         },
         on_start: function(trial){
           image_scale = 1; // Initialization

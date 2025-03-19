@@ -51,21 +51,26 @@
                 stimuli: [
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('firstImage'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('firstImage')
+                        }, 
                         show_start_time: 500, // ms after the start of the trial
                         startX: 300,
                     },
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('secondImage'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('secondImage')
+                        }, 
                         show_start_time: 1000, // ms after the start of the trial
                         startX: 600
                     }
                 ],
                 canvas_height: 500,
                 prompt: 'Press any key to proceed.',
-                data: {'firstImage': jsPsych.timelineVariable('firstImage'),
-                'secondImage': jsPsych.timelineVariable('secondImage')} // for identification
+                data: {
+                    'firstImage': jsPsych.timelineVariable('firstImage'),
+                    'secondImage': jsPsych.timelineVariable('secondImage')} // for identification
             }
         ],
         timeline_variables: [

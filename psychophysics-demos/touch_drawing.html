@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8">
+      <script src="../jspsych-dist/dist/jspsych.js"></script>
+      <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+      <script src="../jspsych-psychophysics.js"></script>
+      <link href="../jspsych-dist/dist/jspsych.css" rel="stylesheet" type="text/css" />
+      </head>
+    <body></body>
+    <script>
+        // This program referes to https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                jsPsych.data.displayData();
+            }
+        })
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'This program uses a touch panel. You can draw using your fingers. The images you draw can be saved as files.',
+            choices: ['Start'],
+        }
+
+        const ongoingTouches = [];
+
+        function copyTouch({ identifier, pageX, pageY }) {
+            return { identifier, pageX, pageY };
+        }
+
+        function ongoingTouchIndexById(idToFind) {
+            for (let i = 0; i < ongoingTouches.length; i++) {
+            const id = ongoingTouches[i].identifier;
+
+            if (id === idToFind) {
+                return i;
+            }
+            }
+            return -1;
+        }
+
+        const rect_width = 500;
+        const rect_height = 500;
+        const background_color = "grey";
+        let canvas;
+        let ctx; // Canvas context
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            canvas_height: rect_height,
+            canvas_width: rect_width,
+            button_choices: ['Finish'],
+            upper_prompt: '<p>You can draw using your fingers. Note that drawing with a mouse is not possible.</p>',
+            lower_prompt: '<p>Press the "C" key to clear the canvas.</p><p>Press the "S" key to save the canvas.</p>',
+            stimuli: [],
+            response_type: 'button',
+            horiz_button_margin: '50px',
+            clear_canvas: false,
+            on_load: function(){
+                canvas = document.getElementById("myCanvas");
+                ctx = canvas.getContext("2d");
+                ctx.fillStyle = background_color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            },
+            key_down_func: function(event){ 
+                if (event.key === 'c'){ // When you press the "C" key, the canvas is cleared. 
+                    ctx.fillStyle = background_color;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                } else if (event.key === 's'){ // When you press the "S" key, the image is saved as a file.
+                    console.log("Save the image")
+                    // The following code cannot be done within the "on_finish" function because the canvas has already been cleared.
+                    const base64 = canvas.toDataURL("image/png");
+                    const png_file_name = `sample_image.png`
+                    jsPsych.getDisplayElement().insertAdjacentHTML('beforeend', `<a id="jspsych-download-as-text-link" style="display:none;" 
+                        download="${png_file_name}" href="${base64}">click to download</a>`);
+                    const elm = document.getElementById('jspsych-download-as-text-link')
+                    elm.click();
+                    jsPsych.getDisplayElement().removeChild(elm);
+                }
+            },
+            touchstart_func: function(evt){
+                evt.preventDefault();
+                console.log("touchstart.");
+                const touches = evt.changedTouches;
+
+                for (let i = 0; i < touches.length; i++) {
+                    console.log(`touchstart: ${i}.`);
+                    ongoingTouches.push(copyTouch(touches[i]));
+                }
+
+            },
+            touchmove_func: function(evt){
+                evt.preventDefault();
+                const touches = evt.changedTouches;
+
+                for (let i = 0; i < touches.length; i++) {
+                    const color = `black`;
+                    
+                    const idx = ongoingTouchIndexById(touches[i].identifier);
+
+                    if (idx >= 0) {
+                        console.log(`continuing touch ${idx}`);
+                        ctx.beginPath();
+                        ctx.moveTo(ongoingTouches[idx].pageX - touches[i].target.offsetLeft, ongoingTouches[idx].pageY - touches[i].target.offsetTop);
+                        ctx.lineTo(touches[i].pageX - touches[i].target.offsetLeft, touches[i].pageY - touches[i].target.offsetTop);
+                        ctx.lineWidth = 4;
+                        ctx.strokeStyle = color;
+                        ctx.stroke();
+
+                        ongoingTouches.splice(idx, 1, copyTouch(touches[i])); // swap in the new touch record
+                    } else {
+                        console.log("can't figure out which touch to continue");
+                    }
+                }
+            },
+            touchend_func: function(evt){
+                evt.preventDefault();
+                console.log("touchend");
+                const touches = evt.changedTouches;
+
+                for (let i = 0; i < touches.length; i++) {
+                    const color = `black`;
+                    let idx = ongoingTouchIndexById(touches[i].identifier);
+
+                    if (idx >= 0) {
+                        ctx.lineWidth = 4;
+                        ctx.fillStyle = color;
+                        ctx.beginPath();
+                        ctx.moveTo(ongoingTouches[idx].pageX - touches[i].target.offsetLeft, ongoingTouches[idx].pageY - touches[i].target.offsetTop);
+                        ctx.lineTo(touches[i].pageX - touches[i].target.offsetLeft, touches[i].pageY - touches[i].target.offsetTop);
+                        // ctx.fillRect(touches[i].pageX - touches[i].target.offsetLeft - 4, touches[i].pageY - touches[i].target.offsetTop - 4, 8, 8); // and a square at the end
+                        ongoingTouches.splice(idx, 1); // remove it; we're done
+                    } else {
+                        console.log("can't figure out which touch to end");
+                    }
+                }
+            },
+            touchcancel_func: function(evt){
+                evt.preventDefault();
+                console.log("touchcancel.");
+                const touches = evt.changedTouches;
+
+                for (let i = 0; i < touches.length; i++) {
+                    let idx = ongoingTouchIndexById(touches[i].identifier);
+                    ongoingTouches.splice(idx, 1); // remove it; we're done
+                }
+            }
+        }
+
+        /* start the experiment */
+        jsPsych.run([instruction, trial])
+
+  </script>
+</html>

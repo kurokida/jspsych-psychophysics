@@ -51,11 +51,15 @@
                 stimuli: [
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('firstImage'),
+                        file: () => {
+                            return jsPsych.evaluateTimelineVariable('firstImage')
+                        }
                     },
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('secondImage'),
+                        file: () => {
+                            return jsPsych.evaluateTimelineVariable('secondImage')
+                        }
                     }
                 ],
                 canvas_height: 500,
@@ -70,17 +74,17 @@
                     const time_from_first_image_onset = elapsedTime % period;
 
                     if (time_from_first_image_onset >= first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
-                        const stim = trial.stim_array[0];
+                        const stim = trial.stimuli[0].instance;
                         stim.show();
                     } else {
-                        if (pixi_flag) trial.stim_array[0].pixi_obj.visible = false;
+                        if (pixi_flag) trial.stimuli[0].instance.pixi_obj.visible = false;
                     }
 
                     if (time_from_first_image_onset >= second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
-                        const stim = trial.stim_array[1];
+                        const stim = trial.stimuli[1].instance;
                         stim.show();
                     } else {
-                        if (pixi_flag) trial.stim_array[1].pixi_obj.visible = false;
+                        if (pixi_flag) trial.stimuli[1].instance.pixi_obj.visible = false;
                     }
                 }
             },

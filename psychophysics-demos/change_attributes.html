@@ -63,7 +63,26 @@
             const color_info = `rgb(${color}, ${color}, ${color})`
 
             if (pixi_flag) { // Using PixiJS
-                const color_num = jsPsych.getCurrentTrial().getColorNum(color_info)
+
+                // Copilot supported to make this function! Thank you!
+                function getColorNum(color_str) {
+                    const result = color_str.match(/\d+/g);
+
+                    if (result.length !== 3) {
+                        throw new Error("Invalid RGB string format");
+                    }
+
+                    // Convert each number (RGB) to hexadecimal
+                    const r = parseInt(result[0]).toString(16).padStart(2, '0');
+                    const g = parseInt(result[1]).toString(16).padStart(2, '0');
+                    const b = parseInt(result[2]).toString(16).padStart(2, '0');
+
+                    const col = `#${r}${g}${b}`;
+                    const col2 = col[1] + col[2] + col[3] + col[4] + col[5] + col[6] + col[7] + col[8];
+                    return parseInt(col2, 16);
+                }
+                
+                const color_num = getColorNum(color_info);
                 stim.pixi_obj.beginFill(color_num, 1);
                 stim.pixi_obj.drawRect(-stim.width/2, -stim.height/2, stim.width, stim.height);
                 stim.pixi_obj.endFill();

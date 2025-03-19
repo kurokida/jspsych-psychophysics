@@ -41,6 +41,7 @@ Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 - [mouse_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html) This file demonstrates how to specify the mouse-event functions. This demo is like a drawing application. Note that the `clear_canvas` property is set to false.
 - [visual_stimuls_terminates_earlier_than_audio.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/visual_stimuls_terminates_earlier_than_audio.html) This file demonstrates how to terminate a visual stimulus earlier than an audio stimuls.
 - [touch_to_end.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/touch_to_end.html) This file demonstrates how to finsh the psychophysics trial by touching the screen.
+- [touch_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/touch_drawing.html) This file demonstrates how to draw using touch on the screen.
 
 # requestAnimationFrame
 
@@ -84,3 +85,4 @@ Please see [the documentation](pixijs.md) regarding the pixi mode of the psychop
 - [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html) This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.
 - [retina_display.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/retina_display.html) This demo confirms that the stimuli are presented properly on retina display. The canvas size is set to 600x600.
 - [dynamically_change.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/dynamically_change.html)-[CodePen](https://codepen.io/kurokida/pen/VwWgbwz) This file demonstrates to change dynamically properties of an object.
+- [button_grid.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/button_grid.html) This file demonstrates how to present multi buttons.

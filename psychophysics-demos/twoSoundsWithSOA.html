@@ -35,16 +35,23 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
+                on_load: function(){
+                    console.log("on_load")
+                },
                 response_start_time: 1600, // To prevent participants from responding before the auditory stimuli are presented
                 stimuli: [
                     {
                         obj_type: 'sound',
-                        file: jsPsych.timelineVariable('first_sound'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('first_sound')
+                        },
                         show_start_time: 500 // from the trial start (ms)
                     },
                     {
                         obj_type: 'sound',
-                        file: jsPsych.timelineVariable('second_sound'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('second_sound')
+                        },
                         show_start_time: 1500 // from the trial start (ms)
                     },
                 ],

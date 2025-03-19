@@ -42,8 +42,12 @@
                 stimuli: [
                     {
                         obj_type: 'circle',
-                        startX: jsPsych.timelineVariable('posX'), // location in the canvas
-                        startY: jsPsych.timelineVariable('posY'),
+                        startX: function(){
+                            return jsPsych.evaluateTimelineVariable('posX') // location in the canvas
+                        },
+                        startY: function(){
+                            return jsPsych.evaluateTimelineVariable('posY') // location in the canvas
+                        },
                         radius: 10,
                         line_color: 'black', // You can use the HTML color name instead of the HEX color.
                         fill_color: 'black',

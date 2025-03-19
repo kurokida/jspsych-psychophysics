@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Kuroki"
+    given-names: "Daiichiro"
+    orcid: "0000-0002-3547-7082"
+title: "A new jsPsych plugin for psychophysics, providing accurate display duration and stimulus onset asynchrony"
+version: 4.0.0
+doi: 10.3758/s13428-020-01445-w
+date-released: 2020-07-22
+url: "https://jspsychophysics.hes.kyushu-u.ac.jp/"

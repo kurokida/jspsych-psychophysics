@@ -9,7 +9,7 @@
 </head>
 <body></body>
 <script>
-    // This file demonstrates how to finsh the psychophysics trial by touching the screen.
+    // This file demonstrates how to manually finsh the psychophysics trial by touching the screen.
     // You can press keys to finsh as well.
     // This program is inspired by this post https://github.com/kurokida/jspsych-psychophysics/issues/48#issuecomment-1843525852
     // and is experimental and needs further testing.
@@ -17,6 +17,7 @@
     const jsPsych = initJsPsych({
         on_finish: function() {
             jsPsych.data.displayData();
+            jsPsych.data.get().localSave('csv','mydata.csv');
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
@@ -28,9 +29,11 @@
         prompt: "This is a sample program for the jspsych-psychophysics plugin.",
     }
 
+    const fixed_key = "a";
+
     const msg = {
         obj_type: "text",
-        content: "This is a psychophysics trial.\nPress any key or touch the screen to finish this trial."
+        content: `This is a psychophysics trial.\nPress any keys other than ${fixed_key} or touch the screen to finish this trial.`
     }
 
     // Consider storing the touched coordinates
@@ -42,22 +45,35 @@
         on_load: function(){ 
             touch_x = null; // initialize
             touch_y = null; // initialize
-
-            const canvas = jsPsych.getCurrentTrial().canvas;
-
-            canvas.addEventListener("touchstart", (event) => {
-                console.log(event)
-                const touch = event.touches[0];
-                touch_x = touch.clientX;
-                touch_y = touch.clientY;
-
-                // The end_trial function should be called, not the jsPsych.finishTrial function.
-                jsPsych.getCurrentTrial().end_trial()
-            })
         },
         on_finish(data){
             data.touch_x = touch_x;
             data.touch_y = touch_y;
+        },
+        touchstart_func: function(event){
+
+            const touch = event.touches[0];
+            touch_x = touch.clientX;
+            touch_y = touch.clientY;
+
+            ////////////////////////////////////////////////
+            // You can use finishTrial https://www.jspsych.org/latest/reference/jspsych/#jspsychfinishtrial,
+            // but since finishTrial does not call the proper termination process, the following process is recommended.
+            const tmp_key_down_event = new KeyboardEvent('keydown', {
+                key: fixed_key, // As you like
+            });
+            console.log(tmp_key_down_event)
+
+            const tmp_key_up_event = new KeyboardEvent('keyup', {
+                key: fixed_key, // "It needs to match the key of the keydown event."
+            });
+            console.log(tmp_key_up_event)
+
+            // To properly complete the psychophysics plugin, call both the keydown and keyup events.
+            const bodyElement = document.body;
+            bodyElement.dispatchEvent(tmp_key_down_event);
+            bodyElement.dispatchEvent(tmp_key_up_event); // Important! Don't forget!
+            
         }
     }
 
@@ -67,7 +83,7 @@
             const last_trial_data = jsPsych.data.getLastTrialData();
             const resp = last_trial_data.values()[0].response;
 
-            if (resp === null){
+            if (resp === fixed_key){
                 return "You have touched the screen."
             } else {
                 return `You have pressed the ${resp} key.`

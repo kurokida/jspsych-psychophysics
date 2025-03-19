@@ -45,7 +45,9 @@
         obj_type: 'image',
         scale: 1.5,
         pixi_angle: 45, // degree
-        file: jsPsych.timelineVariable('firstImage'),
+        file: function(){
+            return jsPsych.evaluateTimelineVariable('firstImage')
+        },
         show_start_time: 500, // ms after the start of the trial
         startX: 300,
     }
@@ -54,7 +56,9 @@
         obj_type: 'image',
         scale: 0.5,
         pixi_rotation: Math.PI, // radian
-        file: jsPsych.timelineVariable('secondImage'),
+        file: function(){
+            return jsPsych.evaluateTimelineVariable('secondImage')
+        },
         show_start_time: 1000, // ms after the start of the trial
         startX: 600
     }
@@ -67,8 +71,10 @@
                 stimuli: [image1, image2],
                 canvas_height: 500,
                 prompt: 'Press any key to proceed.',
-                data: {'firstImage': jsPsych.timelineVariable('firstImage'),
-                'secondImage': jsPsych.timelineVariable('secondImage')}, // for identification
+                data: {
+                    'firstImage': jsPsych.timelineVariable('firstImage'), // for identification
+                    'secondImage': jsPsych.timelineVariable('secondImage')
+                }, 
             }
         ],
         timeline_variables: [

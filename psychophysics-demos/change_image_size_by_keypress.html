@@ -58,7 +58,7 @@
               image_scale -= 0.01;
             }
 
-            jsPsych.getCurrentTrial().stim_array[0].scale = image_scale;
+            jsPsych.getCurrentTrial().stimuli[0].instance.scale = image_scale;
           },
           on_finish: function(data){ // https://www.jspsych.org/7.3/overview/events/#on_finish-trial
             data.image_scale = image_scale;

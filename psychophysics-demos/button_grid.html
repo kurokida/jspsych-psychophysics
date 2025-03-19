@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../jspsych-dist/dist/jspsych.js"></script>
+  <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+  <script src="../jspsych-psychophysics.js"></script>
+  <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present multi buttons.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const cross_object1 = {
+        obj_type: 'cross',        
+        startX: 200, // location of the cross's center in the canvas
+        startY: 400,
+        line_length: 50,
+        line_color: 'black', // You can use the HTML color name instead of the HEX color.
+    }
+
+    const cross_object2 = {
+        obj_type: 'cross',        
+        startX: 400, // location of the cross's center in the canvas
+        startY: 400,
+        line_length: 100,
+        line_color: 'red', // You can use the HTML color name instead of the HEX color.
+        fill_color: 'white',
+    }
+
+    const response_start_time = 1000; // ms
+    const trial = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        canvas_height: 500,
+        stimuli: [cross_object1, cross_object2],
+        response_type: 'button',
+        button_choices: ["Choice 1", "Choice 2", "Choice 3", "Choice 4", "Choice 5", "Choice 6"],
+        response_start_time: response_start_time,
+        grid_rows: 2,
+        // grid_columns: 2,
+        upper_prompt: "You'll see two crosses and six buttons.",
+        lower_prompt: `Buttons are visible, but will be activated after ${response_start_time} ms.`
+    }
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

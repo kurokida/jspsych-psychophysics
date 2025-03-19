@@ -74,7 +74,7 @@
             }
 
             // stim_array[0] means a circle, and stim_array[1] means a line.
-            const line = pixi_flag ? jsPsych.getCurrentTrial().stim_array[1].pixi_obj : jsPsych.getCurrentTrial().stim_array[1];
+            const line = pixi_flag ? jsPsych.getCurrentTrial().stimuli[1].instance.pixi_obj : jsPsych.getCurrentTrial().stimuli[1].instance;
 
             if (event.offsetX > prev_mouseX){
               line.angle += 5; // The angle changes by 5 degrees.

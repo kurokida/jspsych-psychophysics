@@ -51,7 +51,9 @@
                 stimuli: [
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('firstImage'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('firstImage')
+                        }, 
                         show_start_frame: 0, // frames after the start of the trial
                         show_end_frame: 5,
                         is_frame: true, // required
@@ -59,7 +61,9 @@
                     },
                     {
                         obj_type: 'image',
-                        file: jsPsych.timelineVariable('secondImage'),
+                        file: function(){
+                            return jsPsych.evaluateTimelineVariable('secondImage')
+                        }, 
                         show_start_frame: 60, // frames after the start of the trial
                         show_end_frame: 80,
                         is_frame: true, // required

@@ -25,16 +25,16 @@
     const text = {
         obj_type: 'text',
         content: 'Hello!',
-        font: "22px 'Arial'",        
+        font: "22px 'Arial'",
+        change_attr: function(stim, times, frames){
+            const canvas = document.getElementById("myCanvas");
+            stim.content = `The width of the canvas is ${canvas.width} and the height is ${canvas.height}.`
+        }  
     }
 
     const trial = {
         type: jsPsychPsychophysics,
-        stimuli: [text],
-        raf_func: function(trial, elapsedTime){
-            trial.stim_array[0].content = `The width of the canvas is ${trial.canvas_width} and the height is ${trial.canvas_height}.`
-            trial.stim_array[0].show()
-        }
+        stimuli: [text]
     }
 
     jsPsych.run([instruction, trial])

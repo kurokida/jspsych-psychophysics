@@ -34,7 +34,7 @@
         obj_type: 'circle',
         radius: 20, // radius of the dot
         origin_center: true,
-        startX : function(){
+        startX : function(){ // This is called only at once... Bug?
             return radius * Math.cos(theta_in_radian)
         },
         startY : function(){
@@ -42,7 +42,7 @@
         },    
         width: 200,
         height: 50,
-        fill_color: function(){
+        fill_color: function(){ // This works fine.
             if (Math.random() < 0.5){
                 return 'blue'
             } else {
@@ -67,13 +67,15 @@
         stimuli: [dot_object, circle_object],
         response_type: 'button',
         canvas_height: 500,
-        prompt: `Each time you press the "Next" button, the position and color of the circle will change.`
+        prompt: `Each time you press the "Next" button, the position and color of the circle will change.`,
+        button_choices: ['Next'],
     }
 
     const loop_node = {
         timeline: [trial],
         loop_function: function(data){
             theta_in_radian = 2 * Math.PI * Math.random()
+            console.log(theta_in_radian)
             return true
         }
     }
