@@ -124,6 +124,8 @@ The other applications and the tabs in a web browser should be closed during the
 - If you want to manually complete the plugin, see [touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html). 
 - When `obj_type` is set to `gabor`, the method is now only `ml-matrix` (`numeric` has been discontinued)."
 
+For more details, please refer to [the release notes for V4.0.0](https://github.com/kurokida/jspsych-psychophysics/releases/tag/v4.0.0).
+
 ## Using with jsPsych V7
 
 - Use the psychophysics plugin V3.X.
