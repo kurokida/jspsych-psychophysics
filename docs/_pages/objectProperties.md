@@ -157,7 +157,7 @@ See also [Presenting gabor patches in online/web experiments](/gabor/).
 
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
-|width|numeric|undefined| The size (width x width) of the area where the gabor patch is drawn. |
+|width|numeric|undefined| The size (width x width) of the area where the gabor patch is drawn. This parameter can be confusing, so please refer to [this discussion](https://github.com/kurokida/jspsych-psychophysics/issues/53).|
 |tilt|numeric|0| The tilt of the gabor patch. The unit is the degree relative to the horizontal axis.|
 |sf|numeric|0.05| The spatial frequency of the gabor patch. The unit is the cycles per pixel.|
 |phase|numeric|0| The phase of the sine wave. The unit is the degree.|
