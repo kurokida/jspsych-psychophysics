@@ -13,7 +13,7 @@ The calculation method for drawing is almost the same as the one used by [the Ps
 
 There are still the issues of display calibration and luminance resolution. Unfortunately, my plugin does not provide a solution to this problem.
 
-See the Gabor section of [Parameters of stimuli](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties.html) to learn how to draw the gabor patches.
+See the Gabor section of [Parameters of stimuli](https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties/#obj_type-gabor) to learn how to draw the gabor patches.
 
 # The drifting gabor patch
 
