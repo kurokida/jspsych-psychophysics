@@ -74,8 +74,10 @@ Please see [the documentation](pixijs.md) regarding the pixi mode of the psychop
 
 # TIPS
 
+- [button_grid.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/button_grid.html) This file demonstrates how to present multi buttons.
 - [change_attributes.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/change_attributes.html) This file demonstrates how to dynamically change stimulus content for each frame.
 - [combination_with_survey_plugins.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/combination_with_survey_plugins.html) This file demonstrates how to combine with survey plugins: survey-text, survey-likert, survey-multi-choice etc. This program stores the data needed for the analysis in the same row.
+- [dynamically_change.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/dynamically_change.html)-[CodePen](https://codepen.io/kurokida/pen/VwWgbwz) This file demonstrates to change dynamically properties of an object.
 - [how_to_timeline_variables.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/how_to_timeline_variables.html) This file works as the same as the twoImagesWithSOA.html, but the use of the jsPsych.timelineVariable function is slightly different. When you want to use the timeline_variables property with the jspsych-psychophysics plugin, see this file first.
 - [localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html) This file demonstrates how to respond using a mouse. This can be made by specifying the `response_type` and `response_start_time` property.
 - [origin_center.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/origin_center.html) This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true (The default is false).
@@ -84,5 +86,4 @@ Please see [the documentation](pixijs.md) regarding the pixi mode of the psychop
 - [resolution.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/resolution.html) If you are using a Mac which has a retina display, the resolution may not match the number of pixels of the canvas. Using this demo, you can know the number of pixels of the canvas.
 - [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html) This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.
 - [retina_display.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/retina_display.html) This demo confirms that the stimuli are presented properly on retina display. The canvas size is set to 600x600.
-- [dynamically_change.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/dynamically_change.html)-[CodePen](https://codepen.io/kurokida/pen/VwWgbwz) This file demonstrates to change dynamically properties of an object.
-- [button_grid.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/button_grid.html) This file demonstrates how to present multi buttons.
+- [virtual_chinrest.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/virtual_chinrest.html) This file demonstrates how to combine with [the virtual-chinrest plugin](https://www.jspsych.org/v7/plugins/virtual-chinrest/).

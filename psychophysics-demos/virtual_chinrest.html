@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-virtual-chinrest.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to specify the size and position of a rectangle in millimeters (mm)
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    // Important: The resize function does not work with the psychophysics plugin. 
+    // Please avoid using them together, as this will lead to incorrect behavior.
+    const cm_resize = {
+        // Li, Q., Joo, S.J., Yeatman, J.D. et al. Controlling for Participants’ Viewing Distance in Large-Scale, Psychophysical Online Experiments Using a Virtual Chinrest. Sci Rep 10, 904 (2020).
+        type: jsPsychVirtualChinrest,
+        blindspot_reps: 2, 
+    };
+    
+    let rect_object;
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        stimuli: function(){
+            var chinrest_trials = jsPsych.data.get().filter({trial_type: "virtual-chinrest"});
+            const pix_per_mm = chinrest_trials.values()[0].px2mm;
+
+            const rect_width = 30; // mm
+            const rect_height = 40; // mm
+
+            // The origin of the coordinate is the top left of the canvas, 
+            // but the origin can be changed to the center of the window using the origin_center property. 
+            const rect_xpos = 50; // Horizontal center of the rectangle (mm)
+            const rect_ypos = 60; // Vertical center of the rectangle (mm)
+
+            rect_object = {
+                obj_type: 'rect',        
+                startX: rect_xpos * pix_per_mm,
+                startY: rect_ypos * pix_per_mm,
+                width: rect_width * pix_per_mm,
+                height: rect_height * pix_per_mm,
+                line_color: 'black', // You can use the HTML color name instead of the HEX color.
+                line_width: 1,
+            }
+
+            return [rect_object]
+        },
+    }
+
+    jsPsych.run([instruction, cm_resize, trial])
+
+</script>
+
+</html>
