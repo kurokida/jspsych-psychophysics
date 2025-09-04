@@ -10,7 +10,7 @@
 <body></body>
 <script>
     // *** BE CAREFULL! ***
-    // This program does not function properly in PIXI mode. It remains in an incomplete state."
+    // The remain_canvas property does not work correctly with jsPsychophysics version 4 or later.
     
     const jsPsych = initJsPsych({
         on_finish: function() {
@@ -65,6 +65,10 @@
         stimuli: [circle_object2],
         canvas_height: 600,
         prompt: "The black cricle stops after 3 secs.",
+        on_load: function(){
+            // In jsPsychophysics versions up to 3.X, placing a breakpoint at this point would result in a black circle remaining on the screen. From version 4 onward, this does not work.
+            console.log("onload") 
+        }
     }
 
     jsPsych.run([instruction, before_key_press, after_key_press])

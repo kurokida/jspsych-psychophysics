@@ -52,17 +52,13 @@
                 response_start_time: function(){
                     return jsPsych.evaluateTimelineVariable('start_time')
                 },
-                stimuli: [
-                    {
-                        obj_type: 'image',
-                        file: function(){ // This works fine.
-                            return jsPsych.evaluateTimelineVariable('stim')
-                        },
-                        show_start_time: function(){ // This is called only at once... Bug?
-                            return jsPsych.evaluateTimelineVariable('start_time') // ms after the start of the trial
-                        }
-                    }
-                ],
+                stimuli: function(){
+                    return [
+                        {
+                            obj_type: 'image',
+                            file: jsPsych.evaluateTimelineVariable('stim'),
+                            show_start_time: jsPsych.evaluateTimelineVariable('start_time') // ms after the start of the trial
+                        }]},
                 canvas_height: 500,
                 prompt: 'The image stimulus will be presented after one to three seconds. <br>Press any key to respond.',
                 data: {

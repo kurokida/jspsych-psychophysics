@@ -30,41 +30,34 @@
     const radius = 200
     let theta_in_radian = 2 * Math.PI * Math.random()
 
-    const dot_object = {
-        obj_type: 'circle',
-        radius: 20, // radius of the dot
-        origin_center: true,
-        startX : function(){ // This is called only at once... Bug?
-            return radius * Math.cos(theta_in_radian)
-        },
-        startY : function(){
-            return radius * Math.sin(theta_in_radian)
-        },    
-        width: 200,
-        height: 50,
-        fill_color: function(){ // This works fine.
-            if (Math.random() < 0.5){
-                return 'blue'
-            } else {
-                return 'red'
-            }
-        },
-        show_start_time: function(){
-            const min = 700
-            return min + Math.random()*500
-        }
-    }
-
-    const circle_object = {
-        obj_type: 'circle',
-        radius: radius,
-        line_color: 'black'
-    }
-
     const trial = {
         type: jsPsychPsychophysics,
         pixi: pixi_flag,
-        stimuli: [dot_object, circle_object],
+        // stimuli: [dot_object, circle_object],
+        stimuli: function(){
+            const col = Math.random() < 0.5? 'blue':'red';
+            const min = 700
+
+            const dot_object = {
+                obj_type: 'circle',
+                radius: 20, // radius of the dot
+                origin_center: true,
+                startX : radius * Math.cos(theta_in_radian),
+                startY : radius * Math.sin(theta_in_radian),
+                width: 200,
+                height: 50,
+                fill_color: col,
+                show_start_time: min + Math.random()*500
+            }
+
+            const circle_object = {
+                obj_type: 'circle',
+                radius: radius,
+                line_color: 'black'
+            }
+
+            return [dot_object, circle_object]
+        },
         response_type: 'button',
         canvas_height: 500,
         prompt: `Each time you press the "Next" button, the position and color of the circle will change.`,

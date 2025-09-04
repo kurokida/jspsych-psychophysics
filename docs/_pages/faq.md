@@ -71,4 +71,8 @@ The avg_frame_time is the value of an elapsed time divided by the number of time
 
 ## 11. Is there a way to control stimulus size and viewing distance in online experiments?
 
-Yes, there is. Please use [the jspsych-virtual-chinrest plugin](https://www.jspsych.org/plugins/jspsych-virtual-chinrest/). This plugin is included in the jsPsych library.
+Yes, there is. Please use [the jspsych-virtual-chinrest plugin](https://www.jspsych.org/plugins/jspsych-virtual-chinrest/). This plugin is included in the jsPsych library. Then, the [demos/virtual_chinrest.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/virtual_chinrest.html) demonstrates how to specify the size and position of a rectangle in millimeters using the jsPsychophysics plugin.
+
+## 11. How can I forcefully terminate a trial using the jsPsychophysics plugin?
+
+See the [demos/touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html). Using [the finishTrial function](https://www.jspsych.org/v8/reference/jspsych/#jspsychfinishtrial) is not recommended, as it does not properly trigger the termination process required by the jsPsychophysics plugin.

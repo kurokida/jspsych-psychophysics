@@ -39,22 +39,18 @@
             {
                 type: jsPsychPsychophysics,
                 pixi: pixi_flag,
-                stimuli: [
-                    {
+                stimuli: function(){
+                    return [{
                         obj_type: 'circle',
-                        startX: function(){
-                            return jsPsych.evaluateTimelineVariable('posX') // location in the canvas
-                        },
-                        startY: function(){
-                            return jsPsych.evaluateTimelineVariable('posY') // location in the canvas
-                        },
+                        startX: jsPsych.evaluateTimelineVariable('posX'), // location in the canvas
+                        startY: jsPsych.evaluateTimelineVariable('posY'), // location in the canvas
                         radius: 10,
                         line_color: 'black', // You can use the HTML color name instead of the HEX color.
                         fill_color: 'black',
                         show_start_time: 500, // ms after the start of the trial
                         show_end_time: 550
-                    }
-                ],
+                    }]
+                },
                 response_type: 'mouse', // The default of the response_type is 'key'.
                 response_start_time: 550, // When the response_start_time is the same as the show_end_time of the circle_object, the RT is the time from disappearing of the circle until the participant’s response.
             }

@@ -30,7 +30,7 @@ Only the 'stimuli' parameter is required; Other parameters can be left unspecifi
 |canvas_offsetX|numeric|0|This value is subtracted from the width of the canvas in full-screen mode. However, since the default value is 0, it basically has no effect on the window size.|
 |canvas_offsetY|numeric|8|This value is subtracted from the height of the canvas in full-screen mode to prevent the vertical scroll bar from being displayed.|
 |clear_canvas|boolean|true|If true, the canvas is cleared every frame. There are not many cases where this should be false, but if you want to draw the trajectory of the mouse, for example, you need to set it false. Note that in that case, the show_end_time property can not be used.  See the [mouse drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/mouse_drawing.html)|
-|remain_canvas|boolean|false|If true, the main canvas remains for the next trial. This is useful to present complex stimuli using multiple psychophysics objects. Note that this property doesn't work with the Pixi mode.|
+|~~remain_canvas~~|boolean|false|~~If true, the main canvas remains for the next trial. This is useful to present complex stimuli using multiple psychophysics objects. Note that this property doesn't work with the Pixi mode.~~ The remain_canvas property does not work correctly with jsPsychophysics version 4 or later.|
 
 # Parameters related to a key response
 

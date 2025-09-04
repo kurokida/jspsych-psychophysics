@@ -55,10 +55,11 @@
     const loop_node = {
         timeline: [trial],
         loop_function: function(data){
+            console.log("loop")
             if (trial_num < nTrials){
                 trial_num++
 
-                if (data.values()[0].response === 'arrowleft'){
+                if (data.values()[0].response.toLowerCase() === 'arrowleft'){
                   angle += 2
                 } else { // arrowdown
                   angle -= 2
