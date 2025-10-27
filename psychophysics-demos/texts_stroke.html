@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present rectangles.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const text_object1 = {
+        obj_type: 'text',
+        startX: 200,
+        startY: 400,
+        content: 'Hello, world!',
+        font: "22px 'Arial'",
+        text_color: 'white',
+        endX: 'center',
+        endY: 'center',
+        show_start_time: 500, // ms after the start of the trial
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+    }
+
+    const text_object2 = {
+        obj_type: 'text',
+        startX: 'center',
+        startY: 'center',
+        content: 'Stroke text',
+        font: "66px 'Arial'",
+        text_color: 'Yellow',
+        // text_space: 50,
+        motion_start_time: 1500,
+        motion_end_time: 3000,
+        vert_pix_frame: -2,
+        stroke_color: 'blue',
+        stroke_width: 3,
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        pixi: pixi_flag,
+        stimuli: [text_object1, text_object2],
+    }
+
+    jsPsych.run([instruction, trial])
+    
+</script>
+
+</html>
