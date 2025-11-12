@@ -141,6 +141,8 @@ There are two ways to define a line. See, `demos/lines.html`.
 |text_space|numeric|20|The space between lines. Note that this will not work in Pixi mode.|
 |pixi_angle|numeric|undefined|The angle of the image in degrees.|
 |pixi_rotation|numeric|undefined|The angle of the image in radians.|
+|stroke_color|string|undefined|This value is assigned to [the strokeStyle property](https://developer.mozilla.org/ja/docs/Web/API/CanvasRenderingContext2D/strokeStyle).|
+|stroke_width|numeric|undefined|This value is assigned to [the lineWidth property](https://developer.mozilla.org/ja/docs/Web/API/CanvasRenderingContext2D/lineWidth).|
 
 # obj_type: 'cross' 
 

@@ -5836,7 +5836,7 @@ ${indent}columns: ${matrix.columns}
 	const Matrix = Matrix_1;
 	_default.Matrix ? _default.Matrix : Matrix_1;
 
-	var version = "4.0.0";
+	var version = "4.1.0";
 
 	console.log(`Psychophysics Version ${version}`);
 	if (typeof PIXI__namespace.VERSION !== "undefined") {
@@ -7330,7 +7330,6 @@ ${indent}columns: ${matrix.columns}
 	          ctx.lineJoin = this.lineJoin;
 	          ctx.miterLimit = this.miterLimit;
 	          ctx.font = this.font;
-	          ctx.fillStyle = this.text_color;
 	          ctx.textAlign = "center";
 	          ctx.textBaseline = "middle";
 	          let column = [""];
@@ -7344,12 +7343,23 @@ ${indent}columns: ${matrix.columns}
 	              column[line] += char;
 	            }
 	          }
+	          let draw_stroke = typeof this.stroke_color !== "undefined" || typeof this.stroke_weight !== "undefined" && this.stroke_weight > 0;
 	          for (let i = 0; i < column.length; i++) {
+	            ctx.fillStyle = this.text_color;
 	            ctx.fillText(
 	              column[i],
 	              this.currentX,
 	              this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
 	            );
+	            if (draw_stroke) {
+	              ctx.strokeStyle = this.stroke_color;
+	              ctx.lineWidth = this.stroke_width;
+	              ctx.strokeText(
+	                column[i],
+	                this.currentX,
+	                this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
+	              );
+	            }
 	          }
 	        }
 	      }
