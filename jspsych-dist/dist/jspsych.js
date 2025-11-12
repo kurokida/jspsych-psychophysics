@@ -51,7 +51,7 @@ var jsPsychModule = (function (exports) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var version = "8.2.1";
+	var version = "8.2.2";
 
 	class ExtensionManager {
 	  constructor(dependencies, extensionsConfiguration) {
@@ -1016,9 +1016,34 @@ var jsPsychModule = (function (exports) {
 	    return this.microphone_recorder;
 	  }
 	  initializeCameraRecorder(stream, opts) {
+	    let mimeType = this.getCompatibleMimeType() || "video/webm";
+	    const recorderOptions = {
+	      ...opts,
+	      mimeType
+	    };
 	    this.camera_stream = stream;
-	    const recorder = new MediaRecorder(stream, opts);
+	    const recorder = new MediaRecorder(stream, recorderOptions);
 	    this.camera_recorder = recorder;
+	  }
+	  // mimetype checking code adapted from https://github.com/lookit/lookit-jspsych/blob/develop/packages/record/src/videoConfig.ts#L673-L699
+	  /** returns a compatible mimetype string, or null if none from the array are supported. */
+	  getCompatibleMimeType() {
+	    const types = [
+	      // chrome firefox edge
+	      "video/webm;codecs=vp9,opus",
+	      "video/webm;codecs=vp8,opus",
+	      // general
+	      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+	      // safari
+	      "video/mp4;codecs=h264,aac",
+	      "video/mp4;codecs=hevc,aac"
+	    ];
+	    for (const mimeType of types) {
+	      if (MediaRecorder.isTypeSupported(mimeType)) {
+	        return mimeType;
+	      }
+	    }
+	    return null;
 	  }
 	  getCameraStream() {
 	    return this.camera_stream;

@@ -1,7 +1,7 @@
 var jsPsychHtmlAudioResponse = (function (jspsych) {
   'use strict';
 
-  var version = "2.1.0";
+  var version = "2.1.1";
 
   const info = {
     name: "html-audio-response",
@@ -137,7 +137,7 @@ var jsPsychHtmlAudioResponse = (function (jspsych) {
         }
       };
       this.stop_event_handler = () => {
-        const data = new Blob(this.recorded_data_chunks, { type: "audio/webm" });
+        const data = new Blob(this.recorded_data_chunks, { type: this.recorded_data_chunks[0].type });
         this.audio_url = URL.createObjectURL(data);
         const reader = new FileReader();
         reader.addEventListener("load", () => {

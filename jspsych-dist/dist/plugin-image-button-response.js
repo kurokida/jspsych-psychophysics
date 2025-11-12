@@ -1,7 +1,7 @@
 var jsPsychImageButtonResponse = (function (jspsych) {
   'use strict';
 
-  var version = "2.1.0";
+  var version = "2.2.0";
 
   const info = {
     name: "image-button-response",
@@ -250,13 +250,13 @@ var jsPsychImageButtonResponse = (function (jspsych) {
         }
       }
       function enable_buttons() {
-        var btns = document.querySelectorAll(".jspsych-image-button-response-button button");
+        var btns = document.querySelectorAll("#jspsych-image-button-response-btngroup button");
         for (var i = 0; i < btns.length; i++) {
           btns[i].removeAttribute("disabled");
         }
       }
       function disable_buttons() {
-        var btns = document.querySelectorAll(".jspsych-image-button-response-button button");
+        var btns = document.querySelectorAll("#jspsych-image-button-response-btngroup button");
         for (var i = 0; i < btns.length; i++) {
           btns[i].setAttribute("disabled", "disabled");
         }

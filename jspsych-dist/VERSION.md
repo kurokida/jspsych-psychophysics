@@ -2,7 +2,7 @@ Included in this release:
 
 Package|Version|Documentation
 --- | --- | ---
-jspsych|8.2.1|https://www.jspsych.org/8.2/
+jspsych|8.2.2|https://www.jspsych.org/8.2/
 extension-mouse-tracking|1.2.0|https://www.jspsych.org/8.2/extensions/mouse-tracking
 extension-record-video|1.2.0|https://www.jspsych.org/8.2/extensions/record-video
 extension-webgazer|1.2.0|https://www.jspsych.org/8.2/extensions/webgazer
@@ -22,14 +22,14 @@ plugin-cloze|2.2.0|https://www.jspsych.org/8.2/plugins/cloze
 plugin-external-html|2.1.0|https://www.jspsych.org/8.2/plugins/external-html
 plugin-free-sort|2.1.0|https://www.jspsych.org/8.2/plugins/free-sort
 plugin-fullscreen|2.1.0|https://www.jspsych.org/8.2/plugins/fullscreen
-plugin-html-audio-response|2.1.0|https://www.jspsych.org/8.2/plugins/html-audio-response
+plugin-html-audio-response|2.1.1|https://www.jspsych.org/8.2/plugins/html-audio-response
 plugin-html-button-response|2.1.0|https://www.jspsych.org/8.2/plugins/html-button-response
 plugin-html-keyboard-response|2.1.0|https://www.jspsych.org/8.2/plugins/html-keyboard-response
 plugin-html-slider-response|2.1.0|https://www.jspsych.org/8.2/plugins/html-slider-response
 plugin-html-video-response|2.1.0|https://www.jspsych.org/8.2/plugins/html-video-response
 plugin-iat-html|2.1.0|https://www.jspsych.org/8.2/plugins/iat-html
 plugin-iat-image|2.1.0|https://www.jspsych.org/8.2/plugins/iat-image
-plugin-image-button-response|2.1.0|https://www.jspsych.org/8.2/plugins/image-button-response
+plugin-image-button-response|2.2.0|https://www.jspsych.org/8.2/plugins/image-button-response
 plugin-image-keyboard-response|2.1.0|https://www.jspsych.org/8.2/plugins/image-keyboard-response
 plugin-image-slider-response|2.1.0|https://www.jspsych.org/8.2/plugins/image-slider-response
 plugin-initialize-camera|2.1.0|https://www.jspsych.org/8.2/plugins/initialize-camera
@@ -50,10 +50,10 @@ plugin-survey-likert|2.1.0|https://www.jspsych.org/8.2/plugins/survey-likert
 plugin-survey-multi-choice|2.1.0|https://www.jspsych.org/8.2/plugins/survey-multi-choice
 plugin-survey-multi-select|2.1.0|https://www.jspsych.org/8.2/plugins/survey-multi-select
 plugin-survey-text|2.1.0|https://www.jspsych.org/8.2/plugins/survey-text
-plugin-survey|2.1.0|https://www.jspsych.org/8.2/plugins/survey
-plugin-video-button-response|2.1.0|https://www.jspsych.org/8.2/plugins/video-button-response
-plugin-video-keyboard-response|2.1.0|https://www.jspsych.org/8.2/plugins/video-keyboard-response
-plugin-video-slider-response|2.1.0|https://www.jspsych.org/8.2/plugins/video-slider-response
+plugin-survey|4.0.0|https://www.jspsych.org/8.2/plugins/survey
+plugin-video-button-response|2.1.1|https://www.jspsych.org/8.2/plugins/video-button-response
+plugin-video-keyboard-response|2.1.1|https://www.jspsych.org/8.2/plugins/video-keyboard-response
+plugin-video-slider-response|2.1.1|https://www.jspsych.org/8.2/plugins/video-slider-response
 plugin-virtual-chinrest|3.1.0|https://www.jspsych.org/8.2/plugins/virtual-chinrest
 plugin-visual-search-circle|2.2.0|https://www.jspsych.org/8.2/plugins/visual-search-circle
 plugin-webgazer-calibrate|2.1.0|https://www.jspsych.org/8.2/plugins/webgazer-calibrate
