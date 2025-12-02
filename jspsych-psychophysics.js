@@ -2308,7 +2308,7 @@ ${indent}columns: ${matrix.columns}
 	    let result = Matrix$1.eye(this.rows);
 	    let bb = this;
 	    // Note: Don't bit shift. In JS, that would truncate at 32 bits
-	    for (let e = scalar; e > 1; e /= 2) {
+	    for (let e = scalar; e >= 1; e /= 2) {
 	      if ((e & 1) !== 0) {
 	        result = result.mmul(bb);
 	      }
