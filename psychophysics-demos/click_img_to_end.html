@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to complete a trial by clicking on one of the images.
+    // Be careful with the scale and devicePixelRatio properties.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin."
+    }
+
+    const images = [ // All the images used in this demo
+        './img/scissors.png',
+        './img/pen.png',
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        images: images,
+    }
+
+    // window.devicePixelRatio should be taken into consideration.
+    console.log(window.devicePixelRatio) // On some devices, this value can be 1.5 or 2.
+            
+    // In the psychophysics plugin, you can specify the scale property to resize images.
+    // https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties/#obj_type-image
+    const scale = 0.8; // an image scaled to 80%
+    
+    const x_pos = 200;
+    const fixed_key = "a"; // used to trigger the keydown and keyup event handlers intentionally.
+    let selected_image;
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [
+            { // left image
+                obj_type: 'image',
+                file: images[0], // ./img/scissors.png
+                scale: scale,
+                origin_center: true,
+                startX: -x_pos,
+                startY: 0
+            },
+            { // right image
+                obj_type: 'image',
+                file: images[1], // ./img/pen.png
+                scale: scale,
+                origin_center: true,
+                startX: x_pos,
+                startY: 0
+            }
+        ],
+        canvas_height: 400,
+        prompt: 'Click on one of the images.',
+        response_type: 'key', // If this property is set to "mouse", the program will terminate even when you click outside the image.
+        mouse_down_func: function(e){
+            x = e.offsetX; // This value does not depend on window.devicePixelRatio.
+            y = e.offsetY; // This value does not depend on window.devicePixelRatio.
+            console.log(x);
+            console.log(y);
+
+            const canvas = document.getElementById('myCanvas');
+            console.log(canvas.width) // This value depends on window.devicePixelRatio.
+            const canvas_centerX = canvas.width/2/window.devicePixelRatio;
+            const canvas_centerY = canvas.height/2/window.devicePixelRatio;
+
+            let finish_flag = false;
+            
+            let image_width, image_height;
+
+            // ./img/scissors.png
+            image_width = 316;
+            image_height = 300;
+
+            if (x > canvas_centerX - x_pos - image_width*scale/2 &&
+                x < canvas_centerX - x_pos + image_width*scale/2 &&
+                y > canvas_centerY - image_height*scale/2 &&
+                y < canvas_centerY + image_height*scale/2) {
+                    console.log("You clicked on the left image.");
+                    selected_image = "left";
+                    finish_flag = true;
+            }
+
+            // ./img/pen.png
+            image_width = 297;
+            image_height = 300;
+
+            if (x > canvas_centerX + x_pos - image_width*scale/2 &&
+                x < canvas_centerX + x_pos + image_width*scale/2 &&
+                y > canvas_centerY - image_height*scale/2 &&
+                y < canvas_centerY + image_height*scale/2) {
+                    console.log("You clicked on the right image.");
+                    selected_image = "right";
+                    finish_flag = true;
+            }
+
+            if (finish_flag) {
+
+                ////////////////////////////////////////////////
+                // You can use finishTrial https://www.jspsych.org/latest/reference/jspsych/#jspsychfinishtrial,
+                // but since finishTrial does not call the proper termination process of the psychophysics plugin, 
+                // the following process is recommended.
+
+                const tmp_key_down_event = new KeyboardEvent('keydown', {
+                    key: fixed_key, // As you like
+                });
+                console.log(tmp_key_down_event)
+
+                const tmp_key_up_event = new KeyboardEvent('keyup', {
+                    key: fixed_key, // "It needs to match the key of the keydown event."
+                });
+                console.log(tmp_key_up_event)
+
+                // To properly complete the psychophysics plugin, call both the keydown and keyup events.
+                const bodyElement = document.body;
+                bodyElement.dispatchEvent(tmp_key_down_event);
+                bodyElement.dispatchEvent(tmp_key_up_event); // Important! Don't forget!
+            }
+        },
+        on_finish: function(data){
+            data.selected_image = selected_image;
+        }
+    }
+    
+    jsPsych.run([preload, instruction, trial])
+</script>
+
+</html>
