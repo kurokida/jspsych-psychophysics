@@ -75,4 +75,38 @@ Yes, there is. Please use [the jspsych-virtual-chinrest plugin](https://www.jsps
 
 ## 12. How can I forcefully terminate a trial using the jsPsychophysics plugin?
 
-See the [demos/touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html). Using [the finishTrial function](https://www.jspsych.org/v8/reference/jspsych/#jspsychfinishtrial) is not recommended, as it does not properly trigger the termination process required by the jsPsychophysics plugin.
+Using [the finishTrial function](https://www.jspsych.org/v8/reference/jspsych/#jspsychfinishtrial) is not recommended, as it does not properly trigger the termination process required by the jsPsychophysics plugin. Instead, you can end a trial by intentionally triggering the keydown and keyup event handlers as shown below.
+
+```javascript
+const fixed_key = "a"; 
+const tmp_key_down_event = new KeyboardEvent('keydown', {
+    key: fixed_key, // As you like
+});
+
+const tmp_key_up_event = new KeyboardEvent('keyup', {
+    key: fixed_key, // "It needs to match the key of the keydown event."
+});
+
+// To properly complete the psychophysics plugin, call both the keydown and keyup events.
+const bodyElement = document.body;
+bodyElement.dispatchEvent(tmp_key_down_event);
+bodyElement.dispatchEvent(tmp_key_up_event); // Important! Don't forget!
+```
+
+See also, the [demos/touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html) and [click_img_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/click_img_to_end.html).
+
+## 13. How can I terminate a trial by clicking on one of the images?
+
+See the [demos/click_img_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/click_img_to_end.html). 
+
+## 14. How can I access the canvas in the psychophysics plugin?
+
+You can access the canvas as follows. Considering window.devicePixelRatio is probably unnecessary if you use the PIXI mode.
+
+```javascript
+const canvas = document.getElementById("myCanvas");
+const context = canvas.getContext("2d");
+const centerX = canvas.width / 2 / window.devicePixelRatio;
+const centerY = canvas.height / 2 / window.devicePixelRatio;
+```
+See also, the [mouse_drawing.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/mouse_drawing.html) and [click_img_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/click_img_to_end.html).

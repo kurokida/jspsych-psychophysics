@@ -58,7 +58,9 @@
 
             ////////////////////////////////////////////////
             // You can use finishTrial https://www.jspsych.org/latest/reference/jspsych/#jspsychfinishtrial,
-            // but since finishTrial does not call the proper termination process, the following process is recommended.
+            // but since finishTrial does not call the proper termination process of the psychophysics plugin, 
+            // the following process is recommended.
+            
             const tmp_key_down_event = new KeyboardEvent('keydown', {
                 key: fixed_key, // As you like
             });

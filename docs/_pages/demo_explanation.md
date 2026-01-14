@@ -42,6 +42,7 @@ Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 - [visual_stimuls_terminates_earlier_than_audio.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/visual_stimuls_terminates_earlier_than_audio.html) This file demonstrates how to terminate a visual stimulus earlier than an audio stimuls.
 - [touch_to_end.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/touch_to_end.html) This file demonstrates how to finsh the psychophysics trial by touching the screen.
 - [touch_drawing.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/touch_drawing.html) This file demonstrates how to draw using touch on the screen.
+- [click_img_to_end.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/click_img_to_end.html) This file demonstrates how to complete a trial by clicking on one of the images.
 
 # requestAnimationFrame
 
