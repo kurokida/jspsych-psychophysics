@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to hide scroll bars.
+    
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const rect_object = {
+        obj_type: 'rect', // means a rectangle
+        startX: 300, // location in the canvas
+        startY: 150,
+        width: 300, // of the rectangle
+        height: 200,
+        line_color: '#ffffff',
+        fill_color: '#ffffff',
+    }
+
+    const text_object = {
+        obj_type: 'text',
+        startX: 300,
+        startY: 400,
+        content: 'You won’t see the scrollbar. Press Y or N key.',
+        font: "22px 'Arial'",
+        text_color: 'white',
+    }
+
+    const text_object2 = {
+        obj_type: 'text',
+        startX: 300,
+        startY: 400,
+        content: 'You will see the scrollbar. Press Y or N key.',
+        font: "22px 'Arial'",
+        text_color: 'white',
+    }
+
+    // No scroll bars
+    const trial1 = {
+        type: jsPsychPsychophysics,
+        on_load: function(){
+            document.body.style.overflow = "hidden";
+        },
+        stimuli: [rect_object, text_object],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        canvas_width: 2000, // larger than the screen
+        canvas_height: 2000, // larger than the screen
+        background_color: 'red', // The HEX color means green.
+        on_finish: function(){
+            document.body.style.overflow = "auto"; // restore
+        }
+    }
+
+    // With scroll bars
+    const trial2 = {
+        type: jsPsychPsychophysics,
+        stimuli: [rect_object, text_object2],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        canvas_width: 2000, // larger than the screen
+        canvas_height: 2000, // larger than the screen
+        background_color: 'blue',
+    }
+
+    // With scroll bars
+    const trial3 = {
+        type: jsPsychPsychophysics,
+        canvas_offsetY: 0, // https://jspsychophysics.hes.kyushu-u.ac.jp/pluginParams/#parameters-related-to-canvas
+        stimuli: [rect_object, text_object2],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        background_color: 'brown',
+    }
+
+    // No scroll bars
+    const trial4 = {
+        type: jsPsychPsychophysics,
+        on_load: function(){
+            document.body.style.overflow = "hidden";
+        },
+        canvas_offsetY: 0, // https://jspsychophysics.hes.kyushu-u.ac.jp/pluginParams/#parameters-related-to-canvas
+        stimuli: [rect_object, text_object],
+        choices: ['y', 'n'], // The participant can respond to the stimuli using the 'y' or 'n' key.
+        background_color: 'pink',
+        on_finish: function(){
+            document.body.style.overflow = "auto"; // restore
+        }
+    }
+
+    jsPsych.run([instruction, trial1, trial2, trial3, trial4, trial2])
+    
+</script>
+
+</html>

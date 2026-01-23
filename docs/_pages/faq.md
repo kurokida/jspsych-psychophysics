@@ -110,3 +110,7 @@ const centerX = canvas.width / 2 / window.devicePixelRatio;
 const centerY = canvas.height / 2 / window.devicePixelRatio;
 ```
 See also, the [mouse_drawing.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/mouse_drawing.html) and [click_img_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/click_img_to_end.html).
+
+## 15. I want to present visual stimuli across the entire screen without creating any margins or displaying scroll bars.
+
+See [scrollbars.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/scrollbars.html), especially `trial4`, which will be useful as a reference.
