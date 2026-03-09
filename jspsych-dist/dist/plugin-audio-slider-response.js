@@ -49,7 +49,7 @@ var jsPsychAudioSliderResponse = (function (jspsych) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var version = "2.1.0";
+	var version = "2.1.1";
 
 	const info = {
 	  name: "audio-slider-response",
@@ -267,9 +267,9 @@ var jsPsychAudioSliderResponse = (function (jspsych) {
 	    };
 	    this.end_trial = () => {
 	      this.jsPsych.pluginAPI.clearAllTimeouts();
-	      this.audio.stop();
 	      this.audio.removeEventListener("ended", this.end_trial);
 	      this.audio.removeEventListener("ended", this.enable_slider);
+	      this.audio.stop();
 	      var trialdata = {
 	        rt: this.response.rt,
 	        stimulus: this.params.stimulus,

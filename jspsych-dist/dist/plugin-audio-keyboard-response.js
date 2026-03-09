@@ -49,7 +49,7 @@ var jsPsychAudioKeyboardResponse = (function (jspsych) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var version = "2.1.0";
+	var version = "2.1.1";
 
 	const info = {
 	  name: "audio-keyboard-response",
@@ -173,9 +173,9 @@ var jsPsychAudioKeyboardResponse = (function (jspsych) {
 	  }
 	  end_trial() {
 	    this.jsPsych.pluginAPI.clearAllTimeouts();
-	    this.audio.stop();
 	    this.audio.removeEventListener("ended", this.end_trial);
 	    this.audio.removeEventListener("ended", this.setup_keyboard_listener);
+	    this.audio.stop();
 	    this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
 	    var trial_data = {
 	      rt: this.response.rt,

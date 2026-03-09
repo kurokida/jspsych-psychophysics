@@ -1,7 +1,7 @@
 var jsPsychSurveyLikert = (function (jspsych) {
   'use strict';
 
-  var version = "2.1.0";
+  var version = "2.2.0";
 
   const info = {
     name: "survey-likert",
@@ -32,6 +32,11 @@ var jsPsychSurveyLikert = (function (jspsych) {
           name: {
             type: jspsych.ParameterType.STRING,
             default: ""
+          },
+          /** Default response value for this question (0-based index of labels array). */
+          default_response: {
+            type: jspsych.ParameterType.INT,
+            default: null
           }
         }
       },
@@ -123,6 +128,9 @@ var jsPsychSurveyLikert = (function (jspsych) {
           options_string += '<li style="width:' + width + '%"><label class="jspsych-survey-likert-opt-label"><input type="radio" name="Q' + question_order[i] + '" value="' + j + '"';
           if (question.required) {
             options_string += " required";
+          }
+          if (question.default_response === j) {
+            options_string += " checked";
           }
           options_string += ">" + question.labels[j] + "</label></li>";
         }

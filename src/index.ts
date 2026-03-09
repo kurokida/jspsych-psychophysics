@@ -1897,6 +1897,12 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
           .then((buffer) => {
               this.audio = buffer;
               this.prepared = true;
+              
+              // set up end event if trial needs it
+              if (this.trial_ends_after_audio) {
+                this.audio.addEventListener("ended", end_trial);
+              }
+              
               // console.log("New audio");
             })
           .catch((err) => {
@@ -1906,11 +1912,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
               console.error(err);
             }
           );
-
-        // set up end event if trial needs it
-        if (this.trial_ends_after_audio) {
-          this.audio.addEventListener("ended", end_trial);
-        }
       }
 
       play() {

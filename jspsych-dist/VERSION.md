@@ -2,14 +2,14 @@ Included in this release:
 
 Package|Version|Documentation
 --- | --- | ---
-jspsych|8.2.2|https://www.jspsych.org/8.2/
+jspsych|8.2.3|https://www.jspsych.org/8.2/
 extension-mouse-tracking|1.2.0|https://www.jspsych.org/8.2/extensions/mouse-tracking
 extension-record-video|1.2.0|https://www.jspsych.org/8.2/extensions/record-video
 extension-webgazer|1.2.0|https://www.jspsych.org/8.2/extensions/webgazer
 plugin-animation|2.1.0|https://www.jspsych.org/8.2/plugins/animation
-plugin-audio-button-response|2.1.0|https://www.jspsych.org/8.2/plugins/audio-button-response
-plugin-audio-keyboard-response|2.1.0|https://www.jspsych.org/8.2/plugins/audio-keyboard-response
-plugin-audio-slider-response|2.1.0|https://www.jspsych.org/8.2/plugins/audio-slider-response
+plugin-audio-button-response|2.1.1|https://www.jspsych.org/8.2/plugins/audio-button-response
+plugin-audio-keyboard-response|2.1.1|https://www.jspsych.org/8.2/plugins/audio-keyboard-response
+plugin-audio-slider-response|2.1.1|https://www.jspsych.org/8.2/plugins/audio-slider-response
 plugin-browser-check|2.1.0|https://www.jspsych.org/8.2/plugins/browser-check
 plugin-call-function|2.1.0|https://www.jspsych.org/8.2/plugins/call-function
 plugin-canvas-button-response|2.1.0|https://www.jspsych.org/8.2/plugins/canvas-button-response
@@ -46,8 +46,8 @@ plugin-serial-reaction-time-mouse|2.1.0|https://www.jspsych.org/8.2/plugins/seri
 plugin-serial-reaction-time|2.1.0|https://www.jspsych.org/8.2/plugins/serial-reaction-time
 plugin-sketchpad|2.1.0|https://www.jspsych.org/8.2/plugins/sketchpad
 plugin-survey-html-form|2.1.0|https://www.jspsych.org/8.2/plugins/survey-html-form
-plugin-survey-likert|2.1.0|https://www.jspsych.org/8.2/plugins/survey-likert
-plugin-survey-multi-choice|2.1.0|https://www.jspsych.org/8.2/plugins/survey-multi-choice
+plugin-survey-likert|2.2.0|https://www.jspsych.org/8.2/plugins/survey-likert
+plugin-survey-multi-choice|2.2.0|https://www.jspsych.org/8.2/plugins/survey-multi-choice
 plugin-survey-multi-select|2.1.0|https://www.jspsych.org/8.2/plugins/survey-multi-select
 plugin-survey-text|2.1.0|https://www.jspsych.org/8.2/plugins/survey-text
 plugin-survey|4.0.0|https://www.jspsych.org/8.2/plugins/survey

@@ -49,7 +49,7 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
 
 	var autoBind$1 = /*@__PURE__*/getDefaultExportFromCjs(autoBind);
 
-	var version = "2.1.0";
+	var version = "2.1.1";
 
 	const info = {
 	  name: "audio-button-response",
@@ -202,9 +202,9 @@ var jsPsychAudioButtonResponse = (function (jspsych) {
 	    };
 	    // method to end trial when it is time
 	    this.end_trial = () => {
-	      this.audio.stop();
 	      this.audio.removeEventListener("ended", this.end_trial);
 	      this.audio.removeEventListener("ended", this.enable_buttons);
+	      this.audio.stop();
 	      var trial_data = {
 	        rt: this.response.rt,
 	        stimulus: this.params.stimulus,

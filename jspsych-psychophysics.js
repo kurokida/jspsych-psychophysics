@@ -7407,6 +7407,9 @@ ${indent}columns: ${matrix.columns}
 	        jsPsych.pluginAPI.getAudioPlayer(this.file).then((buffer) => {
 	          this.audio = buffer;
 	          this.prepared = true;
+	          if (this.trial_ends_after_audio) {
+	            this.audio.addEventListener("ended", end_trial);
+	          }
 	        }).catch(
 	          (err) => {
 	            console.error(
@@ -7415,9 +7418,6 @@ ${indent}columns: ${matrix.columns}
 	            console.error(err);
 	          }
 	        );
-	        if (this.trial_ends_after_audio) {
-	          this.audio.addEventListener("ended", end_trial);
-	        }
 	      }
 	      play() {
 	        this.audio.play();

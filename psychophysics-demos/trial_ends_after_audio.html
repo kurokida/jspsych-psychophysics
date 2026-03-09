@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to finish the trial after presenting sounds.
+
+    const jsPsych = initJsPsych({
+        // use_webaudio: false, // If you don't want to use webaudio
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+
+    const sounds = [ // All the sound files used in this demo
+        './sound/tone100ms.wav',
+        './sound/880Hz_100ms.wav'
+    ];
+
+    // Preloading files are needed to present the stimuli accurately.
+    const preload = {
+        type: jsPsychPreload,
+        audio: sounds,
+    }
+
+    const sound1 = {
+        obj_type: 'sound',
+        file: sounds[0],
+        trial_ends_after_audio: true
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [sound1],
+        choices: "NO_KEYS",
+        canvas_height: 500
+    }
+
+    // See also jspsych-audio-keyboard-response.html
+    const pre_audio = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p>Recent versions of Chrome require the user to interact with a page before it can play audio. </p>
+            <p>Clicking the button below counts as an interaction. </p><p>Be aware of this when planning audio experiments if you want the first trial to include audio.</p>`,
+        choices: ['Continue']
+    }
+
+    jsPsych.run([preload, pre_audio, trial])
+    
+</script>
+
+</html>
