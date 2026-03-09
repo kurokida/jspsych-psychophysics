@@ -5836,7 +5836,7 @@ ${indent}columns: ${matrix.columns}
 	const Matrix = Matrix_1;
 	_default.Matrix ? _default.Matrix : Matrix_1;
 
-	var version = "4.1.0";
+	var version = "4.1.1";
 
 	console.log(`Psychophysics Version ${version}`);
 	if (typeof PIXI__namespace.VERSION !== "undefined") {
