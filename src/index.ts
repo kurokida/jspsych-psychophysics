@@ -2322,7 +2322,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
           // stim.is_presented = false;
           // if (typeof stim.context !== 'undefined') { // If the stimulus is audio data
-          if (stim.obj_type === "sound") {
+          if (stim.obj_type === "sound" && stim.is_presented) {
             // If the stimulus is audio data
             stim.stop();
           }
