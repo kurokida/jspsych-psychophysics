@@ -39,25 +39,25 @@ const info = {
       description: "The objects will be presented in the canvas.",
       nested: {
         startX: {
-          type: ParameterType.STRING,
+          type: ParameterType.FLOAT,
           pretty_name: "startX",
-          default: "center",
+          default: 0,
           description: "The horizontal start position.",
         },
         startY: {
-          type: ParameterType.STRING,
+          type: ParameterType.FLOAT,
           pretty_name: "startY",
-          default: "center",
+          default: 0,
           description: "The vertical start position.",
         },
         endX: {
-          type: ParameterType.STRING,
+          type: ParameterType.FLOAT,
           pretty_name: "endX",
           default: null,
           description: "The horizontal end position.",
         },
         endY: {
-          type: ParameterType.STRING,
+          type: ParameterType.FLOAT,
           pretty_name: "endY",
           default: null,
           description: "The vertical end position.",
@@ -134,7 +134,7 @@ const info = {
         origin_center: {
           type: ParameterType.BOOL,
           pretty_name: "origin_center",
-          default: false,
+          default: true,
           description: "The origin is the center of the window.",
         },
         is_presented: {
@@ -432,8 +432,9 @@ const info = {
     button_choices: {
       type: ParameterType.STRING,
       pretty_name: "Button choices",
-      default: null,
+      default: ["Next"],
       description: "The labels for the buttons.",
+      array: true
     },
     button_html: {
       type: ParameterType.FUNCTION,
@@ -587,35 +588,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     class visual_stimulus extends psychophysics_stimulus {
       constructor(stim: Stimulus) {
         super(stim);
-
-        if (this.startX === "center") {
-          if (this.origin_center) {
-            this.startX = 0;
-          } else {
-            this.startX = centerX;
-          }
-        }
-        if (this.startY === "center") {
-          if (this.origin_center) {
-            this.startY = 0;
-          } else {
-            this.startY = centerY;
-          }
-        }
-        if (this.endX === "center") {
-          if (this.origin_center) {
-            this.endX = 0;
-          } else {
-            this.endX = centerX;
-          }
-        }
-        if (this.endY === "center") {
-          if (this.origin_center) {
-            this.endY = 0;
-          } else {
-            this.endY = centerY;
-          }
-        }
 
         if (this.origin_center) {
           this.startX = this.startX + centerX;
@@ -1948,8 +1920,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     const canvas_exist =
       document.getElementById("myCanvas") === null ? false : true;
     if (!canvas_exist && trial.upper_prompt !== null) {
-        new_html += trial.upper_prompt;
-    }  
+      new_html += trial.upper_prompt;
+    }
     if (!canvas_exist) {
       if (trial.pixi) {
         pixi_app = new PIXI.Application({
@@ -2357,7 +2329,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         }
       }
 
-      if (!trial.remain_canvas && trial.pixi)
+      if (!trial.remain_canvas && trial.pixi) 
         pixi_app.destroy(true, {
           children: true,
           texture: true,
