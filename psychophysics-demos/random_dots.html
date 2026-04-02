@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present random dots with a circular mask.
+    // Drawing random dots can be heavy, so the jspsychophysics plugin pre-renders them 
+    // to ensure smooth experimental performance without any lag.
+
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            jsPsych.data.displayData();
+        }
+    })
+
+    console.log(`jsPsych Version ${jsPsych.version()}`)
+    
+    const instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: 'Click on the Start button.',
+        choices: ['Start'],
+        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+    }
+
+    const width = 800;
+    const height = 600;
+    const radius = 100;
+
+    const random_dot = {
+        obj_type: 'random_dot',
+        random_dot_size: 5,
+        random_dot_density: 0.5,
+        random_dot_area_width: width,
+        random_dot_area_height: height,
+        random_dot_color: 'black',
+        random_dot_background_color: 'white',
+        mask_func: function (ctx){
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.closePath();
+        }
+    }
+
+    const trial = {
+        type: jsPsychPsychophysics,
+        stimuli: [random_dot],
+    }
+
+
+    jsPsych.run([instruction, trial])
+
+</script>
+
+</html>

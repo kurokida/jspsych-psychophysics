@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body bgcolor="gray"></body>
+<script>
+    // This file demonstrates how to present two images repeatedly until a participant responds to them.
+    // This demonstration can be applied to the study on like change blindness.
+
+    (async () => {
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin."
+        }
+
+        const images = [ // All the images used in this demo
+            '../img/scissors.png',
+            '../img/pen.png',
+            '../img/battery.png',
+            '../img/pin.png',
+            '../img/tape.png',
+            '../img/clip.png'
+        ];
+
+        // Preloading files are needed to present the stimuli accurately.
+        const preload = {
+            type: jsPsychPreload,
+            images: images,
+        }
+
+        const trial = {
+            timeline: [
+                {
+                    type: jsPsychPsychophysics,
+                    pixi_app: function() {
+                        return app;
+                    },
+                    stimuli: [
+                        {
+                            obj_type: 'image',
+                            file: () => {
+                                return jsPsych.evaluateTimelineVariable('firstImage')
+                            }
+                        },
+                        {
+                            obj_type: 'image',
+                            file: () => {
+                                return jsPsych.evaluateTimelineVariable('secondImage')
+                            }
+                        }
+                    ],
+                    canvas_height: 500,
+                    prompt: 'Press any key to proceed.',
+                    raf_func: function(trial, elapsedTime){
+                        const first_image_onset = 0; // ms
+                        const display_duration = 500; // ms
+                        const isi = 500; // ms
+                        const second_image_onset = first_image_onset + display_duration + isi; // ms
+                        const period = (display_duration + isi) * 2; // 2 images
+
+                        const time_from_first_image_onset = elapsedTime % period;
+
+                        if (time_from_first_image_onset >= first_image_onset && time_from_first_image_onset < first_image_onset + display_duration){
+                            const stim = trial.stimuli[0].instance;
+                            stim.show();
+                        } else {
+                            trial.stimuli[0].instance.pixi_obj.visible = false;
+                        }
+
+                        if (time_from_first_image_onset >= second_image_onset && time_from_first_image_onset < second_image_onset + display_duration){
+                            const stim = trial.stimuli[1].instance;
+                            stim.show();
+                        } else {
+                            trial.stimuli[1].instance.pixi_obj.visible = false;
+                        }
+                    }
+                },
+            ],
+            timeline_variables: [
+                {firstImage: images[0], secondImage: images[1]},
+                {firstImage: images[2], secondImage: images[3]},
+                {firstImage: images[4], secondImage: images[5]}
+            ],
+            randomize_order: true
+        }
+        
+        jsPsych.run([preload, instruction, trial])
+    })();
+</script>
+
+</html>

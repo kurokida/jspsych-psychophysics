@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present images with pixi.js.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+        
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const images = [ // All the images used in this demo
+            '../img/scissors.png',
+            '../img/pen.png',
+            '../img/battery.png',
+            '../img/pin.png',
+            '../img/tape.png',
+            '../img/clip.png'
+        ];
+
+        // Preloading files are needed to present the stimuli accurately.
+        const preload = {
+            type: jsPsychPreload,
+            images: images,
+        }
+        
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            stimuli: function() {
+                const image = {
+                    obj_type: 'image',
+                    file: jsPsych.evaluateTimelineVariable('stim_image')
+                };
+                return [image];
+            },
+            canvas_height: 700,
+            prompt: `<p>Press the space key to proceed.</p>`,
+        }
+
+        const main_trials = {
+            timeline: [trial],
+            timeline_variables: [
+                {stim_image: '../img/scissors.png'},
+                {stim_image: '../img/pen.png'},
+                {stim_image: '../img/battery.png'},
+                {stim_image: '../img/pin.png'},
+                {stim_image: '../img/tape.png'},
+                {stim_image: '../img/clip.png'}
+            ],
+            randomize_order: true,
+        }
+
+        jsPsych.run([instruction, main_trials])
+    })();
+
+</script>
+
+</html>

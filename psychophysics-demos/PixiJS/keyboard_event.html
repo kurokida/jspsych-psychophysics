@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to use keyboard events in the jspsych-psychophysics plugin with PixiJS.
+    // In this demo, you can change the color of the circle by pressing the ArrowUp/ArrowDown key.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        const instruction = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: 'Click on the Start button.',
+          choices: ['Start'],
+          prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+
+        let current_color = 0;
+        const radius = 150;
+
+        const circle_obj = {
+            obj_type: 'circle',
+            radius: radius,
+            line_color: 'white',
+            fill_color: `rgb(${current_color}, ${current_color}, ${current_color})`,
+            line_width: 5,
+        };
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },            canvas_height: 500,
+            prompt: '<p>Pressing the ArrowUp/ArrowDown key, the color of the circle will change. <br>Press the space key to finish the program.</p>',
+            stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
+            response_type: 'key',
+            choices: [' '],
+            key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
+              if (event.key === 'ArrowUp'){
+                current_color += 10;
+                if (current_color > 255) current_color = 255;
+              } else if (event.key === 'ArrowDown'){
+                current_color -= 10;
+                if (current_color < 0) current_color = 0;
+              }
+
+              const graphics = jsPsych.getCurrentTrial().stimuli[0].instance.pixi_obj;
+
+              graphics
+                .beginFill(`rgb(${current_color}, ${current_color}, ${current_color})`)
+                .drawCircle(0, 0, radius)
+                .endFill();
+            },
+        }
+
+      console.log(`jsPsych Version ${jsPsych.version()}`)
+      jsPsych.run([instruction, trial])
+    })();
+
+</script>
+</html>

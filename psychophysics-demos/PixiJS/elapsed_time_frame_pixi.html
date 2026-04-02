@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present (fixation) cross.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+        
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const text_object = {
+            obj_type: 'text',
+            content: 'Hello world!',
+            change_attr: function(stim, elapsedTime, elapsedFrame){ // Change the content dynamically
+                const content = `Elapsed Time in seconds\n${Math.round(elapsedTime/1000)}\nElapsed Time in frames\n${elapsedFrame}`;
+                stim.pixi_obj.text = content;
+            } 
+        }
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            stimuli: [text_object],
+        }
+        
+        jsPsych.run([instruction, trial])
+    })();
+
+</script>
+
+</html>

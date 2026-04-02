@@ -45,6 +45,7 @@
         content: 'Original',
         startX: 200,
         startY: 300 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         
@@ -55,6 +56,7 @@
         file: img_file_name,
         startX: 200,
         startY: 300,
+        origin_center: false,
     }
 
     const mask_circle = {
@@ -67,6 +69,7 @@
         center_y: 190,
         startX: 500,
         startY: 300,
+        origin_center: false,
     }
 
     const label2 = {
@@ -75,6 +78,7 @@
         content: 'mask = circle',
         startX: 500,
         startY: 300 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         
@@ -91,6 +95,7 @@
         center_y: 190,
         startX: 800,
         startY: 300,
+        origin_center: false,
     }
 
     const label3 = {
@@ -99,6 +104,7 @@
         content: 'mask + filter (blur)',
         startX: 800,
         startY: 300 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         
@@ -113,6 +119,7 @@
         sc: 30,
         startX: 200,
         startY: 600,
+        origin_center: false,
     }
 
     const label4 = {
@@ -121,6 +128,7 @@
         content: 'mask = gauss',
         startX: 200,
         startY: 600 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         
@@ -136,6 +144,7 @@
         center_y: 190,
         startX: 500,
         startY: 600,
+        origin_center: false,
     }
 
     const label5 = {
@@ -144,6 +153,7 @@
         content: 'mask = rect',
         startX: 500,
         startY: 600 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         
@@ -155,6 +165,7 @@
         mask: 'manual',
         startX: 800,
         startY: 600,
+        origin_center: false,
         mask_func: function(canvas){
             const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio
 
@@ -172,6 +183,7 @@
         content: 'mask = manual',
         startX: 800,
         startY: 600 + dy,
+        origin_center: false,
         font: "32px 'Arial'",
         text_color: 'black',
         

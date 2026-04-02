@@ -3,7 +3,6 @@
 <head>
   <script src="../jspsych-dist/dist/jspsych.js"></script>
   <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
   <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -18,8 +17,6 @@
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
 
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
-
     const instruction = {
         type: jsPsychHtmlButtonResponse,
         stimulus: 'Click on the Start button.',
@@ -33,6 +30,7 @@
         startY: 400,
         line_length: 50,
         line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        origin_center: false,
     }
 
     const cross_object2 = {
@@ -42,12 +40,12 @@
         line_length: 100,
         line_color: 'red', // You can use the HTML color name instead of the HEX color.
         fill_color: 'white',
+        origin_center: false,
     }
 
     const response_start_time = 1000; // ms
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
         canvas_height: 500,
         stimuli: [cross_object1, cross_object2],
         response_type: 'button',

@@ -3,7 +3,6 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -18,8 +17,6 @@
         }
     })
 
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
-
     const instruction = {
         type: jsPsychHtmlButtonResponse,
         stimulus: 'Click on the Start button.',
@@ -32,8 +29,6 @@
 
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
-        // stimuli: [dot_object, circle_object],
         stimuli: function(){
             const col = Math.random() < 0.5? 'blue':'red';
             const min = 700
@@ -47,7 +42,7 @@
                 width: 200,
                 height: 50,
                 fill_color: col,
-                show_start_time: min + Math.random()*500
+                show_start_time: Math.round(min + Math.random()*500)
             }
 
             const circle_object = {

@@ -3,7 +3,7 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="../jspsych-dist/dist/plugin-virtual-chinrest.js"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-virtual-chinrest@3.1.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
@@ -61,6 +61,7 @@
                 height: rect_height * pix_per_mm,
                 line_color: 'black', // You can use the HTML color name instead of the HEX color.
                 line_width: 1,
+                origin_center: false
             }
 
             return [rect_object]

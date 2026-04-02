@@ -27,8 +27,8 @@
 
     const text_object = {
       obj_type: 'text',
-      startX: 'center',
-      startY: 'center',
+      startX: 0,
+      startY: 0,
       content: 'The white rectangle will be appeared 2 sec later.\nThe red circle will be appeared 4 sec later.',
       font: "22px 'Arial'",
       text_color: 'white',
@@ -43,13 +43,15 @@
         height: 200,
         line_color: '#ffffff',
         fill_color: '#ffffff',
-        show_start_time: 2000 // ms after the start of the trial
+        show_start_time: 2000, // ms after the start of the trial
+        origin_center: false,
     }
 
     const circle_object = {
         obj_type: 'circle',
         startX: 500, // location in the canvas
         startY: 300,
+        origin_center: false,
         radius: 100,
         line_color: 'red', // You can use the HTML color name instead of the HEX color.
         fill_color: 'red',

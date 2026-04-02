@@ -41,6 +41,7 @@
         file: img_file_name,
         startX: 200,
         startY: 300,
+        origin_center: false,
     }
 
     const mask_circle = {
@@ -53,6 +54,7 @@
         center_y: 190,
         startX: 500,
         startY: 300,
+        origin_center: false,
     }
 
     const mask_circle_blur = {
@@ -66,6 +68,7 @@
         center_y: 190,
         startX: 800,
         startY: 300,
+        origin_center: false,
     }
 
     const mask_gauss = {
@@ -76,6 +79,7 @@
         sc: 30,
         startX: 200,
         startY: 600,
+        origin_center: false,
     }
 
     const mask_rect = {
@@ -88,6 +92,7 @@
         center_y: 190,
         startX: 500,
         startY: 600,
+        origin_center: false,
     }
 
     const mask_manual = {
@@ -96,6 +101,7 @@
         mask: 'manual',
         startX: 800,
         startY: 600,
+        origin_center: false,
         mask_func: function(canvas){
             const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio
 

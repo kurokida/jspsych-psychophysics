@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present part of an image with pixi.js.
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })    
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin."
+        }
+
+        const img_file_name = '../img/personA.png'
+
+        // Preloading files are needed to present the stimuli accurately.
+        const preload = {
+            type: jsPsychPreload,
+            images: [img_file_name],
+        }
+
+        const mask_width = 312;
+        const mask_height = 400;
+
+        const mask = new PIXI.Graphics();
+        mask
+            .rect(0, 0, mask_width / 2, mask_height / 2) // Note: The origin is set to the center of the image.
+            .fill(0xFF3300); // Any color will work.
+                
+        const blurFilter = new PIXI.BlurFilter();
+        blurFilter.blur = 5;
+        
+        const full_image = {
+            obj_type: 'image',
+            file: img_file_name,
+            startX: -200
+        }
+
+        const part_of_image = {
+            obj_type: 'image',
+            file: img_file_name,
+            pixi_mask: function(){ // You have to specify a function.
+                return mask
+            },
+            pixi_filters: function(){ // You have to specify a function.
+                return [blurFilter] // Note that this should be an array.
+            },
+            startX: 200
+        }
+        
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            stimuli: function(){
+                return [full_image, part_of_image]
+            }
+        }
+
+        jsPsych.run([preload, instruction, trial])
+    })()
+</script>
+
+</html>

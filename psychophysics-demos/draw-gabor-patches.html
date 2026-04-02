@@ -3,7 +3,6 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
   </head>
@@ -16,8 +15,6 @@
             jsPsych.data.displayData();
         }
     })
-
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -36,6 +33,7 @@
         contrast: 10,
         startX: 100,
         startY:100,
+        origin_center: false,
     }
 
     const gabor2 = {
@@ -49,6 +47,7 @@
         disableNorm: true,
         startX: 500,
         startY:100,
+        origin_center: false,
     }
 
     const gabor3 = {
@@ -62,6 +61,7 @@
         startX: 100,
         startY:500,
         show_start_time: 500,
+        origin_center: false,
     }
 
     const gabor4 = {
@@ -77,11 +77,11 @@
         show_start_time: 1000,
         motion_start_time: 1000,
         horiz_pix_frame: 5,
+        origin_center: false,
     }
 
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
         stimuli: [gabor1, gabor2, gabor3, gabor4],
         canvas_height: 700,
         prompt: 'Press any key to proceed.',

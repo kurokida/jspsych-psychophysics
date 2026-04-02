@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="../../jspsych-dist/dist/jspsych.js"></script>
+        <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+        <script src="../../jspsych-psychophysics.js"></script>
+        <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+    </head>
+    <body bgcolor="gray"></body>
+    <script>
+    // This demo explains how to do the similar thing as gabor_tilt.html with pixi.js.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const gabor_obj = {
+            obj_type: 'gabor',
+            tilt: 90,
+            sf: 0.05,
+            phase: 90,
+            width: 150,
+            sc: 10,
+            contrast: 0.5,
+            disableNorm: true
+        };
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            key_down_func: function(event){
+                // See https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties/#obj_type-gabor for uniforms.
+                const uniforms = jsPsych.getCurrentTrial().stimuli[0].instance.pixi_obj.filters[0].resources.uUniforms.uniforms;
+
+                if (event.key === 'ArrowLeft'){
+                    uniforms.angle_in_degrees += 2;
+                    uniforms.modulateColor_R += 0.1;                 
+                } else if (event.key === 'ArrowRight'){
+                    uniforms.angle_in_degrees -= 2;
+                    uniforms.modulateColor_R -= 0.1;
+                }
+            },
+            canvas_height: 500,
+            prompt: `<p>Press the ArrowLeft/ArrowRight key to change the tilt and color of the gabor.</p>
+            <p>Press the space key to finish this demo.</p>`,
+            stimuli: [gabor_obj],
+            response_type: 'key',
+            choices: [' ']
+        }
+
+        /* start the experiment */
+        jsPsych.run([instruction, trial, trial, trial])
+    })();
+
+  </script>
+</html>

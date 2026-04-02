@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-preload.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present a scaled and rotated image.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })    
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const images = [ // All the images used in this demo
+            '../img/scissors.png',
+            '../img/pen.png',
+            '../img/battery.png',
+            '../img/pin.png',
+            '../img/tape.png',
+            '../img/clip.png'
+        ];
+
+        // Preloading files are needed to present the stimuli accurately.
+        const preload = {
+            type: jsPsychPreload,
+            images: images,
+        }
+
+        const image1 = {
+            obj_type: 'image',
+            scale: 1.5,
+            pixi_angle: 45, // degree
+            file: function(){
+                return jsPsych.evaluateTimelineVariable('firstImage')
+            },
+            show_start_time: 500, // ms after the start of the trial
+            startX: -100,
+            pixi_zIndex: 1, // This will be presented behind image2.
+        }
+
+        const image2 =  {
+            obj_type: 'image',
+            scale: 0.5,
+            pixi_rotation: Math.PI, // radian
+            file: function(){
+                return jsPsych.evaluateTimelineVariable('secondImage')
+            },
+            show_start_time: 1000, // ms after the start of the trial
+            startX: 100,
+            pixi_zIndex: 2, // This will be presented in front of image1.
+        }
+
+        const trial = {
+            timeline: [
+                {
+                    type: jsPsychPsychophysics,
+                    pixi_app: function() {
+                        return app;
+                    },
+                    stimuli: [image1, image2],
+                    canvas_height: 500,
+                    prompt: 'Press any key to proceed.',
+                    data: {
+                        'firstImage': jsPsych.timelineVariable('firstImage'), // for identification
+                        'secondImage': jsPsych.timelineVariable('secondImage')
+                    }, 
+                }
+            ],
+            timeline_variables: [
+                {firstImage: images[0], secondImage: images[1]},
+                {firstImage: images[2], secondImage: images[3]},
+                {firstImage: images[4], secondImage: images[5]}
+            ],
+            randomize_order: true
+        }
+
+        jsPsych.run([preload, instruction, trial])
+    })();
+
+</script>
+
+</html>

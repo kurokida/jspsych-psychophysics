@@ -1,6 +1,6 @@
 {
   "name": "@kurokida/jspsych-psychophysics",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "description": "A jsPsych plugin for conducting online/Web-based psychophysical experiments",
   "type": "module",
   "main": "dist/index.cjs",
@@ -44,7 +44,7 @@
     "jspsych": "^8.2.0"
   },
   "dependencies": {
-    "ml-matrix": "^6.10.2",
-    "pixi.js": "^6.5.5"
+    "ml-matrix": "^6.12.0",
+    "pixi.js": "^8.0.0"
   }
 }

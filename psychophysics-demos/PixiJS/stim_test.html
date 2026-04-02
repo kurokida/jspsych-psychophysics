@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to present (fixation) cross.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+        
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const cross = {
+            obj_type: 'cross',        
+            line_length: 50,
+            line_width: 5,
+            line_color: 'black', // You can use the HTML color name instead of the HEX color.
+        }
+
+        const line = {
+            obj_type: 'line',
+            x1: 0,
+            y1: 0,
+            x2: 200,
+            y2: 200,
+            line_width: 3,
+            line_color: 'blue'
+        }
+
+        const rect = {
+            obj_type: 'rect',
+            startX: 200,
+            startY: -200,
+            width: 100,
+            height: 50,
+            line_width: 5,
+            line_color: 'red',
+            fill_color: 'pink'
+        }
+
+        const circle = {
+            obj_type: 'circle',
+            startX: 0,
+            startY: 0,
+            radius: 50,
+            line_width: 5,
+            line_color: 'green',
+            fill_color: 'lightgreen'
+        }
+
+        const gabor = {
+            obj_type: 'gabor',
+            startX: 300,
+            startY: 0,
+            tilt: 45,
+            sf: 0.05,
+            phase: 90,
+            width: 150,
+            sc: 15,
+            contrast: 0.5,
+            disableNorm: true
+        };
+
+        const random_dot = {
+            obj_type: 'random_dot',
+            startX: -300,
+            startY: 0,
+            random_dot_size: 10,
+            random_dot_density: 0.5,
+            random_dot_area_width: 200,
+            random_dot_area_height: 200,
+            random_dot_color: 'black',
+            random_dot_background_color: 'white',
+        }
+
+        const text = {
+            obj_type: 'text',
+            startX: 0,
+            startY: 300,
+            content: 'These shapes are drawn using PixiJS.\nThe jspsych-psychophysics plugin supports various shapes and textures.',
+            fontSize: 24,
+            text_color: 'brown',
+        }
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            stimuli: [rect, circle, line, cross, gabor, random_dot, text],
+        }
+
+        jsPsych.run([instruction, trial])
+    })();
+
+</script>
+
+</html>
