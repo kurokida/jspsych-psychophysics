@@ -554,6 +554,8 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     canvas_for_color.style.display = "none";
     const ctx_for_color = canvas_for_color.getContext("2d");
 
+    const refsToCleanup = [];
+
     // 'blue' -> 255
     function getColorNum(color_str) {
       ctx_for_color.fillStyle = color_str;
@@ -563,6 +565,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       return parseInt(col2, 16);
     }
     trial.getColorNum = getColorNum;
+    refsToCleanup.push('getColorNum');
 
     // Class for visual and audio stimuli
     class psychophysics_stimulus {
@@ -2100,10 +2103,15 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       centerY = canvas_info.centerY;
       ctx = canvas_info.ctx;
       trial.context = ctx;
+      refsToCleanup.push('context');
     }
     trial.canvas = canvas;
+    refsToCleanup.push('canvas');
+
     trial.centerX = centerX;
     trial.centerY = centerY;
+    refsToCleanup.push('centerX');
+    refsToCleanup.push('centerY');
 
     // add event listeners defined by experimenters.
     if (trial.mouse_down_func !== null) {
@@ -2403,10 +2411,23 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         display_element.innerHTML = "";
       }
 
+      // https://github.com/kurokida/jspsych-psychophysics/issues/58
+      refsToCleanup.forEach(prop => {
+        trial[prop] = null;
+      });
+      if (trial.stimuli && Array.isArray(trial.stimuli)) {
+          trial.stimuli.forEach(stim => {
+              if (stim.instance) {
+                  stim.instance = null;
+              }
+          });
+      }
+
       // move on to the next trial
       this.jsPsych.finishTrial(trial_data);
     };
     trial.end_trial = end_trial;
+    refsToCleanup.push('end_trial');
 
     // function to handle responses by the subject
     // let after_response = function(info) { // This causes an initialization error at stim.audio.addEventListener('ended', end_trial);
