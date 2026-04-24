@@ -337,12 +337,6 @@ const info = {
       pretty_name: "Pixi application",
       default: null,
     },
-    remain_canvas: {
-      type: ParameterType.BOOL,
-      pretty_name: "Remain canvas",
-      default: false,
-      description: "If true, the main canvas remains for the next trial.",
-    },
     choices: {
       type: ParameterType.KEYS,
       pretty_name: "Choices",
@@ -1300,7 +1294,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
             angle_in_degrees: { value: 90 + this.tilt, type: 'f32' },
             spatial_freq: { value: this.sf, type: 'f32' },
             SpaceConstant: { value: this.sc, type: 'f32' },
-            disableNorm: { value: this.disableNorm ? 1 : 0, type: 'f32' }, // typeは'f32'でOK
+            disableNorm: { value: this.disableNorm ? 1 : 0, type: 'f32' },
             disableGauss: { value: this.disableGauss ? 1 : 0, type: 'f32' },
             modulateColor_R: { value: this.modulate_color[0], type: 'f32' },
             modulateColor_G: { value: this.modulate_color[1], type: 'f32' },
@@ -2518,8 +2512,6 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       // function end_trial(){
       const end_trial = () => {
 
-        // stim.pixi_objを削除すること！
-
         // console.log(default_maxWidth)
         document.getElementById("jspsych-content").style.maxWidth =
           default_maxWidth; // restore
@@ -2628,9 +2620,7 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         };
 
         // clear the display
-        if (!trial.remain_canvas) {
-          display_element.innerHTML = "";
-        }
+        display_element.innerHTML = "";
 
         // https://github.com/kurokida/jspsych-psychophysics/issues/58
         refsToCleanup.forEach(prop => {
