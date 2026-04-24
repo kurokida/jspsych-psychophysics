@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/jspsych@8.2.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.1.0"></script>
     <script src="https://unpkg.com/@jspsych/plugin-preload@2.1.0"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.10/browser/pixi.js" integrity="sha512-aUDaFsR+MTUl1ZTKRniY6kX38CysOAqoHiuBlip8rcRF0MH+5MhE9YnBcD7n7KYtB4pPorRJD042zMnkSyoZfQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="../jspsych-psychophysics.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
     <link href="https://unpkg.com/jspsych@8.2.3/css/jspsych.css" rel="stylesheet" type="text/css" />
     <style>
     p {
         color: white;
     }
-    body, 
-    .jspsych-display-element, 
-    .jspsych-content-wrapper, 
-    #jspsych-content {
-        background-color: black !important;
-    }    
+    body {
+      background-color: black;
+    }
     .text-white {
         color: white;
-    }
+     }
   </style>
 </head>
 <body></body>
@@ -28,50 +25,45 @@
     // The accuracy of the psychophysics plugin was confirmed using this script.
     // See https://osf.io/pj4sb/
 
-    const jsPsych = initJsPsych({
-        on_finish: function() {
-            pixi_app.destroy(true, {
-                children: true,
-                texture: true,
-                baseTexture: true,});
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({});
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const experiment = [];
+
+        const sounds = [
+            '../sound/tone100ms.wav'
+        ];
+
+        const preload = {
+            type: jsPsychPreload,
+            audio: sounds,
         }
-    })
-    console.log(`jsPsych Version ${jsPsych.version()}`)
 
-    const instruction = {
-        type: jsPsychHtmlKeyboardResponse,
-        // stimulus: '<p>This program uses the jspsych-psychophysics plugin.</p><p>Press any key to start.</p>'
-        stimulus: ''
-    }
+        const enter_fullscreen = {
+            type: jsPsychFullscreen,
+            fullscreen_mode: true,
+        }
 
-    const experiment = [];
+        experiment.push(preload)
+        experiment.push(enter_fullscreen)
 
-    const sounds = [
-        './sound/tone100ms.wav'
-    ];
+        // const time_units = jsPsych.randomization.shuffle(["millisecond", "frame"]);
+        const time_units = ["millisecond", "frame"];
 
-    const preload = {
-        type: jsPsychPreload,
-        audio: sounds,
-    }
-
-    const enter_fullscreen = {
-        type: jsPsychFullscreen,
-        fullscreen_mode: true,
-    }
-
-    experiment.push(preload)
-    experiment.push(enter_fullscreen)
-    // experiment.push(instruction);
-
-    const time_units = ["millisecond", "frame"]
-    const pixi_settings = [true]
-
-    const pixi_app = new PIXI.Application({
-        backgroundColor: 0x0000FF,
-    });
-
-    pixi_settings.forEach(pixi_flag => {
         time_units.forEach(units => {
             let rect1;
             let rect2;
@@ -153,27 +145,19 @@
             const instruction2 = {
                 type: jsPsychHtmlKeyboardResponse,
                 // stimulus: '<p>This program uses the jspsych-psychophysics plugin.</p><p>Press any key to start.</p>'
-                stimulus: `<p class="text-white"> ${pixi_flag ? "Pixi.js is used." : "Pixi.js is not used."}<br>Time unit: ${units}<br>Press any key to start the trial.</p>`,
+                stimulus: `<p class="text-white">Pixi.js is used.<br>Time unit: ${units}<br>Press any key to start the trial.</p>`,
             }
             experiment.push(instruction2)
 
-            const blank = {
-                type: jsPsychHtmlKeyboardResponse,
-                // stimulus: '<p>This program uses the jspsych-psychophysics plugin.</p><p>Press any key to start.</p>'
-                stimulus: '',
-                trial_duration: 1000,
-            }
 
             for (let repeat = 0; repeat < 100; repeat++){
                 const trial_time = 800;
-                // const trial_time = 1800;
 
                 const show_rect_sound = {
                     type: jsPsychPsychophysics,
-                    pixi: pixi_flag,
-                    pixi_app: function() { 
-                        const a = 10;
-                        return pixi_app; },
+                    pixi_app: function() {
+                        return app;
+                    },
                     stimuli: [rect1, rect2, sound_object],
                     trial_duration: trial_time,
                     response_ends_trial: false,
@@ -183,27 +167,25 @@
                 }
 
                 experiment.push(show_rect_sound);
-                // experiment.push(blank);
             }        
         })
 
-    })
+        const exit_fullscreen = {
+            type: jsPsychFullscreen,
+            fullscreen_mode: false,
+            delay_after: 0,
+        }
+        experiment.push(exit_fullscreen)
 
-    const exit_fullscreen = {
-        type: jsPsychFullscreen,
-        fullscreen_mode: false,
-        delay_after: 0,
-    }
-    experiment.push(exit_fullscreen)
+        const end_trial = {
+            type: jsPsychHtmlKeyboardResponse,
+            // stimulus: '<p>The program is finished.</p>'
+            stimulus: ''
+        }
 
-    const end_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        // stimulus: '<p>The program is finished.</p>'
-        stimulus: ''
-    }
-
-    experiment.push(end_trial)
-    jsPsych.run(experiment)
+        experiment.push(end_trial)
+        jsPsych.run(experiment)
+    })();
     
 </script>
 

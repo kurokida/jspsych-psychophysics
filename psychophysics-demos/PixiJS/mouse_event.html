@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../../jspsych-dist/dist/jspsych.js"></script>
+    <script src="../../jspsych-dist/dist/plugin-html-button-response.js"></script>
+    <script src="../../jspsych-psychophysics.js"></script>
+    <link rel="stylesheet" href="../../jspsych-dist/dist/jspsych.css"></link>
+</head>
+<body></body>
+<script>
+    // This file demonstrates how to specify the mouse-event functions.
+    // As you move the mouse, the slope of the line segment changes. 
+    // By changing the direction of the mouse in motion,  the direction of rotation of the line changes.
+
+    (async () => {
+
+        const jsPsych = initJsPsych({
+            on_finish: function() {
+                app.destroy(true, {
+                    children: true,
+                    texture: true,
+                    baseTexture: true
+                });
+                jsPsych.data.displayData();
+            }
+        })
+
+        const app = new PIXI.Application();
+        await app.init({
+          antialias: true // Important!!
+        });
+        console.log(`jsPsych Version ${jsPsych.version()}`)
+
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: 'Click on the Start button.',
+            choices: ['Start'],
+            prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        }
+
+        const circle_obj = {
+            obj_type: 'circle',
+            radius: 150,
+            line_color: 'white',
+            line_width: 5,
+        };
+
+        let prev_mouseX = null;
+        let mouse_move_start = false;
+        
+        const line_obj = {
+            obj_type: 'line',
+            line_length: 300,
+            line_color: 'white',
+            line_width: 5,
+            angle: 0
+        }
+
+        const trial = {
+            type: jsPsychPsychophysics,
+            pixi_app: function() {
+                return app;
+            },
+            canvas_height: 500,
+            button_choices: ['YES', 'NO'],
+            prompt: '<p>Click and move the mouse.</p>',
+            stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stim_array array.
+            response_type: 'button',
+            vert_button_margin: '50px',
+            horiz_button_margin: '50px',
+            mouse_down_func: function(event){
+              mouse_move_start = !mouse_move_start;
+            },                
+            // mouse_up_func: function(event){ // This also works, but, please comment out the mouse_down_function.
+            //   mouse_move_start = !mouse_move_start;
+            // },
+            mouse_move_func: function(event){ // This function will be automatically added as the event listener of the canvas.
+              if (mouse_move_start === false) return;
+
+              if (prev_mouseX === null){
+                prev_mouseX = event.offsetX;
+                return
+              }
+
+              // stim_array[0] means a circle, and stim_array[1] means a line.
+              const line = jsPsych.getCurrentTrial().stimuli[1].instance.pixi_obj;
+
+              if (event.offsetX > prev_mouseX){
+                line.angle += 5; // The angle changes by 5 degrees.
+              } else {
+                line.angle -= 5;
+              }
+              prev_mouseX = event.offsetX;
+            },
+        }
+
+        /* start the experiment */
+
+        jsPsych.run([
+            instruction,
+            {
+              timeline: [trial],
+              repetitions: 3
+            }
+          ])
+          
+    })();
+
+
+  </script>
+</html>

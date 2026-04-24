@@ -3,7 +3,6 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -17,8 +16,6 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
-
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const text_object = {
       obj_type: 'text',
@@ -38,7 +35,6 @@
         timeline: [
             {
                 type: jsPsychPsychophysics,
-                pixi: pixi_flag,
                 stimuli: function(){
                     return [{
                         obj_type: 'circle',
@@ -48,7 +44,8 @@
                         line_color: 'black', // You can use the HTML color name instead of the HEX color.
                         fill_color: 'black',
                         show_start_time: 500, // ms after the start of the trial
-                        show_end_time: 550
+                        show_end_time: 550,
+                        origin_center: false,
                     }]
                 },
                 response_type: 'mouse', // The default of the response_type is 'key'.

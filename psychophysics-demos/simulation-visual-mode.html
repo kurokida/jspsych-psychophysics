@@ -3,13 +3,14 @@
 <head>
   <script src="../jspsych-dist/dist/jspsych.js"></script>
   <script src="../jspsych-dist/dist/plugin-html-keyboard-response.js"></script>
+  <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
   <script src="../jspsych-psychophysics.js"></script>
   <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css">
 </head>
 <body></body>
 <script>
 
-  var jsPsych = initJsPsych({
+  const jsPsych = initJsPsych({
     default_ITI: 250, 
     on_finish: function() {
       jsPsych.data.displayData();
@@ -18,11 +19,28 @@
 
   console.log(jsPsych.version())
 
-  var trial_html_key_resp = {
+  const trial_html_key_resp = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: '<p style="color: red; font-size: 48px; font-weight: bold;">GREEN</p>',
     choices: ['y', 'n'],
     prompt: '<p>Does the color match the word? (y or n)</p>',
+    simulation_options: {
+      data: {
+        rt: 1000
+      }
+    }
+  };
+
+  const trial_html_button_resp = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="color: blue; font-size: 48px; font-weight: bold;">RED</p>',
+    choices: ['Red', 'Green', 'Blue'],
+    prompt: "<p>What color is the ink?</p>",
+    simulation_options: {
+      data: {
+        rt: 700
+      }
+    }
   };
 
   const cross = {
@@ -87,7 +105,7 @@
     }
   }
 
-  var sim_opts = {
+  const sim_opts = {
     default: {
       data: {
         rt: () => { return jsPsych.randomization.sampleExGaussian(250, 50, 0.02, true) }
@@ -100,7 +118,7 @@
     }
   }
 
-  jsPsych.simulate([trial_html_key_resp, psychophysics_key, psychophysics_button, psychophysics_mouse], "visual", sim_opts);
+  jsPsych.simulate([trial_html_key_resp, trial_html_button_resp, psychophysics_key, psychophysics_button, psychophysics_mouse], "visual", sim_opts);
   
 </script>
 </html>

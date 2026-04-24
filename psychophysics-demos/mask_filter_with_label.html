@@ -4,7 +4,6 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -19,8 +18,6 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
-
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -167,7 +164,7 @@
         startY: 600,
         origin_center: false,
         mask_func: function(canvas){
-            const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio
+            const tmpRatio = window.devicePixelRatio
 
             // An argument is the canvas on which the image is drawn. 
             // The top-left coordinate of the canvas is identical to the top-left coordinate of the image.
@@ -191,7 +188,6 @@
 
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
         stimuli: [person_original, mask_circle, mask_circle_blur, mask_gauss, mask_rect, mask_manual,
             label1, label2, label3, label4, label5, label6],
     }

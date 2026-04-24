@@ -5836,7 +5836,7 @@ ${indent}columns: ${matrix.columns}
 	const Matrix = Matrix_1;
 	_default.Matrix ? _default.Matrix : Matrix_1;
 
-	var version = "4.1.2";
+	var version = "5.0.0";
 
 	console.log(`Psychophysics Version ${version}`);
 	if (typeof PIXI__namespace.VERSION !== "undefined") {
@@ -5855,25 +5855,25 @@ ${indent}columns: ${matrix.columns}
 	      description: "The objects will be presented in the canvas.",
 	      nested: {
 	        startX: {
-	          type: jspsych.ParameterType.STRING,
+	          type: jspsych.ParameterType.FLOAT,
 	          pretty_name: "startX",
-	          default: "center",
+	          default: 0,
 	          description: "The horizontal start position."
 	        },
 	        startY: {
-	          type: jspsych.ParameterType.STRING,
+	          type: jspsych.ParameterType.FLOAT,
 	          pretty_name: "startY",
-	          default: "center",
+	          default: 0,
 	          description: "The vertical start position."
 	        },
 	        endX: {
-	          type: jspsych.ParameterType.STRING,
+	          type: jspsych.ParameterType.FLOAT,
 	          pretty_name: "endX",
 	          default: null,
 	          description: "The horizontal end position."
 	        },
 	        endY: {
-	          type: jspsych.ParameterType.STRING,
+	          type: jspsych.ParameterType.FLOAT,
 	          pretty_name: "endY",
 	          default: null,
 	          description: "The vertical end position."
@@ -5948,7 +5948,7 @@ ${indent}columns: ${matrix.columns}
 	        origin_center: {
 	          type: jspsych.ParameterType.BOOL,
 	          pretty_name: "origin_center",
-	          default: false,
+	          default: true,
 	          description: "The origin is the center of the window."
 	        },
 	        is_presented: {
@@ -6084,20 +6084,68 @@ ${indent}columns: ${matrix.columns}
 	          pretty_name: "font family",
 	          default: "Verdana, Arial, Helvetica, sans-serif",
 	          description: "Font family"
+	        },
+	        /** The angle (degrees) of the stimulus when using PixiJS. */
+	        pixi_angle: {
+	          type: jspsych.ParameterType.FLOAT,
+	          default: null
+	        },
+	        /** The rotation (radians) of the stimulus when using PixiJS. */
+	        pixi_rotation: {
+	          type: jspsych.ParameterType.FLOAT,
+	          default: null
+	        },
+	        /** Mask parameter for PixiJS. This function should return a PIXI.Graphics object that will be used as a mask for the stimulus. */
+	        pixi_mask: {
+	          type: jspsych.ParameterType.FUNCTION,
+	          default: null
+	        },
+	        /** Filter parameter for PixiJS. This function should return a PIXI.Filter object that will be used to filter the stimulus. */
+	        pixi_filters: {
+	          type: jspsych.ParameterType.FUNCTION,
+	          default: null
+	        },
+	        /** The z-index of the stimulus when using PixiJS. Stimuli with higher z-index will be drawn on top of those with lower z-index. */
+	        pixi_zIndex: {
+	          type: jspsych.ParameterType.INT,
+	          default: null
+	        },
+	        /** The width of the area where the random dots are presented (in pixels). */
+	        random_dot_area_width: {
+	          type: jspsych.ParameterType.INT,
+	          default: 100
+	        },
+	        /** The height of the area where the random dots are presented (in pixels). */
+	        random_dot_area_height: {
+	          type: jspsych.ParameterType.INT,
+	          default: 100
+	        },
+	        /** The size of the random dots (in pixels). */
+	        random_dot_size: {
+	          type: jspsych.ParameterType.INT,
+	          default: 5
+	        },
+	        /** The density of the random dots, ranging from 0 to 1. */
+	        random_dot_density: {
+	          type: jspsych.ParameterType.FLOAT,
+	          default: 0.5
+	        },
+	        /** The background color of the canvas for the random dots. */
+	        random_dot_background_color: {
+	          type: jspsych.ParameterType.STRING,
+	          default: "white"
+	        },
+	        /** The color of the random dots. */
+	        random_dot_color: {
+	          type: jspsych.ParameterType.STRING,
+	          default: "black"
 	        }
 	      }
 	    },
-	    pixi: {
-	      type: jspsych.ParameterType.BOOL,
-	      pretty_name: "Enable Pixi",
-	      default: false,
-	      description: "If true, this plugin will use PixiJS"
-	    },
-	    remain_canvas: {
-	      type: jspsych.ParameterType.BOOL,
-	      pretty_name: "Remain canvas",
-	      default: false,
-	      description: "If true, the main canvas remains for the next trial."
+	    pixi_app: {
+	      type: jspsych.ParameterType.FUNCTION,
+	      pretty_name: "Pixi application",
+	      default: null
 	    },
 	    choices: {
 	      type: jspsych.ParameterType.KEYS,
@@ -6240,8 +6288,9 @@ ${indent}columns: ${matrix.columns}
 	    button_choices: {
 	      type: jspsych.ParameterType.STRING,
 	      pretty_name: "Button choices",
-	      default: null,
-	      description: "The labels for the buttons."
+	      default: ["Next"],
+	      description: "The labels for the buttons.",
+	      array: true
 	    },
 	    button_html: {
 	      type: jspsych.ParameterType.FUNCTION,
@@ -6318,9 +6367,6 @@ ${indent}columns: ${matrix.columns}
 	    },
 	    button_pressed: {
 	      type: jspsych.ParameterType.INT
-	    },
-	    stimulus: {
-	      type: jspsych.ParameterType.HTML_STRING
 	    }
 	  }
 	};
@@ -6331,1502 +6377,1594 @@ ${indent}columns: ${matrix.columns}
 	  static {
 	    this.info = info;
 	  }
-	  trial(display_element, trial) {
-	    function getNumbering(start_num, count) {
-	      return [...Array(count)].map((_, i) => i + start_num);
-	    }
-	    const canvas_for_color = document.createElement("canvas");
-	    canvas_for_color.id = "canvas_for_color";
-	    canvas_for_color.style.display = "none";
-	    const ctx_for_color = canvas_for_color.getContext("2d");
-	    const refsToCleanup = [];
-	    function getColorNum(color_str) {
-	      ctx_for_color.fillStyle = color_str;
-	      const col = ctx_for_color.fillStyle;
-	      const col2 = col[1] + col[2] + col[3] + col[4] + col[5] + col[6] + col[7] + col[8];
-	      return parseInt(col2, 16);
-	    }
-	    trial.getColorNum = getColorNum;
-	    refsToCleanup.push("getColorNum");
-	    class psychophysics_stimulus {
-	      // so any option can be assigned to stimulus classes
-	      constructor(stim) {
-	        Object.assign(this, stim);
-	        const keys = Object.keys(this);
-	        for (var i = 0; i < keys.length; i++) {
-	          if (typeof this[keys[i]] === "function") {
-	            if (keys[i] === "drawFunc") continue;
-	            if (keys[i] === "change_attr") continue;
-	            if (keys[i] === "mask_func") continue;
-	            this[keys[i]] = this[keys[i]].call();
+	  // reference: https://github.com/jspsych/jsPsych/blob/main/packages/plugin-audio-keyboard-response/src/index.ts
+	  trial(display_element, trial, on_load) {
+	    return new Promise(async (resolve) => {
+	      this.finish = resolve;
+	      function getNumbering(start_num, count) {
+	        return [...Array(count)].map((_, i) => i + start_num);
+	      }
+	      const canvas_for_color = document.createElement("canvas");
+	      canvas_for_color.id = "canvas_for_color";
+	      canvas_for_color.style.display = "none";
+	      const ctx_for_color = canvas_for_color.getContext("2d");
+	      const refsToCleanup = [];
+	      function getColorNum(color_str) {
+	        ctx_for_color.fillStyle = color_str;
+	        const col = ctx_for_color.fillStyle;
+	        const col2 = col[1] + col[2] + col[3] + col[4] + col[5] + col[6] + col[7] + col[8];
+	        return parseInt(col2, 16);
+	      }
+	      trial.getColorNum = getColorNum;
+	      refsToCleanup.push("getColorNum");
+	      class psychophysics_stimulus {
+	        // so any option can be assigned to stimulus classes
+	        constructor(stim) {
+	          Object.assign(this, stim);
+	          const keys = Object.keys(this);
+	          for (var i = 0; i < keys.length; i++) {
+	            if (typeof this[keys[i]] === "function") {
+	              if (keys[i] === "drawFunc") continue;
+	              if (keys[i] === "change_attr") continue;
+	              if (keys[i] === "mask_func") continue;
+	              this[keys[i]] = this[keys[i]].call();
+	            }
 	          }
 	        }
 	      }
-	    }
-	    class visual_stimulus extends psychophysics_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (this.startX === "center") {
+	      class visual_stimulus extends psychophysics_stimulus {
+	        constructor(stim) {
+	          super(stim);
 	          if (this.origin_center) {
-	            this.startX = 0;
-	          } else {
-	            this.startX = centerX;
+	            this.startX = this.startX + centerX;
+	            this.startY = this.startY + centerY;
+	            if (this.endX !== null) this.endX = this.endX + centerX;
+	            if (this.endY !== null) this.endY = this.endY + centerY;
 	          }
+	          if (typeof this.motion_start_time === "undefined")
+	            this.motion_start_time = this.show_start_time;
+	          if (typeof this.motion_end_time === "undefined")
+	            this.motion_end_time = null;
+	          if (typeof this.motion_start_frame === "undefined")
+	            this.motion_start_frame = this.show_start_frame;
+	          if (typeof this.motion_end_frame === "undefined")
+	            this.motion_end_frame = null;
+	          if (trial.clear_canvas === false && this.show_end_time !== null)
+	            alert(
+	              "You can not specify the show_end_time with the clear_canvas property."
+	            );
+	          this.horiz_pix_sec = this.calc_pix_per_sec("horiz");
+	          this.vert_pix_sec = this.calc_pix_per_sec("vert");
+	          this.currentX = this.startX;
+	          this.currentY = this.startY;
 	        }
-	        if (this.startY === "center") {
-	          if (this.origin_center) {
-	            this.startY = 0;
+	        calc_pix_per_sec(direction) {
+	          let pix_sec, pix_frame, startPos, endPos;
+	          if (direction === "horiz") {
+	            pix_sec = this.horiz_pix_sec;
+	            pix_frame = this.horiz_pix_frame;
+	            startPos = this.startX;
+	            endPos = this.endX;
 	          } else {
-	            this.startY = centerY;
+	            pix_sec = this.vert_pix_sec;
+	            pix_frame = this.vert_pix_frame;
+	            startPos = this.startY;
+	            endPos = this.endY;
 	          }
+	          const motion_start_time = this.motion_start_time;
+	          const motion_end_time = this.motion_end_time;
+	          if ((typeof pix_sec !== "undefined" || typeof pix_frame !== "undefined") && endPos !== null && motion_end_time !== null) {
+	            alert(
+	              "You can not specify the speed, location, and time at the same time."
+	            );
+	            pix_sec = 0;
+	          }
+	          if (typeof pix_sec !== "undefined" || typeof pix_frame !== "undefined")
+	            return pix_sec;
+	          if (endPos === null) return 0;
+	          if (startPos === endPos) return 0;
+	          if (motion_end_time === null) {
+	            alert(
+	              "Please specify the motion_end_time or the velocity when you use the endX/Y property."
+	            );
+	            return 0;
+	          }
+	          return (endPos - startPos) / (motion_end_time / 1e3 - motion_start_time / 1e3);
 	        }
-	        if (this.endX === "center") {
-	          if (this.origin_center) {
-	            this.endX = 0;
+	        calc_current_position(direction, elapsed) {
+	          let pix_frame, pix_sec, current_pos, start_pos, end_pos;
+	          if (direction === "horiz") {
+	            pix_frame = this.horiz_pix_frame;
+	            pix_sec = this.horiz_pix_sec;
+	            current_pos = this.currentX;
+	            start_pos = this.startX;
+	            end_pos = this.endX;
 	          } else {
-	            this.endX = centerX;
+	            pix_frame = this.vert_pix_frame;
+	            pix_sec = this.vert_pix_sec;
+	            current_pos = this.currentY;
+	            start_pos = this.startY;
+	            end_pos = this.endY;
 	          }
-	        }
-	        if (this.endY === "center") {
-	          if (this.origin_center) {
-	            this.endY = 0;
-	          } else {
-	            this.endY = centerY;
-	          }
-	        }
-	        if (this.origin_center) {
-	          this.startX = this.startX + centerX;
-	          this.startY = this.startY + centerY;
-	          if (this.endX !== null) this.endX = this.endX + centerX;
-	          if (this.endY !== null) this.endY = this.endY + centerY;
-	        }
-	        if (typeof this.motion_start_time === "undefined")
-	          this.motion_start_time = this.show_start_time;
-	        if (typeof this.motion_end_time === "undefined")
-	          this.motion_end_time = null;
-	        if (typeof this.motion_start_frame === "undefined")
-	          this.motion_start_frame = this.show_start_frame;
-	        if (typeof this.motion_end_frame === "undefined")
-	          this.motion_end_frame = null;
-	        if (trial.clear_canvas === false && this.show_end_time !== null)
-	          alert(
-	            "You can not specify the show_end_time with the clear_canvas property."
-	          );
-	        this.horiz_pix_sec = this.calc_pix_per_sec("horiz");
-	        this.vert_pix_sec = this.calc_pix_per_sec("vert");
-	        this.currentX = this.startX;
-	        this.currentY = this.startY;
-	      }
-	      calc_pix_per_sec(direction) {
-	        let pix_sec, pix_frame, startPos, endPos;
-	        if (direction === "horiz") {
-	          pix_sec = this.horiz_pix_sec;
-	          pix_frame = this.horiz_pix_frame;
-	          startPos = this.startX;
-	          endPos = this.endX;
-	        } else {
-	          pix_sec = this.vert_pix_sec;
-	          pix_frame = this.vert_pix_frame;
-	          startPos = this.startY;
-	          endPos = this.endY;
-	        }
-	        const motion_start_time = this.motion_start_time;
-	        const motion_end_time = this.motion_end_time;
-	        if ((typeof pix_sec !== "undefined" || typeof pix_frame !== "undefined") && endPos !== null && motion_end_time !== null) {
-	          alert(
-	            "You can not specify the speed, location, and time at the same time."
-	          );
-	          pix_sec = 0;
-	        }
-	        if (typeof pix_sec !== "undefined" || typeof pix_frame !== "undefined")
-	          return pix_sec;
-	        if (endPos === null) return 0;
-	        if (startPos === endPos) return 0;
-	        if (motion_end_time === null) {
-	          alert(
-	            "Please specify the motion_end_time or the velocity when you use the endX/Y property."
-	          );
-	          return 0;
-	        }
-	        return (endPos - startPos) / (motion_end_time / 1e3 - motion_start_time / 1e3);
-	      }
-	      calc_current_position(direction, elapsed) {
-	        let pix_frame, pix_sec, current_pos, start_pos, end_pos;
-	        if (direction === "horiz") {
-	          pix_frame = this.horiz_pix_frame;
-	          pix_sec = this.horiz_pix_sec;
-	          current_pos = this.currentX;
-	          start_pos = this.startX;
-	          end_pos = this.endX;
-	        } else {
-	          pix_frame = this.vert_pix_frame;
-	          pix_sec = this.vert_pix_sec;
-	          current_pos = this.currentY;
-	          start_pos = this.startY;
-	          end_pos = this.endY;
-	        }
-	        const motion_start = this.is_frame ? this.motion_start_frame : this.motion_start_time;
-	        const motion_end = this.is_frame ? this.motion_end_frame : this.motion_end_time;
-	        if (elapsed < motion_start) return current_pos;
-	        if (motion_end !== null && elapsed >= motion_end) return current_pos;
-	        let ascending = true;
-	        if (typeof pix_frame === "undefined") {
-	          if (pix_sec < 0) ascending = false;
-	        } else {
-	          if (pix_frame < 0) ascending = false;
-	        }
-	        if (end_pos === null || ascending && current_pos <= end_pos || !ascending && current_pos >= end_pos) {
+	          const motion_start = this.is_frame ? this.motion_start_frame : this.motion_start_time;
+	          const motion_end = this.is_frame ? this.motion_end_frame : this.motion_end_time;
+	          if (elapsed < motion_start) return current_pos;
+	          if (motion_end !== null && elapsed >= motion_end) return current_pos;
+	          let ascending = true;
 	          if (typeof pix_frame === "undefined") {
-	            return start_pos + Math.round(pix_sec * (elapsed - motion_start) / 1e3);
+	            if (pix_sec < 0) ascending = false;
 	          } else {
-	            return current_pos + pix_frame;
+	            if (pix_frame < 0) ascending = false;
 	          }
-	        } else {
-	          return current_pos;
+	          if (end_pos === null || ascending && current_pos <= end_pos || !ascending && current_pos >= end_pos) {
+	            if (typeof pix_frame === "undefined") {
+	              return start_pos + Math.round(pix_sec * (elapsed - motion_start) / 1e3);
+	            } else {
+	              return current_pos + pix_frame;
+	            }
+	          } else {
+	            return current_pos;
+	          }
+	        }
+	        update_position(elapsed) {
+	          this.currentX = this.calc_current_position("horiz", elapsed);
+	          this.currentY = this.calc_current_position("vert", elapsed);
 	        }
 	      }
-	      update_position(elapsed) {
-	        this.currentX = this.calc_current_position("horiz", elapsed);
-	        this.currentY = this.calc_current_position("vert", elapsed);
-	      }
-	    }
-	    class image_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.file === "undefined") {
-	          alert("You have to specify the file property.");
-	          return;
-	        }
-	        this.img = new Image();
-	        this.img.src = this.file;
-	        this.img.onload = () => {
-	          const tmpRatio = trial.pixi ? 1 : window.devicePixelRatio;
-	          if (typeof this.mask === "undefined" && typeof this.filter === "undefined") {
-	            if (trial.pixi) {
-	              this.pixi_obj = PIXI__namespace.Sprite.from(this.file);
-	              if (typeof this.pixi_mask !== "undefined") {
-	                this.pixi_obj.mask = this.pixi_mask;
-	              }
-	              if (typeof this.pixi_filters !== "undefined") {
-	                this.pixi_obj.filters = this.pixi_filters;
-	              }
-	              init_pixi_obj(this.pixi_obj);
-	            }
-	            this.prepared = true;
+	      class image_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.file === "undefined") {
+	            alert("You have to specify the file property.");
 	            return;
 	          }
-	          if (document.getElementById("invisible_canvas") === null) {
-	            const canvas_element = document.createElement("canvas");
-	            canvas_element.id = "invisible_canvas";
-	            display_element.appendChild(canvas_element);
-	            canvas_element.style.display = "none";
-	          }
-	          const invisible_canvas = document.getElementById(
-	            "invisible_canvas"
-	          );
-	          const canvas_info = set_canvas(
-	            invisible_canvas,
-	            tmpRatio,
-	            this.img.width,
-	            this.img.height
-	          );
-	          const invisible_ctx = canvas_info.ctx;
-	          invisible_ctx.clearRect(
-	            0,
-	            0,
-	            invisible_canvas.width,
-	            invisible_canvas.height
-	          );
-	          if (typeof this.filter === "undefined") {
-	            invisible_ctx.filter = "none";
-	          } else {
-	            invisible_ctx.filter = this.filter;
-	          }
-	          invisible_ctx.drawImage(
-	            this.img,
-	            0,
-	            0,
-	            this.img.width,
-	            this.img.height
-	          );
-	          if (typeof this.mask === "undefined") {
-	            const invisible_img = invisible_ctx.getImageData(
-	              0,
-	              0,
-	              this.img.width * tmpRatio,
-	              this.img.height * tmpRatio
-	            );
-	            if (trial.pixi) {
-	              const filtered_texture = PIXI__namespace.Texture.fromBuffer(
-	                invisible_img.data,
-	                invisible_img.width,
-	                invisible_img.height
-	              );
-	              this.pixi_obj = new PIXI__namespace.Sprite(filtered_texture);
-	              init_pixi_obj(this.pixi_obj);
-	            } else {
-	              this.masking_img = invisible_img;
-	            }
-	            this.prepared = true;
-	            return;
-	          }
-	          if (this.mask === "manual") {
-	            if (this.mask_func === null) {
-	              alert(
-	                "You have to specify the mask_func when applying masking manually."
-	              );
-	              return;
-	            }
-	            const manual_img = this.mask_func(invisible_canvas);
-	            if (trial.pixi) {
-	              const manual_texture = PIXI__namespace.Texture.fromBuffer(
-	                manual_img.data,
-	                manual_img.width,
-	                manual_img.height
-	              );
-	              this.pixi_obj = new PIXI__namespace.Sprite(manual_texture);
-	              init_pixi_obj(this.pixi_obj);
-	            } else {
-	              this.masking_img = manual_img;
-	            }
-	            this.prepared = true;
-	            return;
-	          }
-	          if (this.mask === "gauss") {
-	            if (typeof this.width === "undefined") {
-	              alert(
-	                "You have to specify the width property for the gaussian mask. For example, 200."
-	              );
-	              return;
-	            }
-	            const gauss_width = this.width * tmpRatio;
-	            const invisible_img = invisible_ctx.getImageData(
-	              this.img.width * tmpRatio / 2 - gauss_width / 2,
-	              this.img.height * tmpRatio / 2 - gauss_width / 2,
-	              gauss_width,
-	              gauss_width
-	            );
-	            let coord_array = getNumbering(
-	              Math.round(0 - gauss_width / 2),
-	              gauss_width
-	            );
-	            let coord_matrix_x = [];
-	            for (let i = 0; i < gauss_width; i++) {
-	              coord_matrix_x.push(coord_array);
-	            }
-	            coord_array = getNumbering(
-	              Math.round(0 - gauss_width / 2),
-	              gauss_width
-	            );
-	            let coord_matrix_y = [];
-	            for (let i = 0; i < gauss_width; i++) {
-	              coord_matrix_y.push(coord_array);
-	            }
-	            let exp_value;
-	            const adjusted_sc = this.sc * tmpRatio;
-	            if (this.method === "math") {
-	              alert("The math method is not supported. Please use the ml-matrix method instead.");
-	            } else if (this.method === "numeric") {
-	              alert("The numeric method is not supported. Please use the ml-matrix method instead.");
-	            }
-	            if (this.method === "ml-matrix") {
-	              const matrix_x = new Matrix(coord_matrix_x);
-	              const matrix_y = new Matrix(coord_matrix_y).transpose();
-	              const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
-	              const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
-	              const varScale = 2 * Math.pow(adjusted_sc, 2);
-	              exp_value = Matrix.add(
-	                Matrix.divide(x_factor, varScale),
-	                Matrix.divide(y_factor, varScale)
-	              ).exp().to2DArray();
-	            }
-	            let cnt = 3;
-	            for (let i = 0; i < gauss_width; i++) {
-	              for (let j = 0; j < gauss_width; j++) {
-	                invisible_img.data[cnt] = exp_value[i][j] * 255;
-	                cnt = cnt + 4;
-	              }
-	            }
-	            if (trial.pixi) {
-	              const gauss_texture = PIXI__namespace.Texture.fromBuffer(
-	                invisible_img.data,
-	                invisible_img.width,
-	                invisible_img.height
-	              );
-	              this.pixi_obj = new PIXI__namespace.Sprite(gauss_texture);
-	              init_pixi_obj(this.pixi_obj);
-	            } else {
-	              this.masking_img = invisible_img;
-	            }
-	            this.prepared = true;
-	            return;
-	          }
-	          if (this.mask === "circle" || this.mask === "rect") {
-	            if (typeof this.width === "undefined") {
-	              alert(
-	                "You have to specify the width property for the circle/rect mask."
-	              );
-	              return;
-	            }
-	            if (typeof this.height === "undefined") {
-	              alert(
-	                "You have to specify the height property for the circle/rect mask."
-	              );
-	              return;
-	            }
-	            if (typeof this.center_x === "undefined") {
-	              alert(
-	                "You have to specify the center_x property for the circle/rect mask."
-	              );
-	              return;
-	            }
-	            if (typeof this.center_y === "undefined") {
-	              alert(
-	                "You have to specify the center_y property for the circle/rect mask."
-	              );
-	              return;
-	            }
-	            const oval_width = this.width * tmpRatio;
-	            const oval_height = this.height * tmpRatio;
-	            const oval_cx = this.center_x * tmpRatio;
-	            const oval_cy = this.center_y * tmpRatio;
-	            const invisible_img = invisible_ctx.getImageData(
-	              oval_cx - oval_width / 2,
-	              oval_cy - oval_height / 2,
-	              oval_width,
-	              oval_height
-	            );
-	            const cx = invisible_img.width / 2;
-	            const cy = invisible_img.height / 2;
-	            if (this.mask === "circle") {
-	              let cnt = 3;
-	              for (let j = 0; j < oval_height; j++) {
-	                for (let i = 0; i < oval_width; i++) {
-	                  const tmp = Math.pow(i - cx, 2) / Math.pow(cx, 2) + Math.pow(j - cy, 2) / Math.pow(cy, 2);
-	                  if (tmp > 1) {
-	                    invisible_img.data[cnt] = 0;
+	          this.img = new Image();
+	          this.img.src = this.file;
+	          this.img.onload = () => {
+	            const tmpRatio = trial.pixi_app !== null ? 1 : window.devicePixelRatio;
+	            if (typeof this.mask === "undefined" && typeof this.filter === "undefined") {
+	              if (trial.pixi_app !== null) {
+	                (async () => {
+	                  const texture = await PIXI__namespace.Assets.load(this.file);
+	                  const sprite = new PIXI__namespace.Sprite(texture);
+	                  if (this.pixi_mask !== null) {
+	                    sprite.addChild(this.pixi_mask);
+	                    sprite.mask = this.pixi_mask;
 	                  }
-	                  cnt = cnt + 4;
-	                }
+	                  if (this.pixi_filters !== null) {
+	                    sprite.filters = this.pixi_filters;
+	                  }
+	                  this.pixi_obj = sprite;
+	                  if (this.pixi_zIndex !== null) {
+	                    this.pixi_obj.zIndex = this.pixi_zIndex;
+	                  }
+	                  init_pixi_obj(this.pixi_obj);
+	                  this.prepared = true;
+	                })();
+	              } else {
+	                this.prepared = true;
 	              }
+	              return;
 	            }
-	            if (trial.pixi) {
-	              const cropped_texture = PIXI__namespace.Texture.fromBuffer(
-	                invisible_img.data,
-	                invisible_img.width,
-	                invisible_img.height
-	              );
-	              this.pixi_obj = new PIXI__namespace.Sprite(cropped_texture);
-	              init_pixi_obj(this.pixi_obj);
+	            if (document.getElementById("invisible_canvas") === null) {
+	              const canvas_element = document.createElement("canvas");
+	              canvas_element.id = "invisible_canvas";
+	              display_element.appendChild(canvas_element);
+	              canvas_element.style.display = "none";
+	            }
+	            const invisible_canvas = document.getElementById(
+	              "invisible_canvas"
+	            );
+	            const canvas_info = set_canvas(
+	              invisible_canvas,
+	              tmpRatio,
+	              this.img.width,
+	              this.img.height
+	            );
+	            const invisible_ctx = canvas_info.ctx;
+	            invisible_ctx.clearRect(
+	              0,
+	              0,
+	              invisible_canvas.width,
+	              invisible_canvas.height
+	            );
+	            if (typeof this.filter === "undefined") {
+	              invisible_ctx.filter = "none";
 	            } else {
-	              this.masking_img = invisible_img;
+	              invisible_ctx.filter = this.filter;
 	            }
-	            this.prepared = true;
-	            return;
-	          }
-	        };
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          if (typeof this.scale !== "undefined" && typeof this.image_width !== "undefined") {
-	            alert(
-	              "You can not specify the scale and image_width at the same time."
-	            );
-	          }
-	          if (typeof this.scale !== "undefined" && typeof this.image_height !== "undefined") {
-	            alert(
-	              "You can not specify the scale and image_height at the same time."
-	            );
-	          }
-	          if (typeof this.image_height !== "undefined" && typeof this.image_width !== "undefined") {
-	            alert(
-	              "You can not specify the image_height and image_width at the same time."
-	            );
-	          }
-	          let scale = 1;
-	          if (typeof this.scale !== "undefined") {
-	            scale = this.scale;
-	          }
-	          if (typeof this.image_width !== "undefined") {
-	            scale = this.image_width / this.img.width;
-	          }
-	          if (typeof this.image_height !== "undefined") {
-	            scale = this.image_height / this.img.height;
-	          }
-	          this.pixi_obj.scale.x = scale;
-	          this.pixi_obj.scale.y = scale;
-	          if (typeof this.pixi_angle !== "undefined") {
-	            this.pixi_obj.angle = this.pixi_angle;
-	          }
-	          if (typeof this.pixi_rotation !== "undefined") {
-	            this.pixi_obj.rotation = this.pixi_rotation;
-	          }
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (this.mask || this.filter) {
-	            ctx.putImageData(
-	              this.masking_img,
-	              this.currentX * window.devicePixelRatio - this.masking_img.width / 2,
-	              this.currentY * window.devicePixelRatio - this.masking_img.height / 2
-	            );
-	          } else {
-	            if (typeof this.scale !== "undefined" && typeof this.image_width !== "undefined")
-	              alert(
-	                "You can not specify the scale and image_width at the same time."
-	              );
-	            if (typeof this.scale !== "undefined" && typeof this.image_height !== "undefined")
-	              alert(
-	                "You can not specify the scale and image_height at the same time."
-	              );
-	            if (typeof this.image_height !== "undefined" && typeof this.image_width !== "undefined")
-	              alert(
-	                "You can not specify the image_height and image_width at the same time."
-	              );
-	            let scale = 1;
-	            if (typeof this.scale !== "undefined") scale = this.scale;
-	            if (typeof this.image_width !== "undefined")
-	              scale = this.image_width / this.img.width;
-	            if (typeof this.image_height !== "undefined")
-	              scale = this.image_height / this.img.height;
-	            const tmpW = this.img.width * scale;
-	            const tmpH = this.img.height * scale;
-	            ctx.drawImage(
+	            invisible_ctx.drawImage(
 	              this.img,
 	              0,
 	              0,
 	              this.img.width,
-	              this.img.height,
-	              this.currentX - tmpW / 2,
-	              this.currentY - tmpH / 2,
-	              tmpW,
-	              tmpH
+	              this.img.height
 	            );
-	          }
-	        }
-	      }
-	    }
-	    class gabor_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (!trial.pixi) {
-	          this.update_count = 0;
-	          this.prepared = true;
-	          return;
-	        }
-	        const fragmentSrc = `
-            precision mediump float;
-
-            uniform float Contrast;
-            uniform float Phase;
-            uniform float angle_in_degrees; // tilt
-            uniform float spatial_freq;
-            uniform float SpaceConstant;
-            uniform float disableNorm;
-            uniform float disableGauss;
-            uniform float modulateColor_R;
-            uniform float modulateColor_G;
-            uniform float modulateColor_B;
-            uniform float modulateColor_Alpha;
-            uniform float offset_R;
-            uniform float offset_G;
-            uniform float offset_B;
-            uniform float offset_Alpha;
-            uniform float centerX;
-            uniform float centerY;
-            uniform float contrastPreMultiplicator;
-            uniform float min_validModulationRange;
-            uniform float max_validModulationRange;
-
-            void main() {
-                const float twopi     = 2.0 * 3.141592654;
-                const float sqrtof2pi = 2.5066282746;
-                /* Conversion factor from degrees to radians: */
-                const float deg2rad = 3.141592654 / 180.0;
-                
-                float Angle = deg2rad * angle_in_degrees;
-                float FreqTwoPi = spatial_freq * twopi;
-                float Expmultiplier = -0.5 / (SpaceConstant * SpaceConstant);
-                float mc = disableNorm + (1.0 - disableNorm) * (1.0 / (sqrtof2pi * SpaceConstant));
-
-                vec3 modulateColor = vec3(modulateColor_R, modulateColor_G, modulateColor_B);
-
-                vec3 baseColor = modulateColor * mc * Contrast * contrastPreMultiplicator;
-
-                vec2 pos = gl_FragCoord.xy - vec2(centerX, centerY);
-
-                /* Compute (x,y) distance weighting coefficients, based on rotation angle: */
-                vec2 coeff = vec2(cos(Angle), sin(Angle)) * FreqTwoPi;
-
-                /* Evaluate sine grating at requested position, angle and phase: */
-                float sv = sin(dot(coeff, pos) + Phase);
-
-                /* Compute exponential hull for the gabor: */
-                float ev = disableGauss + (1.0 - disableGauss) * exp(dot(pos, pos) * Expmultiplier);
-
-                /* Multiply/Modulate base color and alpha with calculated sine/gauss      */
-                /* values, add some constant color/alpha Offset, assign as final fragment */
-                /* output color: */
-
-                vec4  Offset = vec4(offset_R, offset_G, offset_B, offset_Alpha);
-                        
-                // Be careful not to change the transparency. Note that the type of the baseColor valuable is vec3 not vec4.
-                gl_FragColor = vec4(baseColor * clamp(ev * sv, min_validModulationRange, max_validModulationRange), modulateColor_Alpha) + Offset;
-
-          }`;
-	        const gabor_width = this.width;
-	        const img_element = document.createElement("img");
-	        img_element.width = gabor_width;
-	        img_element.height = gabor_width;
-	        const gabor_sprite = PIXI__namespace.Sprite.from(img_element);
-	        gabor_sprite.visible = false;
-	        gabor_sprite.anchor.set(0.5);
-	        gabor_sprite.x = pixi_app.screen.width / 2;
-	        gabor_sprite.y = pixi_app.screen.height / 2;
-	        const uniforms = {
-	          Contrast: this.contrast,
-	          Phase: this.phase,
-	          angle_in_degrees: 90 + this.tilt,
-	          // Add 90 degrees for compatibility with previous versions.
-	          spatial_freq: this.sf,
-	          SpaceConstant: this.sc,
-	          disableNorm: this.disableNorm ? 1 : 0,
-	          disableGauss: this.disableGauss ? 1 : 0,
-	          modulateColor_R: this.modulate_color[0],
-	          modulateColor_G: this.modulate_color[1],
-	          modulateColor_B: this.modulate_color[2],
-	          modulateColor_Alpha: this.modulate_color[3],
-	          offset_R: this.offset_color[0],
-	          offset_G: this.offset_color[1],
-	          offset_B: this.offset_color[2],
-	          offset_Alpha: this.offset_color[3],
-	          centerX: pixi_app.screen.width / 2,
-	          centerY: pixi_app.screen.height / 2,
-	          contrastPreMultiplicator: this.contrastPreMultiplicator,
-	          min_validModulationRange: -2,
-	          max_validModulationRange: 2
-	        };
-	        const myFilter = new PIXI__namespace.Filter(null, fragmentSrc, uniforms);
-	        pixi_app.stage.addChild(gabor_sprite);
-	        gabor_sprite.filters = [myFilter];
-	        this.pixi_obj = gabor_sprite;
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.filters[0].uniforms.Phase += this.drift;
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.filters[0].uniforms.centerX = this.currentX;
-	          this.pixi_obj.filters[0].uniforms.centerY = pixi_app.screen.height - this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          ctx.putImageData(
-	            this.img_data,
-	            this.currentX * window.devicePixelRatio - this.img_data.width / 2,
-	            this.currentY * window.devicePixelRatio - this.img_data.height / 2
-	          );
-	        }
-	      }
-	      update_position(elapsed) {
-	        this.currentX = this.calc_current_position("horiz", elapsed);
-	        this.currentY = this.calc_current_position("vert", elapsed);
-	        if (trial.pixi) return;
-	        if (typeof this.img_data !== "undefined" && this.drift === 0) return;
-	        let gabor_data;
-	        const gabor_width = this.width * window.devicePixelRatio;
-	        let coord_array = getNumbering(
-	          Math.round(0 - gabor_width / 2),
-	          gabor_width
-	        );
-	        let coord_matrix_x = [];
-	        for (let i = 0; i < gabor_width; i++) {
-	          coord_matrix_x.push(coord_array);
-	        }
-	        coord_array = getNumbering(
-	          Math.round(0 - gabor_width / 2),
-	          gabor_width
-	        );
-	        let coord_matrix_y = [];
-	        for (let i = 0; i < gabor_width; i++) {
-	          coord_matrix_y.push(coord_array);
-	        }
-	        const tilt_rad = deg2rad(90 - this.tilt);
-	        const a = Math.cos(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI);
-	        const b = Math.sin(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI);
-	        const adjusted_sc = this.sc * window.devicePixelRatio;
-	        let multConst = 1 / (Math.sqrt(2 * Math.PI) * adjusted_sc);
-	        if (this.disableNorm) multConst = 1;
-	        const phase_rad = deg2rad(this.phase + this.drift * this.update_count);
-	        this.update_count += 1;
-	        if (this.method === "math") {
-	          alert("The math method is not supported. Please use the ml-matrix method instead.");
-	        } else if (this.method === "numeric") {
-	          alert("The numeric method is not supported. Please use the ml-matrix method instead.");
-	        }
-	        if (this.method === "ml-matrix") {
-	          const matrix_x = new Matrix(coord_matrix_x);
-	          const matrix_y = new Matrix(coord_matrix_y).transpose();
-	          const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
-	          const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
-	          const sinWave = Matrix.add(
-	            Matrix.multiply(matrix_x, a),
-	            Matrix.multiply(matrix_y, b)
-	          ).add(phase_rad).sin();
-	          const varScale = 2 * Math.pow(adjusted_sc, 2);
-	          const exp_value = this.disableGauss ? 1 : Matrix.add(
-	            Matrix.divide(x_factor, varScale),
-	            Matrix.divide(y_factor, varScale)
-	          ).exp();
-	          const tmp1 = Matrix.multiply(sinWave, exp_value);
-	          const tmp2 = Matrix.multiply(tmp1, multConst);
-	          const tmp3 = Matrix.multiply(
-	            Matrix.multiply(tmp2, this.contrastPreMultiplicator),
-	            this.contrast
-	          );
-	          const m = Matrix.multiply(Matrix.add(tmp3, 0.5), 256);
-	          gabor_data = m.to2DArray();
-	        }
-	        const imageData = ctx.createImageData(gabor_width, gabor_width);
-	        let cnt = 0;
-	        for (let i = 0; i < gabor_width; i++) {
-	          for (let j = 0; j < gabor_width; j++) {
-	            imageData.data[cnt] = Math.round(gabor_data[i][j]);
-	            cnt++;
-	            imageData.data[cnt] = Math.round(gabor_data[i][j]);
-	            cnt++;
-	            imageData.data[cnt] = Math.round(gabor_data[i][j]);
-	            cnt++;
-	            imageData.data[cnt] = 255;
-	            cnt++;
-	          }
-	        }
-	        this.img_data = imageData;
-	      }
-	    }
-	    class line_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.angle === "undefined") {
-	          if (typeof this.x1 === "undefined" || typeof this.x2 === "undefined" || typeof this.y1 === "undefined" || typeof this.y2 === "undefined") {
-	            alert(
-	              "You have to specify the angle of lines, or the start (x1, y1) and end (x2, y2) coordinates."
-	            );
-	            return;
-	          }
-	          this.startX = (this.x1 + this.x2) / 2;
-	          this.startY = (this.y1 + this.y2) / 2;
-	          if (this.origin_center) {
-	            this.startX = this.startX + centerX;
-	            this.startY = this.startY + centerY;
-	          }
-	          this.currentX = this.startX;
-	          this.currentY = this.startY;
-	          this.angle = Math.atan((this.y2 - this.y1) / (this.x2 - this.x1)) * (180 / Math.PI);
-	          this.line_length = Math.sqrt(
-	            (this.x2 - this.x1) ** 2 + (this.y2 - this.y1) ** 2
-	          );
-	        } else {
-	          if (typeof this.x1 !== "undefined" || typeof this.x2 !== "undefined" || typeof this.y1 !== "undefined" || typeof this.y2 !== "undefined")
-	            alert(
-	              "You can not specify the angle and positions of the line at the same time."
-	            );
-	          if (typeof this.line_length === "undefined")
-	            alert("You have to specify the line_length property.");
-	        }
-	        if (typeof this.line_color === "undefined") this.line_color = "black";
-	        if (trial.pixi) {
-	          this.pixi_obj = new PIXI__namespace.Graphics();
-	          this.pixi_obj.lineStyle({
-	            width: this.line_width,
-	            color: getColorNum(this.line_color),
-	            join: this.lineJoin,
-	            miterLimit: this.miterLimit
-	          });
-	          const theta = deg2rad(this.angle);
-	          const x1 = -this.line_length / 2 * Math.cos(theta);
-	          const y1 = -this.line_length / 2 * Math.sin(theta);
-	          const x2 = this.line_length / 2 * Math.cos(theta);
-	          const y2 = this.line_length / 2 * Math.sin(theta);
-	          this.pixi_obj.moveTo(x1, y1);
-	          this.pixi_obj.lineTo(x2, y2);
-	          this.pixi_obj.visible = false;
-	          pixi_app.stage.addChild(this.pixi_obj);
-	        }
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (typeof this.filter === "undefined") {
-	            ctx.filter = "none";
-	          } else {
-	            ctx.filter = this.filter;
-	          }
-	          ctx.beginPath();
-	          ctx.lineWidth = this.line_width;
-	          ctx.lineJoin = this.lineJoin;
-	          ctx.miterLimit = this.miterLimit;
-	          const theta = deg2rad(this.angle);
-	          const x1 = this.currentX - this.line_length / 2 * Math.cos(theta);
-	          const y1 = this.currentY - this.line_length / 2 * Math.sin(theta);
-	          const x2 = this.currentX + this.line_length / 2 * Math.cos(theta);
-	          const y2 = this.currentY + this.line_length / 2 * Math.sin(theta);
-	          ctx.strokeStyle = this.line_color;
-	          ctx.moveTo(x1, y1);
-	          ctx.lineTo(x2, y2);
-	          ctx.stroke();
-	        }
-	      }
-	    }
-	    class rect_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.width === "undefined")
-	          alert("You have to specify the width of the rectangle.");
-	        if (typeof this.height === "undefined")
-	          alert("You have to specify the height of the rectangle.");
-	        if (typeof this.line_color === "undefined" && typeof this.fill_color === "undefined")
-	          alert(
-	            "You have to specify the either of the line_color or fill_color property."
-	          );
-	        if (trial.pixi) {
-	          this.pixi_obj = new PIXI__namespace.Graphics();
-	          this.pixi_obj.lineStyle({
-	            width: this.line_width,
-	            color: getColorNum(this.line_color),
-	            join: this.lineJoin,
-	            miterLimit: this.miterLimit
-	          });
-	          if (typeof this.fill_color !== "undefined")
-	            this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
-	          this.pixi_obj.drawRect(
-	            -this.width / 2,
-	            -this.height / 2,
-	            this.width,
-	            this.height
-	          );
-	          if (typeof this.fill_color !== "undefined") this.pixi_obj.endFill();
-	          this.pixi_obj.visible = false;
-	          pixi_app.stage.addChild(this.pixi_obj);
-	        }
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (typeof this.filter === "undefined") {
-	            ctx.filter = "none";
-	          } else {
-	            ctx.filter = this.filter;
-	          }
-	          ctx.lineWidth = this.line_width;
-	          ctx.lineJoin = this.lineJoin;
-	          ctx.miterLimit = this.miterLimit;
-	          if (typeof this.fill_color !== "undefined") {
-	            ctx.fillStyle = this.fill_color;
-	            ctx.fillRect(
-	              this.currentX - this.width / 2,
-	              this.currentY - this.height / 2,
-	              this.width,
-	              this.height
-	            );
-	          }
-	          if (typeof this.line_color !== "undefined") {
-	            ctx.strokeStyle = this.line_color;
-	            ctx.strokeRect(
-	              this.currentX - this.width / 2,
-	              this.currentY - this.height / 2,
-	              this.width,
-	              this.height
-	            );
-	          }
-	        }
-	      }
-	    }
-	    class cross_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.line_length === "undefined")
-	          alert("You have to specify the line_length of the fixation cross.");
-	        if (typeof this.line_color === "undefined") this.line_color = "#000000";
-	        if (trial.pixi) {
-	          this.pixi_obj = new PIXI__namespace.Graphics();
-	          this.pixi_obj.lineStyle({
-	            width: this.line_width,
-	            color: getColorNum(this.line_color),
-	            join: this.lineJoin,
-	            miterLimit: this.miterLimit
-	          });
-	          const x1 = -this.line_length / 2;
-	          const y1 = 0;
-	          const x2 = this.line_length / 2;
-	          const y2 = 0;
-	          this.pixi_obj.moveTo(x1, y1);
-	          this.pixi_obj.lineTo(x2, y2);
-	          const x3 = 0;
-	          const y3 = -this.line_length / 2;
-	          const x4 = 0;
-	          const y4 = this.line_length / 2;
-	          this.pixi_obj.moveTo(x3, y3);
-	          this.pixi_obj.lineTo(x4, y4);
-	          this.pixi_obj.visible = false;
-	          pixi_app.stage.addChild(this.pixi_obj);
-	        }
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (typeof this.filter === "undefined") {
-	            ctx.filter = "none";
-	          } else {
-	            ctx.filter = this.filter;
-	          }
-	          ctx.beginPath();
-	          ctx.lineWidth = this.line_width;
-	          ctx.lineJoin = this.lineJoin;
-	          ctx.miterLimit = this.miterLimit;
-	          ctx.strokeStyle = this.line_color;
-	          const x1 = this.currentX;
-	          const y1 = this.currentY - this.line_length / 2;
-	          const x2 = this.currentX;
-	          const y2 = this.currentY + this.line_length / 2;
-	          ctx.moveTo(x1, y1);
-	          ctx.lineTo(x2, y2);
-	          const x3 = this.currentX - this.line_length / 2;
-	          const y3 = this.currentY;
-	          const x4 = this.currentX + this.line_length / 2;
-	          const y4 = this.currentY;
-	          ctx.moveTo(x3, y3);
-	          ctx.lineTo(x4, y4);
-	          ctx.stroke();
-	        }
-	      }
-	    }
-	    class circle_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.radius === "undefined")
-	          alert("You have to specify the radius of circles.");
-	        if (typeof this.line_color === "undefined" && typeof this.fill_color === "undefined")
-	          alert("You have to specify the either of line_color or fill_color.");
-	        if (!trial.pixi) {
-	          this.prepared = true;
-	          return;
-	        }
-	        this.pixi_obj = new PIXI__namespace.Graphics();
-	        this.pixi_obj.lineStyle({
-	          width: this.line_width,
-	          color: getColorNum(this.line_color),
-	          join: this.lineJoin,
-	          miterLimit: this.miterLimit
-	        });
-	        if (typeof this.fill_color !== "undefined")
-	          this.pixi_obj.beginFill(getColorNum(this.fill_color), 1);
-	        this.pixi_obj.drawCircle(0, 0, this.radius);
-	        if (typeof this.fill_color !== "undefined") this.pixi_obj.endFill();
-	        this.pixi_obj.visible = false;
-	        pixi_app.stage.addChild(this.pixi_obj);
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (typeof this.filter === "undefined") {
-	            ctx.filter = "none";
-	          } else {
-	            ctx.filter = this.filter;
-	          }
-	          ctx.beginPath();
-	          ctx.lineWidth = this.line_width;
-	          ctx.lineJoin = this.lineJoin;
-	          ctx.miterLimit = this.miterLimit;
-	          if (typeof this.fill_color !== "undefined") {
-	            ctx.fillStyle = this.fill_color;
-	            ctx.arc(
-	              this.currentX,
-	              this.currentY,
-	              this.radius,
-	              0,
-	              Math.PI * 2,
-	              false
-	            );
-	            ctx.fill();
-	          }
-	          if (typeof this.line_color !== "undefined") {
-	            ctx.strokeStyle = this.line_color;
-	            ctx.arc(
-	              this.currentX,
-	              this.currentY,
-	              this.radius,
-	              0,
-	              Math.PI * 2,
-	              false
-	            );
-	            ctx.stroke();
-	          }
-	        }
-	      }
-	    }
-	    class text_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.content === "undefined")
-	          alert("You have to specify the content of texts.");
-	        if (trial.pixi) {
-	          if (typeof this.text_space !== "undefined")
-	            alert(`You can't specify the text_space in Pixi mode.`);
-	          this.pixi_obj = new PIXI__namespace.Text(this.content);
-	          init_pixi_obj(this.pixi_obj);
-	          this.pixi_obj.style.align = "center";
-	          this.pixi_obj.style.fontFamily = this.fontFamily;
-	          this.pixi_obj.style.fontSize = this.fontSize;
-	          this.pixi_obj.style.fontStyle = this.fontStyle;
-	          this.pixi_obj.style.fontWeight = this.fontWeight;
-	          this.pixi_obj.style.fill = this.text_color;
-	          this.pixi_obj.style.lineJoin = this.lineJoin;
-	          this.pixi_obj.style.miterLimit = this.miterLimit;
-	          if (typeof this.pixi_angle !== "undefined") {
-	            this.pixi_obj.angle = this.pixi_angle;
-	          }
-	          if (typeof this.pixi_rotation !== "undefined") {
-	            this.pixi_obj.rotation = this.pixi_rotation;
-	          }
-	        } else {
-	          if (typeof this.text_space === "undefined") this.text_space = 20;
-	          let font_info = "";
-	          font_info = font_info + " " + this.fontStyle;
-	          font_info = font_info + " " + this.fontWeight;
-	          font_info = font_info + " " + this.fontSize;
-	          font_info = font_info + " " + this.fontFamily;
-	          if (typeof this.font === "undefined") this.font = font_info;
-	        }
-	        this.prepared = true;
-	      }
-	      show() {
-	        if (trial.pixi) {
-	          this.pixi_obj.x = this.currentX;
-	          this.pixi_obj.y = this.currentY;
-	          this.pixi_obj.visible = true;
-	        } else {
-	          if (typeof this.filter === "undefined") {
-	            ctx.filter = "none";
-	          } else {
-	            ctx.filter = this.filter;
-	          }
-	          ctx.lineWidth = this.line_width;
-	          ctx.lineJoin = this.lineJoin;
-	          ctx.miterLimit = this.miterLimit;
-	          ctx.font = this.font;
-	          ctx.textAlign = "center";
-	          ctx.textBaseline = "middle";
-	          let column = [""];
-	          let line = 0;
-	          for (let i = 0; i < this.content.length; i++) {
-	            let char = this.content.charAt(i);
-	            if (char == "\n") {
-	              line++;
-	              column[line] = "";
-	            } else {
-	              column[line] += char;
+	            if (typeof this.mask === "undefined") {
+	              const invisible_img = invisible_ctx.getImageData(
+	                0,
+	                0,
+	                this.img.width * tmpRatio,
+	                this.img.height * tmpRatio
+	              );
+	              if (trial.pixi_app !== null) {
+	                const filtered_texture = PIXI__namespace.Texture.from({
+	                  resource: invisible_img.data,
+	                  width: invisible_img.width,
+	                  height: invisible_img.height
+	                });
+	                this.pixi_obj = new PIXI__namespace.Sprite(filtered_texture);
+	                init_pixi_obj(this.pixi_obj);
+	              } else {
+	                this.masking_img = invisible_img;
+	              }
+	              this.prepared = true;
+	              return;
 	            }
-	          }
-	          let draw_stroke = typeof this.stroke_color !== "undefined" || typeof this.stroke_weight !== "undefined" && this.stroke_weight > 0;
-	          for (let i = 0; i < column.length; i++) {
-	            ctx.fillStyle = this.text_color;
-	            ctx.fillText(
-	              column[i],
-	              this.currentX,
-	              this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
-	            );
-	            if (draw_stroke) {
-	              ctx.strokeStyle = this.stroke_color;
-	              ctx.lineWidth = this.stroke_width;
-	              ctx.strokeText(
-	                column[i],
-	                this.currentX,
-	                this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
+	            if (this.mask === "manual") {
+	              if (this.mask_func === null) {
+	                alert(
+	                  "You have to specify the mask_func when applying masking manually."
+	                );
+	                return;
+	              }
+	              const manual_img = this.mask_func(invisible_canvas);
+	              if (trial.pixi_app !== null) {
+	                const manual_texture = PIXI__namespace.Texture.from({
+	                  resource: manual_img.data,
+	                  width: manual_img.width,
+	                  height: manual_img.height
+	                });
+	                this.pixi_obj = new PIXI__namespace.Sprite(manual_texture);
+	                init_pixi_obj(this.pixi_obj);
+	              } else {
+	                this.masking_img = manual_img;
+	              }
+	              this.prepared = true;
+	              return;
+	            }
+	            if (this.mask === "gauss") {
+	              if (typeof this.width === "undefined") {
+	                alert(
+	                  "You have to specify the width property for the gaussian mask. For example, 200."
+	                );
+	                return;
+	              }
+	              const gauss_width = this.width * tmpRatio;
+	              const invisible_img = invisible_ctx.getImageData(
+	                this.img.width * tmpRatio / 2 - gauss_width / 2,
+	                this.img.height * tmpRatio / 2 - gauss_width / 2,
+	                gauss_width,
+	                gauss_width
+	              );
+	              let coord_array = getNumbering(
+	                Math.round(0 - gauss_width / 2),
+	                gauss_width
+	              );
+	              let coord_matrix_x = [];
+	              for (let i = 0; i < gauss_width; i++) {
+	                coord_matrix_x.push(coord_array);
+	              }
+	              coord_array = getNumbering(
+	                Math.round(0 - gauss_width / 2),
+	                gauss_width
+	              );
+	              let coord_matrix_y = [];
+	              for (let i = 0; i < gauss_width; i++) {
+	                coord_matrix_y.push(coord_array);
+	              }
+	              let exp_value;
+	              const adjusted_sc = this.sc * tmpRatio;
+	              if (this.method === "math") {
+	                alert("The math method is not supported. Please use the ml-matrix method instead.");
+	              } else if (this.method === "numeric") {
+	                alert("The numeric method is not supported. Please use the ml-matrix method instead.");
+	              }
+	              if (this.method === "ml-matrix") {
+	                const matrix_x = new Matrix(coord_matrix_x);
+	                const matrix_y = new Matrix(coord_matrix_y).transpose();
+	                const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
+	                const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
+	                const varScale = 2 * Math.pow(adjusted_sc, 2);
+	                exp_value = Matrix.add(
+	                  Matrix.divide(x_factor, varScale),
+	                  Matrix.divide(y_factor, varScale)
+	                ).exp().to2DArray();
+	              }
+	              let cnt = 3;
+	              for (let i = 0; i < gauss_width; i++) {
+	                for (let j = 0; j < gauss_width; j++) {
+	                  invisible_img.data[cnt] = exp_value[i][j] * 255;
+	                  cnt = cnt + 4;
+	                }
+	              }
+	              if (trial.pixi_app !== null) {
+	                const gauss_texture = PIXI__namespace.Texture.from({
+	                  resource: invisible_img.data,
+	                  width: invisible_img.width,
+	                  height: invisible_img.height
+	                });
+	                this.pixi_obj = new PIXI__namespace.Sprite(gauss_texture);
+	                init_pixi_obj(this.pixi_obj);
+	              } else {
+	                this.masking_img = invisible_img;
+	              }
+	              this.prepared = true;
+	              return;
+	            }
+	            if (this.mask === "circle" || this.mask === "rect") {
+	              if (typeof this.width === "undefined") {
+	                alert(
+	                  "You have to specify the width property for the circle/rect mask."
+	                );
+	                return;
+	              }
+	              if (typeof this.height === "undefined") {
+	                alert(
+	                  "You have to specify the height property for the circle/rect mask."
+	                );
+	                return;
+	              }
+	              if (typeof this.center_x === "undefined") {
+	                alert(
+	                  "You have to specify the center_x property for the circle/rect mask."
+	                );
+	                return;
+	              }
+	              if (typeof this.center_y === "undefined") {
+	                alert(
+	                  "You have to specify the center_y property for the circle/rect mask."
+	                );
+	                return;
+	              }
+	              const oval_width = this.width * tmpRatio;
+	              const oval_height = this.height * tmpRatio;
+	              const oval_cx = this.center_x * tmpRatio;
+	              const oval_cy = this.center_y * tmpRatio;
+	              const invisible_img = invisible_ctx.getImageData(
+	                oval_cx - oval_width / 2,
+	                oval_cy - oval_height / 2,
+	                oval_width,
+	                oval_height
+	              );
+	              const cx = invisible_img.width / 2;
+	              const cy = invisible_img.height / 2;
+	              if (this.mask === "circle") {
+	                let cnt = 3;
+	                for (let j = 0; j < oval_height; j++) {
+	                  for (let i = 0; i < oval_width; i++) {
+	                    const tmp = Math.pow(i - cx, 2) / Math.pow(cx, 2) + Math.pow(j - cy, 2) / Math.pow(cy, 2);
+	                    if (tmp > 1) {
+	                      invisible_img.data[cnt] = 0;
+	                    }
+	                    cnt = cnt + 4;
+	                  }
+	                }
+	              }
+	              if (trial.pixi_app !== null) {
+	                const cropped_texture = PIXI__namespace.Texture.from({
+	                  resource: invisible_img.data,
+	                  width: invisible_img.width,
+	                  height: invisible_img.height
+	                });
+	                this.pixi_obj = new PIXI__namespace.Sprite(cropped_texture);
+	                init_pixi_obj(this.pixi_obj);
+	              } else {
+	                this.masking_img = invisible_img;
+	              }
+	              this.prepared = true;
+	              return;
+	            }
+	          };
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            if (typeof this.scale !== "undefined" && typeof this.image_width !== "undefined") {
+	              alert(
+	                "You can not specify the scale and image_width at the same time."
+	              );
+	            }
+	            if (typeof this.scale !== "undefined" && typeof this.image_height !== "undefined") {
+	              alert(
+	                "You can not specify the scale and image_height at the same time."
+	              );
+	            }
+	            if (typeof this.image_height !== "undefined" && typeof this.image_width !== "undefined") {
+	              alert(
+	                "You can not specify the image_height and image_width at the same time."
+	              );
+	            }
+	            let scale = 1;
+	            if (typeof this.scale !== "undefined") {
+	              scale = this.scale;
+	            }
+	            if (typeof this.image_width !== "undefined") {
+	              scale = this.image_width / this.img.width;
+	            }
+	            if (typeof this.image_height !== "undefined") {
+	              scale = this.image_height / this.img.height;
+	            }
+	            this.pixi_obj.scale.x = scale;
+	            this.pixi_obj.scale.y = scale;
+	            if (this.pixi_angle !== null) {
+	              this.pixi_obj.angle = this.pixi_angle;
+	            }
+	            if (this.pixi_rotation !== null) {
+	              this.pixi_obj.rotation = this.pixi_rotation;
+	            }
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (this.mask || this.filter) {
+	              ctx.putImageData(
+	                this.masking_img,
+	                this.currentX * window.devicePixelRatio - this.masking_img.width / 2,
+	                this.currentY * window.devicePixelRatio - this.masking_img.height / 2
+	              );
+	            } else {
+	              if (typeof this.scale !== "undefined" && typeof this.image_width !== "undefined")
+	                alert(
+	                  "You can not specify the scale and image_width at the same time."
+	                );
+	              if (typeof this.scale !== "undefined" && typeof this.image_height !== "undefined")
+	                alert(
+	                  "You can not specify the scale and image_height at the same time."
+	                );
+	              if (typeof this.image_height !== "undefined" && typeof this.image_width !== "undefined")
+	                alert(
+	                  "You can not specify the image_height and image_width at the same time."
+	                );
+	              let scale = 1;
+	              if (typeof this.scale !== "undefined") scale = this.scale;
+	              if (typeof this.image_width !== "undefined")
+	                scale = this.image_width / this.img.width;
+	              if (typeof this.image_height !== "undefined")
+	                scale = this.image_height / this.img.height;
+	              const tmpW = this.img.width * scale;
+	              const tmpH = this.img.height * scale;
+	              ctx.drawImage(
+	                this.img,
+	                0,
+	                0,
+	                this.img.width,
+	                this.img.height,
+	                this.currentX - tmpW / 2,
+	                this.currentY - tmpH / 2,
+	                tmpW,
+	                tmpH
 	              );
 	            }
 	          }
 	        }
 	      }
-	    }
-	    class manual_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        this.prepared = true;
-	      }
-	      show() {
-	      }
-	    }
-	    class pixi_stimulus extends visual_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (!trial.pixi) {
-	          alert(
-	            "To use Pixi objects, the pixi property of the psychophysics plugin must be set to true."
-	          );
-	          return;
-	        }
-	        this.pixi_obj.visible = false;
-	        pixi_app.stage.addChild(this.pixi_obj);
-	        this.prepared = true;
-	      }
-	      show() {
-	        this.pixi_obj.x = this.currentX;
-	        this.pixi_obj.y = this.currentY;
-	        this.pixi_obj.visible = true;
-	      }
-	    }
-	    function init_pixi_obj(obj) {
-	      obj.anchor.set(0.5);
-	      obj.visible = false;
-	      pixi_app.stage.addChild(obj);
-	    }
-	    const jsPsych = this.jsPsych;
-	    class audio_stimulus extends psychophysics_stimulus {
-	      constructor(stim) {
-	        super(stim);
-	        if (typeof this.file === "undefined") {
-	          alert("You have to specify the file property.");
-	          return;
-	        }
-	        jsPsych.pluginAPI.getAudioPlayer(this.file).then((buffer) => {
-	          this.audio = buffer;
-	          this.prepared = true;
-	          if (this.trial_ends_after_audio) {
-	            this.audio.addEventListener("ended", end_trial);
-	          }
-	        }).catch(
-	          (err) => {
-	            console.error(
-	              `Failed to load audio file "${this.file}". Try checking the file path. We recommend using the preload plugin to load audio files.`
-	            );
-	            console.error(err);
-	          }
-	        );
-	      }
-	      play() {
-	        this.audio.play();
-	      }
-	      stop() {
-	        this.audio.stop();
-	        this.audio.removeEventListener("ended", end_trial);
-	      }
-	    }
-	    if (typeof trial.stepFunc !== "undefined")
-	      alert(
-	        `The stepFunc is no longer supported. Please use the raf_func instead.`
-	      );
-	    const elm_jspsych_content = document.getElementById("jspsych-content");
-	    const style_jspsych_content = window.getComputedStyle(elm_jspsych_content);
-	    const default_maxWidth = style_jspsych_content.maxWidth;
-	    elm_jspsych_content.style.maxWidth = "none";
-	    if (trial.canvas_width === null)
-	      trial.canvas_width = window.innerWidth - trial.canvas_offsetX;
-	    if (trial.canvas_height === null)
-	      trial.canvas_height = window.innerHeight - trial.canvas_offsetY;
-	    let pixi_app;
-	    let new_html = "";
-	    const canvas_exist = document.getElementById("myCanvas") === null ? false : true;
-	    if (!canvas_exist && trial.upper_prompt !== null) {
-	      new_html += trial.upper_prompt;
-	    }
-	    if (!canvas_exist) {
-	      if (trial.pixi) {
-	        pixi_app = new PIXI__namespace.Application({
-	          width: trial.canvas_width,
-	          height: trial.canvas_height,
-	          backgroundColor: getColorNum(trial.background_color)
-	          // antialias: true,
-	          // resolution: window.devicePixelRatio || 1,
-	        });
-	        display_element.appendChild(pixi_app.view);
-	      } else {
-	        new_html += '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + " height=" + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
-	      }
-	    }
-	    const motion_rt_method = "performance";
-	    let start_time;
-	    let keyboardListener;
-	    let response_flag = false;
-	    this.jsPsych.pluginAPI.setTimeout(() => {
-	      response_flag = true;
-	      if (trial.response_type === "key") {
-	        if (trial.choices != "NO_KEYS") {
-	          keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
-	            callback_function: after_response,
-	            valid_responses: trial.choices,
-	            rt_method: motion_rt_method,
-	            persist: false,
-	            allow_held_key: false
-	          });
-	        }
-	      } else if (trial.response_type === "mouse") {
-	        start_time = performance.now();
-	        canvas.addEventListener("mousedown", mouseDownFunc);
-	      } else {
-	        start_time = performance.now();
-	      }
-	    }, trial.response_start_time);
-	    if (!canvas_exist && trial.prompt !== null) {
-	      new_html += trial.prompt;
-	    }
-	    if (!canvas_exist && trial.lower_prompt !== null) {
-	      new_html += trial.lower_prompt;
-	    }
-	    display_element.insertAdjacentHTML("beforeend", new_html);
-	    if (!canvas_exist && trial.response_type === "button") {
-	      const buttonGroupElement = document.createElement("div");
-	      buttonGroupElement.id = "jspsych-html-button-response-btngroup";
-	      if (trial.button_layout === "grid") {
-	        buttonGroupElement.classList.add("jspsych-btn-group-grid");
-	        if (trial.grid_rows === null && trial.grid_columns === null) {
-	          throw new Error(
-	            "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
-	          );
-	        }
-	        const n_cols = trial.grid_columns === null ? Math.ceil(trial.button_choices.length / trial.grid_rows) : trial.grid_columns;
-	        const n_rows = trial.grid_rows === null ? Math.ceil(trial.button_choices.length / trial.grid_columns) : trial.grid_rows;
-	        buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
-	        buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
-	      } else if (trial.button_layout === "flex") {
-	        buttonGroupElement.classList.add("jspsych-btn-group-flex");
-	      }
-	      for (const [choiceIndex, choice] of trial.button_choices.entries()) {
-	        buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
-	        const buttonElement = buttonGroupElement.lastChild;
-	        buttonElement.dataset.choice = choiceIndex.toString();
-	        buttonElement.addEventListener("click", () => {
-	          after_response({
-	            key: -1,
-	            rt: performance.now() - start_time,
-	            button: choiceIndex
-	          });
-	        });
-	      }
-	      display_element.appendChild(buttonGroupElement);
-	    }
-	    const canvas = trial.pixi === true ? pixi_app.view : document.getElementById("myCanvas");
-	    if (!canvas || !canvas.getContext) {
-	      alert("This browser does not support the canvas element.");
-	      return;
-	    }
-	    let centerX;
-	    let centerY;
-	    let ctx;
-	    function set_canvas(canvas2, ratio, width, height) {
-	      const ctx2 = canvas2.getContext("2d");
-	      const canvas_scale = ratio;
-	      canvas2.style.width = width + "px";
-	      canvas2.style.height = height + "px";
-	      if (!canvas_exist) {
-	        canvas2.width = width * canvas_scale;
-	        canvas2.height = height * canvas_scale;
-	        ctx2.scale(canvas_scale, canvas_scale);
-	      }
-	      const centerX2 = canvas2.width / 2 / canvas_scale;
-	      const centerY2 = canvas2.height / 2 / canvas_scale;
-	      return {
-	        ctx: ctx2,
-	        centerX: centerX2,
-	        centerY: centerY2
-	      };
-	    }
-	    if (trial.pixi) {
-	      centerX = pixi_app.screen.width / 2;
-	      centerY = pixi_app.screen.height / 2;
-	    } else {
-	      const canvas_info = set_canvas(
-	        canvas,
-	        window.devicePixelRatio,
-	        trial.canvas_width,
-	        trial.canvas_height
-	      );
-	      centerX = canvas_info.centerX;
-	      centerY = canvas_info.centerY;
-	      ctx = canvas_info.ctx;
-	      trial.context = ctx;
-	      refsToCleanup.push("context");
-	    }
-	    trial.canvas = canvas;
-	    refsToCleanup.push("canvas");
-	    trial.centerX = centerX;
-	    trial.centerY = centerY;
-	    refsToCleanup.push("centerX");
-	    refsToCleanup.push("centerY");
-	    if (trial.mouse_down_func !== null) {
-	      canvas.addEventListener("mousedown", trial.mouse_down_func);
-	    }
-	    if (trial.mouse_move_func !== null) {
-	      canvas.addEventListener("mousemove", trial.mouse_move_func);
-	    }
-	    if (trial.mouse_up_func !== null) {
-	      canvas.addEventListener("mouseup", trial.mouse_up_func);
-	    }
-	    if (trial.key_down_func !== null) {
-	      document.addEventListener("keydown", trial.key_down_func);
-	    }
-	    if (trial.key_up_func !== null) {
-	      document.addEventListener("keyup", trial.key_up_func);
-	    }
-	    if (trial.touchstart_func !== null) {
-	      canvas.addEventListener("touchstart", trial.touchstart_func);
-	    }
-	    if (trial.touchend_func !== null) {
-	      canvas.addEventListener("touchend", trial.touchend_func);
-	    }
-	    if (trial.touchcancel_func !== null) {
-	      canvas.addEventListener("touchcancel", trial.touchcancel_func);
-	    }
-	    if (trial.touchmove_func !== null) {
-	      canvas.addEventListener("touchmove", trial.touchmove_func);
-	    }
-	    if (typeof trial.stimuli === "undefined" && trial.raf_func === null) {
-	      alert(
-	        "You have to specify the stimuli/raf_func parameter in the psychophysics plugin."
-	      );
-	      return;
-	    }
-	    const set_instance = {
-	      sound: audio_stimulus,
-	      image: image_stimulus,
-	      line: line_stimulus,
-	      rect: rect_stimulus,
-	      circle: circle_stimulus,
-	      text: text_stimulus,
-	      cross: cross_stimulus,
-	      manual: manual_stimulus,
-	      gabor: gabor_stimulus,
-	      pixi: pixi_stimulus
-	    };
-	    if (typeof trial.stimuli !== "undefined") {
-	      for (let i = 0; i < trial.stimuli.length; i++) {
-	        const stim = trial.stimuli[i];
-	        if (typeof stim.obj_type === "undefined") {
-	          alert(
-	            "You have missed to specify the obj_type property in the " + (i + 1) + "th object."
-	          );
-	          return;
-	        }
-	        stim.instance = new set_instance[stim.obj_type](stim);
-	      }
-	    }
-	    function mouseDownFunc(e) {
-	      let click_time;
-	      click_time = performance.now();
-	      e.preventDefault();
-	      after_response({
-	        key: -1,
-	        rt: click_time - start_time,
-	        // clickX: e.clientX,
-	        // clickY: e.clientY,
-	        clickX: e.offsetX,
-	        clickY: e.offsetY
-	      });
-	    }
-	    let startStep = null;
-	    let sumOfStep;
-	    let elapsedTime;
-	    let prepare_check = true;
-	    function step(timestamp) {
-	      if (prepare_check) {
-	        for (let i = 0; i < trial.stimuli.length; i++) {
-	          if (!trial.stimuli[i].instance.prepared) {
-	            frameRequestID = window.requestAnimationFrame(step);
+	      class gabor_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (trial.pixi_app === null) {
+	            this.update_count = 0;
+	            this.prepared = true;
 	            return;
 	          }
+	          const fragmentSrc = `
+              precision mediump float;
+
+              uniform float Contrast;
+              uniform float Phase;
+              uniform float angle_in_degrees; // tilt
+              uniform float spatial_freq;
+              uniform float SpaceConstant;
+              uniform float disableNorm;
+              uniform float disableGauss;
+              uniform float modulateColor_R;
+              uniform float modulateColor_G;
+              uniform float modulateColor_B;
+              uniform float modulateColor_Alpha;
+              uniform float offset_R;
+              uniform float offset_G;
+              uniform float offset_B;
+              uniform float offset_Alpha;
+              uniform float centerX;
+              uniform float centerY;
+              uniform float contrastPreMultiplicator;
+              uniform float min_validModulationRange;
+              uniform float max_validModulationRange;
+
+              void main() {
+                  const float twopi     = 2.0 * 3.141592654;
+                  const float sqrtof2pi = 2.5066282746;
+                  /* Conversion factor from degrees to radians: */
+                  const float deg2rad = 3.141592654 / 180.0;
+                  
+                  float Angle = deg2rad * angle_in_degrees;
+                  float FreqTwoPi = spatial_freq * twopi;
+                  float Expmultiplier = -0.5 / (SpaceConstant * SpaceConstant);
+                  float mc = disableNorm + (1.0 - disableNorm) * (1.0 / (sqrtof2pi * SpaceConstant));
+
+                  vec3 modulateColor = vec3(modulateColor_R, modulateColor_G, modulateColor_B);
+
+                  vec3 baseColor = modulateColor * mc * Contrast * contrastPreMultiplicator;
+
+                  vec2 pos = gl_FragCoord.xy - vec2(centerX, centerY);
+
+                  /* Compute (x,y) distance weighting coefficients, based on rotation angle: */
+                  vec2 coeff = vec2(cos(Angle), sin(Angle)) * FreqTwoPi;
+
+                  /* Evaluate sine grating at requested position, angle and phase: */
+                  float sv = sin(dot(coeff, pos) + Phase);
+
+                  /* Compute exponential hull for the gabor: */
+                  float ev = disableGauss + (1.0 - disableGauss) * exp(dot(pos, pos) * Expmultiplier);
+
+                  /* Multiply/Modulate base color and alpha with calculated sine/gauss      */
+                  /* values, add some constant color/alpha Offset, assign as final fragment */
+                  /* output color: */
+
+                  vec4  Offset = vec4(offset_R, offset_G, offset_B, offset_Alpha);
+                          
+                  // Be careful not to change the transparency. Note that the type of the baseColor valuable is vec3 not vec4.
+                  gl_FragColor = vec4(baseColor * clamp(ev * sv, min_validModulationRange, max_validModulationRange), modulateColor_Alpha) + Offset;
+
+            }`;
+	          const gabor_width = this.width;
+	          const gabor_sprite = new PIXI__namespace.Sprite(PIXI__namespace.Texture.EMPTY);
+	          gabor_sprite.width = gabor_width;
+	          gabor_sprite.height = gabor_width;
+	          gabor_sprite.visible = false;
+	          gabor_sprite.anchor.set(0.5);
+	          gabor_sprite.x = trial.pixi_app().screen.width / 2;
+	          gabor_sprite.y = trial.pixi_app().screen.height / 2;
+	          const uniforms = new PIXI__namespace.UniformGroup({
+	            Contrast: { value: this.contrast, type: "f32" },
+	            Phase: { value: this.phase, type: "f32" },
+	            angle_in_degrees: { value: 90 + this.tilt, type: "f32" },
+	            spatial_freq: { value: this.sf, type: "f32" },
+	            SpaceConstant: { value: this.sc, type: "f32" },
+	            disableNorm: { value: this.disableNorm ? 1 : 0, type: "f32" },
+	            disableGauss: { value: this.disableGauss ? 1 : 0, type: "f32" },
+	            modulateColor_R: { value: this.modulate_color[0], type: "f32" },
+	            modulateColor_G: { value: this.modulate_color[1], type: "f32" },
+	            modulateColor_B: { value: this.modulate_color[2], type: "f32" },
+	            modulateColor_Alpha: { value: this.modulate_color[3], type: "f32" },
+	            offset_R: { value: this.offset_color[0], type: "f32" },
+	            offset_G: { value: this.offset_color[1], type: "f32" },
+	            offset_B: { value: this.offset_color[2], type: "f32" },
+	            offset_Alpha: { value: this.offset_color[3], type: "f32" },
+	            centerX: { value: trial.pixi_app().screen.width / 2, type: "f32" },
+	            centerY: { value: trial.pixi_app().screen.height / 2, type: "f32" },
+	            contrastPreMultiplicator: { value: this.contrastPreMultiplicator, type: "f32" },
+	            min_validModulationRange: { value: -2, type: "f32" },
+	            max_validModulationRange: { value: 2, type: "f32" }
+	          });
+	          const myFilter = PIXI__namespace.Filter.from({
+	            gl: {
+	              vertex: PIXI__namespace.defaultFilterVert,
+	              fragment: fragmentSrc
+	            },
+	            resources: {
+	              uUniforms: uniforms
+	            }
+	          });
+	          trial.pixi_app().stage.addChild(gabor_sprite);
+	          gabor_sprite.filters = [myFilter];
+	          this.pixi_obj = gabor_sprite;
+	          if (this.pixi_zIndex !== null) {
+	            this.pixi_obj.zIndex = this.pixi_zIndex;
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.filters[0].resources.uUniforms.uniforms.Phase += this.drift;
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.filters[0].resources.uUniforms.uniforms.centerX = this.currentX;
+	            this.pixi_obj.filters[0].resources.uUniforms.uniforms.centerY = trial.pixi_app().screen.height - this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            ctx.putImageData(
+	              this.img_data,
+	              this.currentX * window.devicePixelRatio - this.img_data.width / 2,
+	              this.currentY * window.devicePixelRatio - this.img_data.height / 2
+	            );
+	          }
+	        }
+	        update_position(elapsed) {
+	          this.currentX = this.calc_current_position("horiz", elapsed);
+	          this.currentY = this.calc_current_position("vert", elapsed);
+	          if (trial.pixi_app !== null) return;
+	          if (typeof this.img_data !== "undefined" && this.drift === 0) return;
+	          let gabor_data;
+	          const gabor_width = this.width * window.devicePixelRatio;
+	          let coord_array = getNumbering(
+	            Math.round(0 - gabor_width / 2),
+	            gabor_width
+	          );
+	          let coord_matrix_x = [];
+	          for (let i = 0; i < gabor_width; i++) {
+	            coord_matrix_x.push(coord_array);
+	          }
+	          coord_array = getNumbering(
+	            Math.round(0 - gabor_width / 2),
+	            gabor_width
+	          );
+	          let coord_matrix_y = [];
+	          for (let i = 0; i < gabor_width; i++) {
+	            coord_matrix_y.push(coord_array);
+	          }
+	          const tilt_rad = deg2rad(90 - this.tilt);
+	          const a = Math.cos(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI);
+	          const b = Math.sin(tilt_rad) * this.sf / window.devicePixelRatio * (2 * Math.PI);
+	          const adjusted_sc = this.sc * window.devicePixelRatio;
+	          let multConst = 1 / (Math.sqrt(2 * Math.PI) * adjusted_sc);
+	          if (this.disableNorm) multConst = 1;
+	          const phase_rad = deg2rad(this.phase + this.drift * this.update_count);
+	          this.update_count += 1;
+	          if (this.method === "math") {
+	            alert("The math method is not supported. Please use the ml-matrix method instead.");
+	          } else if (this.method === "numeric") {
+	            alert("The numeric method is not supported. Please use the ml-matrix method instead.");
+	          }
+	          if (this.method === "ml-matrix") {
+	            const matrix_x = new Matrix(coord_matrix_x);
+	            const matrix_y = new Matrix(coord_matrix_y).transpose();
+	            const x_factor = Matrix.pow(matrix_x, 2).mul(-1);
+	            const y_factor = Matrix.pow(matrix_y, 2).mul(-1);
+	            const sinWave = Matrix.add(
+	              Matrix.multiply(matrix_x, a),
+	              Matrix.multiply(matrix_y, b)
+	            ).add(phase_rad).sin();
+	            const varScale = 2 * Math.pow(adjusted_sc, 2);
+	            const exp_value = this.disableGauss ? 1 : Matrix.add(
+	              Matrix.divide(x_factor, varScale),
+	              Matrix.divide(y_factor, varScale)
+	            ).exp();
+	            const tmp1 = Matrix.multiply(sinWave, exp_value);
+	            const tmp2 = Matrix.multiply(tmp1, multConst);
+	            const tmp3 = Matrix.multiply(
+	              Matrix.multiply(tmp2, this.contrastPreMultiplicator),
+	              this.contrast
+	            );
+	            const m = Matrix.multiply(Matrix.add(tmp3, 0.5), 256);
+	            gabor_data = m.to2DArray();
+	          }
+	          const imageData = ctx.createImageData(gabor_width, gabor_width);
+	          let cnt = 0;
+	          for (let i = 0; i < gabor_width; i++) {
+	            for (let j = 0; j < gabor_width; j++) {
+	              imageData.data[cnt] = Math.round(gabor_data[i][j]);
+	              cnt++;
+	              imageData.data[cnt] = Math.round(gabor_data[i][j]);
+	              cnt++;
+	              imageData.data[cnt] = Math.round(gabor_data[i][j]);
+	              cnt++;
+	              imageData.data[cnt] = 255;
+	              cnt++;
+	            }
+	          }
+	          this.img_data = imageData;
 	        }
 	      }
-	      prepare_check = false;
-	      if (!startStep) {
-	        startStep = timestamp;
-	        sumOfStep = 0;
-	      } else {
-	        sumOfStep += 1;
+	      class line_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.angle === "undefined") {
+	            if (typeof this.x1 === "undefined" || typeof this.x2 === "undefined" || typeof this.y1 === "undefined" || typeof this.y2 === "undefined") {
+	              alert(
+	                "You have to specify the angle of lines, or the start (x1, y1) and end (x2, y2) coordinates."
+	              );
+	              return;
+	            }
+	            this.startX = (this.x1 + this.x2) / 2;
+	            this.startY = (this.y1 + this.y2) / 2;
+	            if (this.origin_center) {
+	              this.startX = this.startX + centerX;
+	              this.startY = this.startY + centerY;
+	            }
+	            this.currentX = this.startX;
+	            this.currentY = this.startY;
+	            this.angle = Math.atan((this.y2 - this.y1) / (this.x2 - this.x1)) * (180 / Math.PI);
+	            this.line_length = Math.sqrt(
+	              (this.x2 - this.x1) ** 2 + (this.y2 - this.y1) ** 2
+	            );
+	          } else {
+	            if (typeof this.x1 !== "undefined" || typeof this.x2 !== "undefined" || typeof this.y1 !== "undefined" || typeof this.y2 !== "undefined")
+	              alert(
+	                "You can not specify the angle and positions of the line at the same time."
+	              );
+	            if (typeof this.line_length === "undefined")
+	              alert("You have to specify the line_length property.");
+	          }
+	          if (typeof this.line_color === "undefined") this.line_color = "black";
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj = new PIXI__namespace.Graphics();
+	            const theta = deg2rad(this.angle);
+	            const x1 = -this.line_length / 2 * Math.cos(theta);
+	            const y1 = -this.line_length / 2 * Math.sin(theta);
+	            const x2 = this.line_length / 2 * Math.cos(theta);
+	            const y2 = this.line_length / 2 * Math.sin(theta);
+	            this.pixi_obj.moveTo(x1, y1).lineTo(x2, y2).stroke({
+	              width: this.line_width,
+	              color: getColorNum(this.line_color),
+	              join: this.lineJoin,
+	              miterLimit: this.miterLimit
+	            });
+	            if (this.pixi_zIndex !== null) {
+	              this.pixi_obj.zIndex = this.pixi_zIndex;
+	            }
+	            this.pixi_obj.visible = false;
+	            trial.pixi_app().stage.addChild(this.pixi_obj);
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (typeof this.filter === "undefined") {
+	              ctx.filter = "none";
+	            } else {
+	              ctx.filter = this.filter;
+	            }
+	            ctx.beginPath();
+	            ctx.lineWidth = this.line_width;
+	            ctx.lineJoin = this.lineJoin;
+	            ctx.miterLimit = this.miterLimit;
+	            const theta = deg2rad(this.angle);
+	            const x1 = this.currentX - this.line_length / 2 * Math.cos(theta);
+	            const y1 = this.currentY - this.line_length / 2 * Math.sin(theta);
+	            const x2 = this.currentX + this.line_length / 2 * Math.cos(theta);
+	            const y2 = this.currentY + this.line_length / 2 * Math.sin(theta);
+	            ctx.strokeStyle = this.line_color;
+	            ctx.moveTo(x1, y1);
+	            ctx.lineTo(x2, y2);
+	            ctx.stroke();
+	          }
+	        }
 	      }
-	      elapsedTime = timestamp - startStep;
-	      if (trial.clear_canvas && !trial.pixi)
-	        ctx.clearRect(0, 0, canvas.width, canvas.height);
-	      if (trial.raf_func !== null) {
-	        trial.raf_func(trial, elapsedTime, sumOfStep);
-	        frameRequestID = window.requestAnimationFrame(step);
+	      class rect_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.width === "undefined")
+	            alert("You have to specify the width of the rectangle.");
+	          if (typeof this.height === "undefined")
+	            alert("You have to specify the height of the rectangle.");
+	          if (typeof this.line_color === "undefined" && typeof this.fill_color === "undefined")
+	            alert(
+	              "You have to specify the either of the line_color or fill_color property."
+	            );
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj = new PIXI__namespace.Graphics();
+	            if (this.pixi_zIndex !== null) {
+	              this.pixi_obj.zIndex = this.pixi_zIndex;
+	            }
+	            this.pixi_obj.rect(
+	              -this.width / 2,
+	              -this.height / 2,
+	              this.width,
+	              this.height
+	            );
+	            if (typeof this.fill_color !== "undefined") {
+	              this.pixi_obj.fill({
+	                color: getColorNum(this.fill_color),
+	                alpha: 1
+	              });
+	            }
+	            this.pixi_obj.stroke({
+	              width: this.line_width,
+	              color: getColorNum(this.line_color),
+	              join: this.lineJoin,
+	              miterLimit: this.miterLimit
+	            });
+	            this.pixi_obj.visible = false;
+	            trial.pixi_app().stage.addChild(this.pixi_obj);
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (typeof this.filter === "undefined") {
+	              ctx.filter = "none";
+	            } else {
+	              ctx.filter = this.filter;
+	            }
+	            ctx.lineWidth = this.line_width;
+	            ctx.lineJoin = this.lineJoin;
+	            ctx.miterLimit = this.miterLimit;
+	            if (typeof this.fill_color !== "undefined") {
+	              ctx.fillStyle = this.fill_color;
+	              ctx.fillRect(
+	                this.currentX - this.width / 2,
+	                this.currentY - this.height / 2,
+	                this.width,
+	                this.height
+	              );
+	            }
+	            if (typeof this.line_color !== "undefined") {
+	              ctx.strokeStyle = this.line_color;
+	              ctx.strokeRect(
+	                this.currentX - this.width / 2,
+	                this.currentY - this.height / 2,
+	                this.width,
+	                this.height
+	              );
+	            }
+	          }
+	        }
+	      }
+	      class random_dot_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          const tmpRatio = 1;
+	          this.random_dot_canvas = document.createElement("canvas");
+	          const canvas_info = set_canvas(
+	            this.random_dot_canvas,
+	            tmpRatio,
+	            this.random_dot_area_width,
+	            this.random_dot_area_height
+	          );
+	          const ctx2 = canvas_info.ctx;
+	          ctx2.fillStyle = trial.background_color;
+	          ctx2.fillRect(0, 0, this.random_dot_canvas.width, this.random_dot_canvas.height);
+	          if (this.mask_func !== null) {
+	            ctx2.save();
+	            this.mask_func(ctx2);
+	            ctx2.clip();
+	          }
+	          for (let y = 0; y < this.random_dot_area_height; y += this.random_dot_size) {
+	            for (let x = 0; x < this.random_dot_area_width; x += this.random_dot_size) {
+	              if (Math.random() < this.random_dot_density) {
+	                ctx2.fillStyle = this.random_dot_color;
+	              } else {
+	                ctx2.fillStyle = this.random_dot_background_color;
+	              }
+	              ctx2.fillRect(x, y, this.random_dot_size, this.random_dot_size);
+	            }
+	          }
+	          if (this.mask_func !== null) {
+	            ctx2.restore();
+	          }
+	          if (trial.pixi_app !== null) {
+	            const texture = PIXI__namespace.Texture.from(this.random_dot_canvas);
+	            const dotsSprite = new PIXI__namespace.Sprite(texture);
+	            if (this.pixi_mask !== null) {
+	              dotsSprite.addChild(this.pixi_mask);
+	              dotsSprite.mask = this.pixi_mask;
+	            }
+	            if (this.pixi_filters !== null) {
+	              dotsSprite.filters = this.pixi_filters;
+	            }
+	            this.pixi_obj = dotsSprite;
+	            if (this.pixi_zIndex !== null) {
+	              this.pixi_obj.zIndex = this.pixi_zIndex;
+	            }
+	            init_pixi_obj(this.pixi_obj);
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            ctx.drawImage(
+	              this.random_dot_canvas,
+	              this.currentX - this.random_dot_area_width / 2,
+	              this.currentY - this.random_dot_area_height / 2
+	            );
+	          }
+	        }
+	      }
+	      class cross_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.line_length === "undefined")
+	            alert("You have to specify the line_length of the fixation cross.");
+	          if (typeof this.line_color === "undefined") this.line_color = "#000000";
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj = new PIXI__namespace.Graphics();
+	            if (this.pixi_zIndex !== null) {
+	              this.pixi_obj.zIndex = this.pixi_zIndex;
+	            }
+	            const x1 = -this.line_length / 2;
+	            const y1 = 0;
+	            const x2 = this.line_length / 2;
+	            const y2 = 0;
+	            this.pixi_obj.moveTo(x1, y1);
+	            this.pixi_obj.lineTo(x2, y2);
+	            const x3 = 0;
+	            const y3 = -this.line_length / 2;
+	            const x4 = 0;
+	            const y4 = this.line_length / 2;
+	            this.pixi_obj.moveTo(x3, y3);
+	            this.pixi_obj.lineTo(x4, y4);
+	            this.pixi_obj.stroke({
+	              width: this.line_width,
+	              color: getColorNum(this.line_color),
+	              join: this.lineJoin,
+	              miterLimit: this.miterLimit
+	            });
+	            this.pixi_obj.visible = false;
+	            trial.pixi_app().stage.addChild(this.pixi_obj);
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (typeof this.filter === "undefined") {
+	              ctx.filter = "none";
+	            } else {
+	              ctx.filter = this.filter;
+	            }
+	            ctx.beginPath();
+	            ctx.lineWidth = this.line_width;
+	            ctx.lineJoin = this.lineJoin;
+	            ctx.miterLimit = this.miterLimit;
+	            ctx.strokeStyle = this.line_color;
+	            const x1 = this.currentX;
+	            const y1 = this.currentY - this.line_length / 2;
+	            const x2 = this.currentX;
+	            const y2 = this.currentY + this.line_length / 2;
+	            ctx.moveTo(x1, y1);
+	            ctx.lineTo(x2, y2);
+	            const x3 = this.currentX - this.line_length / 2;
+	            const y3 = this.currentY;
+	            const x4 = this.currentX + this.line_length / 2;
+	            const y4 = this.currentY;
+	            ctx.moveTo(x3, y3);
+	            ctx.lineTo(x4, y4);
+	            ctx.stroke();
+	          }
+	        }
+	      }
+	      class circle_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.radius === "undefined")
+	            alert("You have to specify the radius of circles.");
+	          if (typeof this.line_color === "undefined" && typeof this.fill_color === "undefined")
+	            alert("You have to specify the either of line_color or fill_color.");
+	          if (trial.pixi_app === null) {
+	            this.prepared = true;
+	            return;
+	          }
+	          this.pixi_obj = new PIXI__namespace.Graphics();
+	          if (this.pixi_zIndex !== null) {
+	            this.pixi_obj.zIndex = this.pixi_zIndex;
+	          }
+	          this.pixi_obj.circle(0, 0, this.radius);
+	          if (typeof this.fill_color !== "undefined") {
+	            this.pixi_obj.fill({
+	              color: getColorNum(this.fill_color),
+	              alpha: 1
+	            });
+	          }
+	          this.pixi_obj.stroke({
+	            width: this.line_width,
+	            color: getColorNum(this.line_color),
+	            join: this.lineJoin,
+	            miterLimit: this.miterLimit
+	          });
+	          this.pixi_obj.visible = false;
+	          trial.pixi_app().stage.addChild(this.pixi_obj);
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (typeof this.filter === "undefined") {
+	              ctx.filter = "none";
+	            } else {
+	              ctx.filter = this.filter;
+	            }
+	            ctx.beginPath();
+	            ctx.lineWidth = this.line_width;
+	            ctx.lineJoin = this.lineJoin;
+	            ctx.miterLimit = this.miterLimit;
+	            if (typeof this.fill_color !== "undefined") {
+	              ctx.fillStyle = this.fill_color;
+	              ctx.arc(
+	                this.currentX,
+	                this.currentY,
+	                this.radius,
+	                0,
+	                Math.PI * 2,
+	                false
+	              );
+	              ctx.fill();
+	            }
+	            if (typeof this.line_color !== "undefined") {
+	              ctx.strokeStyle = this.line_color;
+	              ctx.arc(
+	                this.currentX,
+	                this.currentY,
+	                this.radius,
+	                0,
+	                Math.PI * 2,
+	                false
+	              );
+	              ctx.stroke();
+	            }
+	          }
+	        }
+	      }
+	      class text_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.content === "undefined")
+	            alert("You have to specify the content of texts.");
+	          if (trial.pixi_app !== null) {
+	            if (typeof this.text_space !== "undefined")
+	              alert(`You can't specify the text_space in Pixi mode.`);
+	            this.pixi_obj = new PIXI__namespace.Text(this.content);
+	            if (this.pixi_zIndex !== null) {
+	              this.pixi_obj.zIndex = this.pixi_zIndex;
+	            }
+	            init_pixi_obj(this.pixi_obj);
+	            this.pixi_obj.style.align = "center";
+	            this.pixi_obj.style.fontFamily = this.fontFamily;
+	            this.pixi_obj.style.fontSize = this.fontSize;
+	            this.pixi_obj.style.fontStyle = this.fontStyle;
+	            this.pixi_obj.style.fontWeight = this.fontWeight;
+	            this.pixi_obj.style.fill = this.text_color;
+	            this.pixi_obj.style.lineJoin = this.lineJoin;
+	            this.pixi_obj.style.miterLimit = this.miterLimit;
+	          } else {
+	            if (typeof this.text_space === "undefined") this.text_space = 20;
+	            let font_info = "";
+	            font_info = font_info + " " + this.fontStyle;
+	            font_info = font_info + " " + this.fontWeight;
+	            font_info = font_info + " " + this.fontSize;
+	            font_info = font_info + " " + this.fontFamily;
+	            if (typeof this.font === "undefined") this.font = font_info;
+	          }
+	          this.prepared = true;
+	        }
+	        show() {
+	          if (trial.pixi_app !== null) {
+	            if (this.pixi_angle !== null) {
+	              this.pixi_obj.angle = this.pixi_angle;
+	            }
+	            if (this.pixi_rotation !== null) {
+	              this.pixi_obj.rotation = this.pixi_rotation;
+	            }
+	            this.pixi_obj.x = this.currentX;
+	            this.pixi_obj.y = this.currentY;
+	            this.pixi_obj.visible = true;
+	          } else {
+	            if (typeof this.filter === "undefined") {
+	              ctx.filter = "none";
+	            } else {
+	              ctx.filter = this.filter;
+	            }
+	            ctx.lineWidth = this.line_width;
+	            ctx.lineJoin = this.lineJoin;
+	            ctx.miterLimit = this.miterLimit;
+	            ctx.font = this.font;
+	            ctx.textAlign = "center";
+	            ctx.textBaseline = "middle";
+	            let column = [""];
+	            let line = 0;
+	            for (let i = 0; i < this.content.length; i++) {
+	              let char = this.content.charAt(i);
+	              if (char == "\n") {
+	                line++;
+	                column[line] = "";
+	              } else {
+	                column[line] += char;
+	              }
+	            }
+	            let draw_stroke = typeof this.stroke_color !== "undefined" || typeof this.stroke_weight !== "undefined" && this.stroke_weight > 0;
+	            for (let i = 0; i < column.length; i++) {
+	              ctx.fillStyle = this.text_color;
+	              ctx.fillText(
+	                column[i],
+	                this.currentX,
+	                this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
+	              );
+	              if (draw_stroke) {
+	                ctx.strokeStyle = this.stroke_color;
+	                ctx.lineWidth = this.stroke_width;
+	                ctx.strokeText(
+	                  column[i],
+	                  this.currentX,
+	                  this.currentY - this.text_space * (column.length - 1) / 2 + this.text_space * i
+	                );
+	              }
+	            }
+	          }
+	        }
+	      }
+	      class manual_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          this.prepared = true;
+	        }
+	        show() {
+	        }
+	      }
+	      class pixi_stimulus extends visual_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (trial.pixi_app === null) {
+	            alert(
+	              "To use Pixi objects, the pixi_app property of the psychophysics plugin must be set."
+	            );
+	            return;
+	          }
+	          this.pixi_obj.visible = false;
+	          if (this.pixi_zIndex !== null) {
+	            this.pixi_obj.zIndex = this.pixi_zIndex;
+	          }
+	          trial.pixi_app().stage.addChild(this.pixi_obj);
+	          this.prepared = true;
+	        }
+	        show() {
+	          this.pixi_obj.x = this.currentX;
+	          this.pixi_obj.y = this.currentY;
+	          this.pixi_obj.visible = true;
+	        }
+	      }
+	      function init_pixi_obj(obj) {
+	        if ("anchor" in obj) {
+	          obj.anchor.set(0.5);
+	        } else if ("pivot" in obj) {
+	          obj.pivot.set(obj.width / 2, obj.height / 2);
+	        }
+	        obj.visible = false;
+	        trial.pixi_app().stage.addChild(obj);
+	      }
+	      const jsPsych = this.jsPsych;
+	      class audio_stimulus extends psychophysics_stimulus {
+	        constructor(stim) {
+	          super(stim);
+	          if (typeof this.file === "undefined") {
+	            alert("You have to specify the file property.");
+	            return;
+	          }
+	          jsPsych.pluginAPI.getAudioPlayer(this.file).then((buffer) => {
+	            this.audio = buffer;
+	            this.prepared = true;
+	            if (this.trial_ends_after_audio) {
+	              this.audio.addEventListener("ended", end_trial);
+	            }
+	          }).catch(
+	            (err) => {
+	              console.error(
+	                `Failed to load audio file "${this.file}". Try checking the file path. We recommend using the preload plugin to load audio files.`
+	              );
+	              console.error(err);
+	            }
+	          );
+	        }
+	        play() {
+	          this.audio.play();
+	        }
+	        stop() {
+	          this.audio.stop();
+	          this.audio.removeEventListener("ended", end_trial);
+	        }
+	      }
+	      if (typeof trial.stepFunc !== "undefined")
+	        alert(
+	          `The stepFunc is no longer supported. Please use the raf_func instead.`
+	        );
+	      const elm_jspsych_content = document.getElementById("jspsych-content");
+	      const style_jspsych_content = window.getComputedStyle(elm_jspsych_content);
+	      const default_maxWidth = style_jspsych_content.maxWidth;
+	      elm_jspsych_content.style.maxWidth = "none";
+	      if (trial.canvas_width === null)
+	        trial.canvas_width = window.innerWidth - trial.canvas_offsetX;
+	      if (trial.canvas_height === null)
+	        trial.canvas_height = window.innerHeight - trial.canvas_offsetY;
+	      let new_html = "";
+	      const canvas_exist = document.getElementById("myCanvas") === null ? false : true;
+	      if (!canvas_exist && trial.upper_prompt !== null) {
+	        new_html += trial.upper_prompt;
+	      }
+	      if (!canvas_exist) {
+	        if (trial.pixi_app !== null) {
+	          if (!trial.pixi_app().renderer) {
+	            alert(
+	              "Please ensure that the PIXI.Application instance is created and the init method is called before starting the experiment."
+	            );
+	            return;
+	          }
+	          trial.pixi_app().sortableChildren = true;
+	          trial.pixi_app().renderer.resize(trial.canvas_width, trial.canvas_height);
+	          trial.pixi_app().renderer.background.color = trial.background_color;
+	          display_element.appendChild(trial.pixi_app().canvas);
+	        } else {
+	          new_html += '<canvas id="myCanvas" class="jspsych-canvas" width=' + trial.canvas_width + " height=" + trial.canvas_height + ' style="background-color:' + trial.background_color + ';"></canvas>';
+	        }
+	      }
+	      const motion_rt_method = "performance";
+	      let start_time;
+	      let keyboardListener;
+	      let response_flag = false;
+	      this.jsPsych.pluginAPI.setTimeout(() => {
+	        response_flag = true;
+	        if (trial.response_type === "key") {
+	          if (trial.choices != "NO_KEYS") {
+	            keyboardListener = this.jsPsych.pluginAPI.getKeyboardResponse({
+	              callback_function: after_response,
+	              valid_responses: trial.choices,
+	              rt_method: motion_rt_method,
+	              persist: false,
+	              allow_held_key: false
+	            });
+	          }
+	        } else if (trial.response_type === "mouse") {
+	          start_time = performance.now();
+	          canvas.addEventListener("mousedown", mouseDownFunc);
+	        } else {
+	          start_time = performance.now();
+	        }
+	      }, trial.response_start_time);
+	      if (!canvas_exist && trial.prompt !== null) {
+	        new_html += trial.prompt;
+	      }
+	      if (!canvas_exist && trial.lower_prompt !== null) {
+	        new_html += trial.lower_prompt;
+	      }
+	      display_element.insertAdjacentHTML("beforeend", new_html);
+	      if (!canvas_exist && trial.response_type === "button") {
+	        const buttonGroupElement = document.createElement("div");
+	        buttonGroupElement.id = "jspsych-html-button-response-btngroup";
+	        if (trial.button_layout === "grid") {
+	          buttonGroupElement.classList.add("jspsych-btn-group-grid");
+	          if (trial.grid_rows === null && trial.grid_columns === null) {
+	            throw new Error(
+	              "You cannot set `grid_rows` to `null` without providing a value for `grid_columns`."
+	            );
+	          }
+	          const n_cols = trial.grid_columns === null ? Math.ceil(trial.button_choices.length / trial.grid_rows) : trial.grid_columns;
+	          const n_rows = trial.grid_rows === null ? Math.ceil(trial.button_choices.length / trial.grid_columns) : trial.grid_rows;
+	          buttonGroupElement.style.gridTemplateColumns = `repeat(${n_cols}, 1fr)`;
+	          buttonGroupElement.style.gridTemplateRows = `repeat(${n_rows}, 1fr)`;
+	        } else if (trial.button_layout === "flex") {
+	          buttonGroupElement.classList.add("jspsych-btn-group-flex");
+	        }
+	        for (const [choiceIndex, choice] of trial.button_choices.entries()) {
+	          buttonGroupElement.insertAdjacentHTML("beforeend", trial.button_html(choice, choiceIndex));
+	          const buttonElement = buttonGroupElement.lastChild;
+	          buttonElement.dataset.choice = choiceIndex.toString();
+	          buttonElement.addEventListener("click", () => {
+	            after_response({
+	              key: -1,
+	              rt: performance.now() - start_time,
+	              button: choiceIndex
+	            });
+	          });
+	        }
+	        display_element.appendChild(buttonGroupElement);
+	      }
+	      const canvas = trial.pixi_app !== null ? trial.pixi_app().canvas : document.getElementById("myCanvas");
+	      if (!canvas || !canvas.getContext) {
+	        alert("This browser does not support the canvas element.");
 	        return;
 	      }
-	      for (let i = 0; i < trial.stimuli.length; i++) {
-	        const stim = trial.stimuli[i].instance;
-	        const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
-	        const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
-	        const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
-	        if (stim.obj_type === "sound") {
-	          if (elapsed >= show_start && !stim.is_presented) {
-	            stim.play();
-	            stim.is_presented = true;
-	          }
-	          continue;
+	      let centerX;
+	      let centerY;
+	      let ctx;
+	      function set_canvas(canvas2, ratio, width, height) {
+	        const ctx2 = canvas2.getContext("2d");
+	        const canvas_scale = ratio;
+	        canvas2.style.width = width + "px";
+	        canvas2.style.height = height + "px";
+	        if (!canvas_exist) {
+	          canvas2.width = width * canvas_scale;
+	          canvas2.height = height * canvas_scale;
+	          ctx2.scale(canvas_scale, canvas_scale);
 	        }
-	        if (trial.pixi) {
-	          if (elapsed < show_start) {
-	            stim.pixi_obj.visible = false;
-	            continue;
-	          }
-	          if (show_end !== null && elapsed >= show_end) {
-	            stim.pixi_obj.visible = false;
-	            continue;
-	          }
-	        } else {
-	          if (elapsed < show_start) continue;
-	          if (show_end !== null && elapsed >= show_end) continue;
-	          if (trial.clear_canvas === false && stim.is_presented) continue;
-	        }
-	        stim.update_position(elapsed);
-	        if (stim.drawFunc !== null) {
-	          stim.drawFunc(stim, canvas, ctx, elapsedTime, sumOfStep);
-	        } else {
-	          if (stim.change_attr != null)
-	            stim.change_attr(stim, elapsedTime, sumOfStep);
-	          stim.show();
-	        }
-	        stim.is_presented = true;
+	        const centerX2 = canvas2.width / 2 / canvas_scale;
+	        const centerY2 = canvas2.height / 2 / canvas_scale;
+	        return {
+	          ctx: ctx2,
+	          centerX: centerX2,
+	          centerY: centerY2
+	        };
 	      }
-	      frameRequestID = window.requestAnimationFrame(step);
-	    }
-	    let frameRequestID = window.requestAnimationFrame(step);
-	    function deg2rad(degrees) {
-	      return degrees / 180 * Math.PI;
-	    }
-	    let response = {
-	      rt: null,
-	      key: null
-	    };
-	    const end_trial = () => {
-	      document.getElementById("jspsych-content").style.maxWidth = default_maxWidth;
-	      window.cancelAnimationFrame(frameRequestID);
-	      canvas.removeEventListener("mousedown", mouseDownFunc);
+	      if (trial.pixi_app !== null) {
+	        centerX = trial.pixi_app().screen.width / 2;
+	        centerY = trial.pixi_app().screen.height / 2;
+	      } else {
+	        const canvas_info = set_canvas(
+	          canvas,
+	          window.devicePixelRatio,
+	          trial.canvas_width,
+	          trial.canvas_height
+	        );
+	        centerX = canvas_info.centerX;
+	        centerY = canvas_info.centerY;
+	        ctx = canvas_info.ctx;
+	        trial.context = ctx;
+	        refsToCleanup.push("context");
+	      }
+	      trial.canvas = canvas;
+	      refsToCleanup.push("canvas");
+	      trial.centerX = centerX;
+	      trial.centerY = centerY;
+	      refsToCleanup.push("centerX");
+	      refsToCleanup.push("centerY");
 	      if (trial.mouse_down_func !== null) {
-	        canvas.removeEventListener("mousedown", trial.mouse_down_func);
+	        canvas.addEventListener("mousedown", trial.mouse_down_func);
 	      }
 	      if (trial.mouse_move_func !== null) {
-	        canvas.removeEventListener("mousemove", trial.mouse_move_func);
+	        canvas.addEventListener("mousemove", trial.mouse_move_func);
 	      }
 	      if (trial.mouse_up_func !== null) {
-	        canvas.removeEventListener("mouseup", trial.mouse_up_func);
-	      }
-	      if (trial.touchstart_func !== null) {
-	        canvas.removeEventListener("touchstart", trial.touchstart_func);
-	      }
-	      if (trial.touchend_func !== null) {
-	        canvas.removeEventListener("touchend", trial.touchend_func);
-	      }
-	      if (trial.touchcancel_func !== null) {
-	        canvas.removeEventListener("touchcancel", trial.touchcancel_func);
-	      }
-	      if (trial.touchmove_func !== null) {
-	        canvas.removeEventListener("touchmove", trial.touchmove_func);
+	        canvas.addEventListener("mouseup", trial.mouse_up_func);
 	      }
 	      if (trial.key_down_func !== null) {
-	        document.removeEventListener("keydown", trial.key_down_func);
+	        document.addEventListener("keydown", trial.key_down_func);
 	      }
 	      if (trial.key_up_func !== null) {
-	        document.removeEventListener("keyup", trial.key_up_func);
+	        document.addEventListener("keyup", trial.key_up_func);
 	      }
+	      if (trial.touchstart_func !== null) {
+	        canvas.addEventListener("touchstart", trial.touchstart_func);
+	      }
+	      if (trial.touchend_func !== null) {
+	        canvas.addEventListener("touchend", trial.touchend_func);
+	      }
+	      if (trial.touchcancel_func !== null) {
+	        canvas.addEventListener("touchcancel", trial.touchcancel_func);
+	      }
+	      if (trial.touchmove_func !== null) {
+	        canvas.addEventListener("touchmove", trial.touchmove_func);
+	      }
+	      if (typeof trial.stimuli === "undefined" && trial.raf_func === null) {
+	        alert(
+	          "You have to specify the stimuli/raf_func parameter in the psychophysics plugin."
+	        );
+	        return;
+	      }
+	      const set_instance = {
+	        sound: audio_stimulus,
+	        image: image_stimulus,
+	        line: line_stimulus,
+	        rect: rect_stimulus,
+	        circle: circle_stimulus,
+	        text: text_stimulus,
+	        cross: cross_stimulus,
+	        manual: manual_stimulus,
+	        gabor: gabor_stimulus,
+	        pixi: pixi_stimulus,
+	        random_dot: random_dot_stimulus
+	      };
 	      if (typeof trial.stimuli !== "undefined") {
 	        for (let i = 0; i < trial.stimuli.length; i++) {
+	          const stim = trial.stimuli[i];
+	          if (typeof stim.obj_type === "undefined") {
+	            alert(
+	              "You have missed to specify the obj_type property in the " + (i + 1) + "th object."
+	            );
+	            return;
+	          }
+	          stim.instance = new set_instance[stim.obj_type](stim);
+	        }
+	      }
+	      function mouseDownFunc(e) {
+	        let click_time;
+	        click_time = performance.now();
+	        e.preventDefault();
+	        after_response({
+	          key: -1,
+	          rt: click_time - start_time,
+	          // clickX: e.clientX,
+	          // clickY: e.clientY,
+	          clickX: e.offsetX,
+	          clickY: e.offsetY
+	        });
+	      }
+	      let startStep = null;
+	      let sumOfStep;
+	      let elapsedTime;
+	      let prepare_check = true;
+	      function step(timestamp) {
+	        if (prepare_check) {
+	          for (let i = 0; i < trial.stimuli.length; i++) {
+	            if (!trial.stimuli[i].instance.prepared) {
+	              frameRequestID = window.requestAnimationFrame(step);
+	              return;
+	            }
+	          }
+	        }
+	        prepare_check = false;
+	        if (!startStep) {
+	          startStep = timestamp;
+	          sumOfStep = 0;
+	        } else {
+	          sumOfStep += 1;
+	        }
+	        elapsedTime = timestamp - startStep;
+	        if (trial.clear_canvas && trial.pixi_app === null)
+	          ctx.clearRect(0, 0, canvas.width, canvas.height);
+	        if (trial.raf_func !== null) {
+	          trial.raf_func(trial, elapsedTime, sumOfStep);
+	          frameRequestID = window.requestAnimationFrame(step);
+	          return;
+	        }
+	        for (let i = 0; i < trial.stimuli.length; i++) {
 	          const stim = trial.stimuli[i].instance;
-	          if (typeof stim.pixi_obj !== "undefined") stim.pixi_obj.destroy();
+	          const elapsed = stim.is_frame ? sumOfStep : elapsedTime;
+	          const show_start = stim.is_frame ? stim.show_start_frame : stim.show_start_time;
+	          const show_end = stim.is_frame ? stim.show_end_frame : stim.show_end_time;
 	          if (stim.obj_type === "sound") {
-	            stim.stop();
+	            if (elapsed >= show_start && !stim.is_presented) {
+	              stim.play();
+	              stim.is_presented = true;
+	            }
+	            continue;
+	          }
+	          if (trial.pixi_app !== null) {
+	            if (elapsed < show_start) {
+	              stim.pixi_obj.visible = false;
+	              continue;
+	            }
+	            if (show_end !== null && elapsed >= show_end) {
+	              stim.pixi_obj.visible = false;
+	              continue;
+	            }
+	          } else {
+	            if (elapsed < show_start) continue;
+	            if (show_end !== null && elapsed >= show_end) continue;
+	            if (trial.clear_canvas === false && stim.is_presented) continue;
+	          }
+	          stim.update_position(elapsed);
+	          if (stim.drawFunc !== null) {
+	            stim.drawFunc(stim, canvas, ctx, elapsedTime, sumOfStep);
+	          } else {
+	            if (stim.change_attr != null)
+	              stim.change_attr(stim, elapsedTime, sumOfStep);
+	            stim.show();
+	          }
+	          stim.is_presented = true;
+	        }
+	        frameRequestID = window.requestAnimationFrame(step);
+	      }
+	      let frameRequestID = window.requestAnimationFrame(step);
+	      function deg2rad(degrees) {
+	        return degrees / 180 * Math.PI;
+	      }
+	      let response = {
+	        rt: null,
+	        key: null
+	      };
+	      const end_trial = () => {
+	        document.getElementById("jspsych-content").style.maxWidth = default_maxWidth;
+	        window.cancelAnimationFrame(frameRequestID);
+	        canvas.removeEventListener("mousedown", mouseDownFunc);
+	        if (trial.mouse_down_func !== null) {
+	          canvas.removeEventListener("mousedown", trial.mouse_down_func);
+	        }
+	        if (trial.mouse_move_func !== null) {
+	          canvas.removeEventListener("mousemove", trial.mouse_move_func);
+	        }
+	        if (trial.mouse_up_func !== null) {
+	          canvas.removeEventListener("mouseup", trial.mouse_up_func);
+	        }
+	        if (trial.touchstart_func !== null) {
+	          canvas.removeEventListener("touchstart", trial.touchstart_func);
+	        }
+	        if (trial.touchend_func !== null) {
+	          canvas.removeEventListener("touchend", trial.touchend_func);
+	        }
+	        if (trial.touchcancel_func !== null) {
+	          canvas.removeEventListener("touchcancel", trial.touchcancel_func);
+	        }
+	        if (trial.touchmove_func !== null) {
+	          canvas.removeEventListener("touchmove", trial.touchmove_func);
+	        }
+	        if (trial.key_down_func !== null) {
+	          document.removeEventListener("keydown", trial.key_down_func);
+	        }
+	        if (trial.key_up_func !== null) {
+	          document.removeEventListener("keyup", trial.key_up_func);
+	        }
+	        if (typeof trial.stimuli !== "undefined") {
+	          for (let i = 0; i < trial.stimuli.length; i++) {
+	            const stim = trial.stimuli[i].instance;
+	            if (typeof stim.pixi_obj !== "undefined") stim.pixi_obj.destroy();
+	            if (stim.obj_type === "sound" && stim.is_presented) {
+	              stim.stop();
+	            }
 	          }
 	        }
-	      }
-	      if (!trial.remain_canvas && trial.pixi)
-	        pixi_app.destroy(true, {
-	          children: true,
-	          texture: true,
-	          baseTexture: true
-	        });
-	      this.jsPsych.pluginAPI.clearAllTimeouts();
-	      if (typeof keyboardListener !== "undefined") {
-	        this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
-	      }
-	      this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
-	      const trial_data = {};
-	      trial_data["rt"] = response.rt;
-	      trial_data["response_type"] = trial.response_type;
-	      trial_data["key_press"] = response.key;
-	      trial_data["response"] = response.key;
-	      trial_data["avg_frame_time"] = elapsedTime / sumOfStep;
-	      trial_data["center_x"] = centerX;
-	      trial_data["center_y"] = centerY;
-	      if (trial.response_type === "mouse") {
-	        trial_data["click_x"] = response.clickX;
-	        trial_data["click_y"] = response.clickY;
-	      } else if (trial.response_type === "button") {
-	        trial_data["button_pressed"] = response.button;
-	        trial_data["response"] = response.button;
-	      }
-	      if (!trial.remain_canvas) {
+	        if (trial.pixi_app !== null) {
+	          const app = trial.pixi_app();
+	          const children = app.stage.removeChildren();
+	          children.forEach((child) => {
+	            if (child.geometry) child.geometry.destroy();
+	            if (child.shader) child.shader.destroy();
+	            child.destroy({
+	              children: true,
+	              texture: true,
+	              baseTexture: true,
+	              context: true
+	            });
+	          });
+	        }
+	        this.jsPsych.pluginAPI.clearAllTimeouts();
+	        if (typeof keyboardListener !== "undefined") {
+	          this.jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
+	        }
+	        this.jsPsych.pluginAPI.cancelAllKeyboardResponses();
+	        const trial_data = {
+	          rt: response.rt,
+	          response_type: trial.response_type,
+	          key_press: response.key,
+	          response: trial.response_type === "button" ? response.button : response.key,
+	          // compatible with the jsPsych >= 6.3.0
+	          avg_frame_time: elapsedTime / sumOfStep,
+	          center_x: centerX,
+	          center_y: centerY,
+	          click_x: trial.response_type === "mouse" ? response.clickX : null,
+	          click_y: trial.response_type === "mouse" ? response.clickY : null,
+	          button_pressed: trial.response_type === "button" ? response.button : null
+	        };
 	        display_element.innerHTML = "";
-	      }
-	      refsToCleanup.forEach((prop) => {
-	        trial[prop] = null;
-	      });
-	      if (trial.stimuli && Array.isArray(trial.stimuli)) {
-	        trial.stimuli.forEach((stim) => {
-	          if (stim.instance) {
-	            stim.instance = null;
-	          }
+	        refsToCleanup.forEach((prop) => {
+	          trial[prop] = null;
 	        });
-	      }
-	      this.jsPsych.finishTrial(trial_data);
-	    };
-	    trial.end_trial = end_trial;
-	    refsToCleanup.push("end_trial");
-	    function after_response(info2) {
-	      if (!response_flag) return;
-	      if (response.key == null) {
-	        response = info2;
-	      }
-	      if (trial.response_type === "button") {
-	        let btns = document.querySelectorAll(
-	          ".jspsych-image-button-response-button button"
-	        );
-	        for (let i = 0; i < btns.length; i++) {
-	          btns[i].setAttribute("disabled", "disabled");
+	        if (trial.stimuli && Array.isArray(trial.stimuli)) {
+	          trial.stimuli.forEach((stim) => {
+	            if (stim.instance) {
+	              stim.instance = null;
+	            }
+	          });
+	        }
+	        this.finish(trial_data);
+	      };
+	      trial.end_trial = end_trial;
+	      refsToCleanup.push("end_trial");
+	      function after_response(info2) {
+	        if (!response_flag) return;
+	        if (response.key == null) {
+	          response = info2;
+	        }
+	        if (trial.response_type === "button") {
+	          let btns = document.querySelectorAll(
+	            ".jspsych-image-button-response-button button"
+	          );
+	          for (let i = 0; i < btns.length; i++) {
+	            btns[i].setAttribute("disabled", "disabled");
+	          }
+	        }
+	        if (trial.response_ends_trial) {
+	          end_trial();
 	        }
 	      }
-	      if (trial.response_ends_trial) {
-	        end_trial();
+	      if (trial.trial_duration !== null) {
+	        this.jsPsych.pluginAPI.setTimeout(function() {
+	          end_trial();
+	        }, trial.trial_duration);
 	      }
-	    }
-	    if (trial.trial_duration !== null) {
-	      this.jsPsych.pluginAPI.setTimeout(function() {
-	        end_trial();
-	      }, trial.trial_duration);
-	    }
+	      on_load();
+	    });
 	  }
-	  simulate(trial, simulation_mode, simulation_options, load_callback) {
+	  async simulate(trial, simulation_mode, simulation_options, load_callback) {
 	    if (simulation_mode == "data-only") {
 	      load_callback();
-	      this.simulate_data_only(trial, simulation_options);
+	      return this.simulate_data_only(trial, simulation_options);
 	    }
 	    if (simulation_mode == "visual") {
-	      this.simulate_visual(trial, simulation_options, load_callback);
+	      return this.simulate_visual(trial, simulation_options, load_callback);
 	    }
 	  }
 	  create_simulation_data(trial, simulation_options) {
@@ -7854,43 +7992,48 @@ ${indent}columns: ${matrix.columns}
 	  }
 	  simulate_data_only(trial, simulation_options) {
 	    const data = this.create_simulation_data(trial, simulation_options);
-	    this.jsPsych.finishTrial(data);
+	    return data;
 	  }
-	  simulate_visual(trial, simulation_options, load_callback) {
+	  async simulate_visual(trial, simulation_options, load_callback) {
 	    const data = this.create_simulation_data(trial, simulation_options);
 	    const display_element = this.jsPsych.getDisplayElement();
-	    this.trial(display_element, trial);
-	    load_callback();
-	    if (data.rt !== null) {
-	      switch (trial.response_type) {
-	        case "key":
-	          this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
-	          break;
-	        case "button":
-	          this.jsPsych.pluginAPI.clickTarget(
-	            display_element.querySelector(
-	              `#jspsych-html-button-response-btngroup [data-choice="${data.response}"]`
-	            ),
-	            data.rt
-	          );
-	          break;
-	        case "mouse": {
-	          const client_rect = document.getElementById("myCanvas").getBoundingClientRect();
-	          if (typeof data.click_x === "undefined") data.click_x = 0;
-	          if (typeof data.click_y === "undefined") data.click_y = 0;
-	          const mouse_event = new MouseEvent("mousedown", {
-	            bubbles: true,
-	            clientX: data.click_x + client_rect.left,
-	            // Note that click_x is offsetX.
-	            clientY: data.click_y + client_rect.top
-	          });
-	          setTimeout(() => {
-	            document.getElementById("myCanvas").dispatchEvent(mouse_event);
-	          }, data.rt);
-	          break;
+	    const respond = () => {
+	      if (data.rt !== null) {
+	        switch (trial.response_type) {
+	          case "key":
+	            this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
+	            break;
+	          case "button":
+	            this.jsPsych.pluginAPI.clickTarget(
+	              display_element.querySelector(
+	                `#jspsych-html-button-response-btngroup [data-choice="${data.response}"]`
+	              ),
+	              data.rt
+	            );
+	            break;
+	          case "mouse": {
+	            const client_rect = document.getElementById("myCanvas").getBoundingClientRect();
+	            if (typeof data.click_x === "undefined") data.click_x = 0;
+	            if (typeof data.click_y === "undefined") data.click_y = 0;
+	            const mouse_event = new MouseEvent("mousedown", {
+	              bubbles: true,
+	              clientX: data.click_x + client_rect.left,
+	              // Note that click_x is offsetX.
+	              clientY: data.click_y + client_rect.top
+	            });
+	            setTimeout(() => {
+	              document.getElementById("myCanvas").dispatchEvent(mouse_event);
+	            }, data.rt);
+	            break;
+	          }
 	        }
 	      }
-	    }
+	    };
+	    const result = await this.trial(display_element, trial, () => {
+	      load_callback();
+	      respond();
+	    });
+	    return result;
 	  }
 	}
 

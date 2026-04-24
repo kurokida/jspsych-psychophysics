@@ -3,7 +3,6 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -33,7 +32,7 @@
 
     const msg = {
         obj_type: "text",
-        content: `This is a psychophysics trial.\nPress any keys other than ${fixed_key} or touch the screen to finish this trial.`
+        content: `This is a psychophysics trial.\n\nPress any keys other than the "${fixed_key.toUpperCase()}" key or touch the screen to finish this trial.`
     }
 
     // Consider storing the touched coordinates

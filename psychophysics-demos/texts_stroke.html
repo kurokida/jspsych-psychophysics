@@ -3,7 +3,6 @@
 <head>
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -17,8 +16,6 @@
         }
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
-
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
 
     const instruction = {
         type: jsPsychHtmlButtonResponse,
@@ -34,8 +31,8 @@
         content: 'Hello, world!',
         font: "22px 'Arial'",
         text_color: 'white',
-        endX: 'center',
-        endY: 'center',
+        endX: 0,
+        endY: 0,
         show_start_time: 500, // ms after the start of the trial
         motion_start_time: 1500,
         motion_end_time: 3000,
@@ -43,8 +40,8 @@
 
     const text_object2 = {
         obj_type: 'text',
-        startX: 'center',
-        startY: 'center',
+        startX: 0,
+        startY: 0,
         content: 'Stroke text',
         font: "66px 'Arial'",
         text_color: 'Yellow',
@@ -58,7 +55,6 @@
 
     const trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
         stimuli: [text_object1, text_object2],
     }
 
