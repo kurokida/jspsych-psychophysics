@@ -2685,13 +2685,13 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       on_load();
     });
   }
-  simulate(trial, simulation_mode, simulation_options, load_callback) {
+  async simulate(trial, simulation_mode, simulation_options, load_callback) {
     if (simulation_mode == "data-only") {
       load_callback();
-      this.simulate_data_only(trial, simulation_options);
+      return this.simulate_data_only(trial, simulation_options);
     }
     if (simulation_mode == "visual") {
-      this.simulate_visual(trial, simulation_options, load_callback);
+      return this.simulate_visual(trial, simulation_options, load_callback);
     }
   }
   create_simulation_data(trial, simulation_options) {
@@ -2717,46 +2717,54 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
     this.jsPsych.pluginAPI.ensureSimulationDataConsistency(trial, data);
     return data;
   }
-  simulate_data_only(trial, simulation_options) {
+  private simulate_data_only(trial, simulation_options) {
     const data = this.create_simulation_data(trial, simulation_options);
     return data;
   }
-  simulate_visual(trial, simulation_options, load_callback) {
+  private async simulate_visual(trial, simulation_options, load_callback) {
     const data = this.create_simulation_data(trial, simulation_options);
     const display_element = this.jsPsych.getDisplayElement();
-    this.trial(display_element, trial, () => {load_callback();});
-    load_callback();
-    if (data.rt !== null) {
-      switch (trial.response_type) {
-        case "key":
-          this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
-          break;
-        case "button":
-          this.jsPsych.pluginAPI.clickTarget(
-            display_element.querySelector(
-              `#jspsych-html-button-response-btngroup [data-choice="${data.response}"]`
-            ),
-            data.rt
-          );
-          break;
-        case "mouse": {
-          const client_rect = document
-            .getElementById("myCanvas")
-            .getBoundingClientRect();
-          if (typeof data.click_x === "undefined") data.click_x = 0;
-          if (typeof data.click_y === "undefined") data.click_y = 0;
-          const mouse_event = new MouseEvent("mousedown", {
-            bubbles: true,
-            clientX: data.click_x + client_rect.left, // Note that click_x is offsetX.
-            clientY: data.click_y + client_rect.top,
-          });
-          setTimeout(() => {
-            document.getElementById("myCanvas").dispatchEvent(mouse_event);
-          }, data.rt);
-          break;
+
+    const respond = () => {
+      if (data.rt !== null) {
+        switch (trial.response_type) {
+          case "key":
+            this.jsPsych.pluginAPI.pressKey(data.response, data.rt);
+            break;
+          case "button":
+            this.jsPsych.pluginAPI.clickTarget(
+              display_element.querySelector(
+                `#jspsych-html-button-response-btngroup [data-choice="${data.response}"]`
+              ),
+              data.rt
+            );
+            break;
+          case "mouse": {
+            const client_rect = document
+              .getElementById("myCanvas")
+              .getBoundingClientRect();
+            if (typeof data.click_x === "undefined") data.click_x = 0;
+            if (typeof data.click_y === "undefined") data.click_y = 0;
+            const mouse_event = new MouseEvent("mousedown", {
+              bubbles: true,
+              clientX: data.click_x + client_rect.left, // Note that click_x is offsetX.
+              clientY: data.click_y + client_rect.top,
+            });
+            setTimeout(() => {
+              document.getElementById("myCanvas").dispatchEvent(mouse_event);
+            }, data.rt);
+            break;
+          }
         }
       }
     }
+
+    const result = await this.trial(display_element, trial, () => {
+      load_callback();
+      respond();
+    });
+
+    return result;
   }
 }
 
