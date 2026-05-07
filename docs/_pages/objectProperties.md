@@ -17,7 +17,7 @@ var rect_object = {
 }
 ```
 
-This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the top left of the canvas, and the unit is the pixel. If you want to change the origin to the center of the window, set the `origin_center` property to true. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
+This code means that a white rectangle is presented at coordinates (200, 150) in a canvas which is a HTML element providing a lots of drawing tools. The origin of the coordinate is the center of the canvas, and the unit is the pixel. Positive values indicate positions to the right and downward. If you want to change the origin to the top left of the canvas, set the `origin_center` property to false. The width and height of the rectangle are 300 and 200 pixels respectively. The line and filled colors can be specified individually using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file. Most importantly, the white rectangle is presented 500 ms after beginning this trial.
 
 # Preloading media files
 
@@ -43,9 +43,9 @@ jsPsych.init({
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |obj_type|string|undefined|The type of the object (e.g., rect, image, or sound). Refer to the individual explanation below in detail.|
-|startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window using the `origin_center` property. The unit is the pixel. If the startX/startY is specified as `'center'`, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
+|startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The origin of the coordinate is the center of the canvas, but the origin can be changed to the top left of the canvas using the `origin_center` property. The unit is the pixel. If the startX/startY is not specified, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
 |endX/endY|numeric|null|Horizontal/Vertical end position of the moving object.|
-|origin_center|boolean|false|If you want to change the coordinate origin to the center of the window, set this property to true.|
+|origin_center|boolean|true|If you want to change the coordinate origin to the top left of the canvas, set this property to false.|
 |horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display.|
 |horiz_pix_sec|numeric|undefined|Horizontal pixels by which the object moves per second.|
 |vert_pix_frame|numeric|undefined|Vertical pixels by which the object moves per frame of the display.|

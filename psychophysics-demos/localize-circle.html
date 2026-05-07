@@ -25,6 +25,12 @@
       text_space: 100,
     }
 
+    const cross_object1 = {
+        obj_type: 'cross',        
+        line_length: 50,
+        line_color: 'black',
+    }
+
     const instruction = {
         type: jsPsychPsychophysics,
         stimuli: [text_object],
@@ -36,17 +42,20 @@
             {
                 type: jsPsychPsychophysics,
                 stimuli: function(){
-                    return [{
-                        obj_type: 'circle',
-                        startX: jsPsych.evaluateTimelineVariable('posX'), // location in the canvas
-                        startY: jsPsych.evaluateTimelineVariable('posY'), // location in the canvas
-                        radius: 10,
-                        line_color: 'black', // You can use the HTML color name instead of the HEX color.
-                        fill_color: 'black',
-                        show_start_time: 500, // ms after the start of the trial
-                        show_end_time: 550,
-                        origin_center: false,
-                    }]
+                    return [
+                        {
+                            obj_type: 'circle',
+                            startX: jsPsych.evaluateTimelineVariable('posX'), // location in the canvas
+                            startY: jsPsych.evaluateTimelineVariable('posY'), // location in the canvas
+                            radius: 10,
+                            line_color: 'black', // You can use the HTML color name instead of the HEX color.
+                            fill_color: 'black',
+                            show_start_time: 500, // ms after the start of the trial
+                            show_end_time: 550,
+                            origin_center: false,
+                        },
+                        cross_object1
+                    ]
                 },
                 response_type: 'mouse', // The default of the response_type is 'key'.
                 response_start_time: 550, // When the response_start_time is the same as the show_end_time of the circle_object, the RT is the time from disappearing of the circle until the participant’s response.

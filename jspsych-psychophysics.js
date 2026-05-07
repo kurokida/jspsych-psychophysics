@@ -7914,8 +7914,8 @@ ${indent}columns: ${matrix.columns}
 	          avg_frame_time: elapsedTime / sumOfStep,
 	          center_x: centerX,
 	          center_y: centerY,
-	          click_x: trial.response_type === "mouse" ? response.clickX : null,
-	          click_y: trial.response_type === "mouse" ? response.clickY : null,
+	          click_x: trial.response_type === "mouse" ? response.clickX - centerX : null,
+	          click_y: trial.response_type === "mouse" ? response.clickY - centerY : null,
 	          button_pressed: trial.response_type === "button" ? response.button : null
 	        };
 	        display_element.innerHTML = "";

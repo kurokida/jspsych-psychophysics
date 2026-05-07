@@ -66,7 +66,11 @@ const circle_object = {
 }
 ```
 
-The default origin of the coordinate is the top left of the canvas, but the origin can be changed to the center of the window (canvas) by specifying the `origin_center` property as true. The unit is the pixel. 
+From version 5, the origin of the coordinate system has been changed to the center of the canvas. This means that the `origin_center` property now defaults to true. Please note that in version 4 and earlier, this was false and the origin was at the top-left of the canvas. The unit of the coordinate system is pixels. Positive values indicate positions to the right (horizontal) and downward (vertical).
+
+In version 4 and earlier, you could specify 'center' for startX/startY, but this is no longer supported. If you want to present a stimulus at the center of the canvas, you do not need to specify startX/startY, or you can simply set them to 0.
+
+![The coordinate system of jsPsychophysics](images/coordinate_system.png)
 
 The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
 
