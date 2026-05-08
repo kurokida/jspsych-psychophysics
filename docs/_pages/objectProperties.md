@@ -43,7 +43,7 @@ jsPsych.init({
 |Parameter|Type|Default Value|Description|
 |---|---|---|---|
 |obj_type|string|undefined|The type of the object (e.g., rect, image, or sound). Refer to the individual explanation below in detail.|
-|startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The origin of the coordinate is the center of the canvas, but the origin can be changed to the top left of the canvas using the `origin_center` property. The unit is the pixel. If the startX/startY is not specified, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
+|startX/startY|numeric|'center'|Horizontal/Vertical position of the object's center. The default origin is the center of the canvas. You can change it to the top-left corner by setting the `origin_center property` to false. The unit is the pixel. If the startX/startY is not specified, the object is presented at the horizontal/vertical center of the canvas. The startX/startY is also used as the starting position in motion.|
 |endX/endY|numeric|null|Horizontal/Vertical end position of the moving object.|
 |origin_center|boolean|true|If you want to change the coordinate origin to the top left of the canvas, set this property to false.|
 |horiz_pix_frame|numeric|undefined|Horizontal pixels by which the object moves per frame of the display.|

@@ -66,13 +66,36 @@ const circle_object = {
 }
 ```
 
-From version 5, the origin of the coordinate system has been changed to the center of the canvas. This means that the `origin_center` property now defaults to true. Please note that in version 4 and earlier, this was false and the origin was at the top-left of the canvas. The unit of the coordinate system is pixels. Positive values indicate positions to the right (horizontal) and downward (vertical).
+#### Coordinate System
 
-In version 4 and earlier, you could specify 'center' for startX/startY, but this is no longer supported. If you want to present a stimulus at the center of the canvas, you do not need to specify startX/startY, or you can simply set them to 0.
+The specification of the coordinate system has been updated in Version 5. Please note the differences in the origin position between versions.
+
+##### Version Differences (Origin)
+
+| Feature | Version 4 and earlier | Version 5 and later |
+|:---|:---|:---|
+| **Default Origin** | **Top-left** of the canvas | **Center** of the canvas |
+| Default `origin_center` property | `false` | `true` |
+| **Centering Method** | Specify `'center'` for `startX`/`startY` | Set `0` or omit `startX`/`startY` |
+
+In Version 4 and earlier, you could specify `'center'` as a string for `startX` and `startY`. **This is no longer supported in Version 5.** 
+
+##### Common Specifications (All Versions)
+
+Regardless of the version, the following rules apply to the coordinate system:
+
+*   **Unit**: Pixels
+*   **Direction**:
+    *   **Horizontal (X)**: Positive values indicate positions to the **right**.
+    *   **Vertical (Y)**: Positive values indicate positions **downward**.
 
 ![The coordinate system of jsPsychophysics](images/coordinate_system.png)
 
+#### Color
+
 The color can be specified using the HTML color names, hexadecimal (HEX) colors, and RGB values that are often used in a general HTML file.
+
+#### Time
 
 The **show_start_time** property is one of the most notable properties, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 

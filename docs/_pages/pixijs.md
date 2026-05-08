@@ -38,9 +38,9 @@ Since PixiJS v8 initialization is asynchronous, you must wrap your entire jsPsyc
 ```
 
 ## 3. Initialize the Application Manually
-Previously, the plugin handled the Pixi instance internally. Now, you need to:
+Previously, the jspsychophysics plugin handled the Pixi instance internally. Now, you need to:
 - Create the PIXI.Application instance yourself.
-- Call await app.init({}).
+- Call `await app.init({})`.
 - Pass the app instance to the plugin using the `pixi_app` property as a function.
 
 Important: The old `pixi` property has been removed. You must use `pixi_app`.
@@ -61,10 +61,10 @@ const trial = {
 ```
 
 ## 4. Enable Antialiasing
-If you want to enable antialiasing for smoother graphics, set antialias: true within the app.init() options. See psychophysics-demos/PixiJS/mouse_event.html
+If you want to enable antialiasing for smoother graphics, set `antialias: true` within the `app.init()` options. See psychophysics-demos/PixiJS/mouse_event.html
 
 ## 5. Proper Cleanup (Destroy)
-To prevent memory leaks ensure you call app.destroy() when the experiment finishes.
+To prevent memory leaks ensure you call `app.destroy()` when the experiment finishes.
 
 # Minimal Example
 The following code demonstrates the simplest way to present a fixation cross using PixiJS.
@@ -120,7 +120,7 @@ The following code demonstrates the simplest way to present a fixation cross usi
 </html>
 ```
 
-If you are not using images, you can run the program in a local environment. Please note that if you use images, you must upload them to a server due to CORS policy restrictions.
+If you are not using images, you can run the program locally. Otherwise, images must be hosted on a server to avoid CORS policy restrictions.
 
 
 # Advanced usage
