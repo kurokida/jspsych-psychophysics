@@ -34,7 +34,7 @@
                     texture: true,
                     baseTexture: true
                 });
-                jsPsych.data.displayData();
+                jsPsych.data.get().localSave('csv','mydata.csv');
             }
         })
 
@@ -56,6 +56,9 @@
         const enter_fullscreen = {
             type: jsPsychFullscreen,
             fullscreen_mode: true,
+            simulation_options: {
+                simulate: false
+            }
         }
 
         experiment.push(preload)
@@ -146,12 +149,21 @@
                 type: jsPsychHtmlKeyboardResponse,
                 // stimulus: '<p>This program uses the jspsych-psychophysics plugin.</p><p>Press any key to start.</p>'
                 stimulus: `<p class="text-white">Pixi.js is used.<br>Time unit: ${units}<br>Press any key to start the trial.</p>`,
+                simulation_options: {
+                    simulate: false
+                }
             }
             experiment.push(instruction2)
 
 
             for (let repeat = 0; repeat < 100; repeat++){
                 const trial_time = 800;
+
+                const blank = {
+                    type: jsPsychHtmlKeyboardResponse,
+                    stimulus: ``,
+                }
+                experiment.push(blank)
 
                 const show_rect_sound = {
                     type: jsPsychPsychophysics,
@@ -184,7 +196,15 @@
         }
 
         experiment.push(end_trial)
-        jsPsych.run(experiment)
+        const sim_opts = {
+            default: {
+                data: {
+                    rt: 500
+                }
+            },
+        }
+
+        jsPsych.simulate(experiment, "visual", sim_opts);
     })();
     
 </script>
