@@ -12,7 +12,7 @@ From version 5, the integration with PixiJS has been significantly updated to su
 # Key Changes and Requirements
 
 ## 1. Load the PixiJS Library
-You must include the PixiJS library via a `<script>` tag in your HTML header. Ensure you are using a version compatible with v8. For more information on the available PixiJS assets, visit: https://cdnjs.com/libraries/pixi.js
+You must include the PixiJS library via a `<script>` tag in your HTML header. Ensure you are using a version compatible with v8. For more information on the available PixiJS assets, visit: [cdnjs](https://cdnjs.com/libraries/pixi.js)
 
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.13.2/pixi.min.js" integrity="sha512-rOMqai9NIPaFWpmvHUjdOa2dSuaaYo6i7E19jS1ZW9rjnrl4qAOOtsOeTk0QgIflFCe2ZYi/7or3CRF6VfBk9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -61,7 +61,7 @@ const trial = {
 ```
 
 ## 4. Enable Antialiasing
-If you want to enable antialiasing for smoother graphics, set `antialias: true` within the `app.init()` options. See psychophysics-demos/PixiJS/mouse_event.html
+If you want to enable antialiasing for smoother graphics, set `antialias: true` within the `app.init()` options. See [psychophysics-demos/PixiJS/mouse_event.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/PixiJS/mouse_event.html)
 
 ## 5. Proper Cleanup (Destroy)
 To prevent memory leaks ensure you call `app.destroy()` when the experiment finishes.
@@ -120,7 +120,7 @@ The following code demonstrates the simplest way to present a fixation cross usi
 </html>
 ```
 
-If you are not using images, you can run the program locally. Otherwise, images must be hosted on a server to avoid CORS policy restrictions.
+If you are not using images, you can run the program locally. Otherwise, images must be hosted on a server to avoid CORS policy restrictions. Note that you have to preload the image files.
 
 
 # Advanced usage

@@ -13,8 +13,8 @@ The jspsych-psychophysics plugin is developed for conducting online/Web-based ps
 
 ## What you can do with the jspsych-psychophysics plugin
 - You can present multiple stimuli asynchronously. In other words, you can set stimulus onset asynchronies (SOAs) in a single trial.
-- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of both milliseconds and frames. You can also move these stimuli, and play sound files although the time accuracy is not so good.
-- According to [my recent observation (June 2024)](https://osf.io/pj4sb/wiki/Accuracy%20test%20June%202024/), presentation times should be specified in terms of frames not milliseconds, and the use of Firefox should be avoided for experiments with brief presentation times of less than 50 ms/3 frames.
+- You can present visual stimuli (e.g., [gabor patches](/gabor/), images, lines, rectangles, circles, and texts) at intended coordinates, and the time duration can be specified in terms of both milliseconds and frames. 
+- You can also move visual stimuli, and play sound files although the time accuracy is not so good. When using audio files as stimuli, it is highly recommended to play a sound before the experiment begins to ensure precise timing. This can be any audio file, not necessarily the actual stimuli. Please refer to [the Accuracy test Mya 2026](https://osf.io/pj4sb/wiki?wiki=mfk5r) for the latest accuracy check.
 - This plugin presents visual stimuli synchronized with the refresh of the display using the **requestAnimationFrame** method. According to my observation, the SOA between visual stimuli with the plugin was more accurate than that without the plugin ([Kuroki, 2020](https://rdcu.be/b5Nie)).
 - [Starting with version 3.2, this plugin can present visual stimuli using PixiJS functionality.](/pixijs/)
 - You can specify the mouse/keyboard event handler. For example, you can make a program in which a participant change the luminance of a stimulus pressing the ArrowUp/ArrowDown key, and finish the trial pressing the space key. See [the FAQ 7](/faq/) and [this issue](https://github.com/kurokida/jspsych-psychophysics/issues/27).
@@ -39,7 +39,7 @@ The package includes the comaptible [jsPsych](http://www.jspsych.org/) (de Leeuw
 ```javascript
 <script src="jspsych-psychophysics.js"></script>
 ```
-This procedure is the same as other plugins are used with the jsPsych. Note the location of the plugin file.
+This procedure is the same as when using other jsPsych plugins. Note the location of the plugin file.
 
 ### 3. Specify all stimuli used in the program as JavaScript objects
 
@@ -74,9 +74,9 @@ The specification of the coordinate system has been updated in Version 5. Please
 
 | Feature | Version 4 and earlier | Version 5 and later |
 |:---|:---|:---|
-| **Default Origin** | **Top-left** of the canvas | **Center** of the canvas |
+| Default Origin | **Top-left** of the canvas | **Center** of the canvas |
 | Default `origin_center` property | `false` | `true` |
-| **Centering Method** | Specify `'center'` for `startX`/`startY` | Set `0` or omit `startX`/`startY` |
+| Centering Method | Specify `'center'` for `startX`/`startY` | Set `0` or omit `startX`/`startY` |
 
 In Version 4 and earlier, you could specify `'center'` as a string for `startX` and `startY`. **This is no longer supported in Version 5.** 
 
@@ -99,7 +99,7 @@ The color can be specified using the HTML color names, hexadecimal (HEX) colors,
 
 The **show_start_time** property is one of the most notable properties, which enables to present the stimulus at the intended time. In this example, a white rectangle is presented 500 ms after beginning this trial, after another 500 ms, a red circle is presented until the response.
 
-If you mind the increase/decrease by 1 frame (16.7 ms) regarding visual stimuli, presentation times should be specified in terms of frames not milliseconds. See [my recent observation (June 2024)](https://osf.io/pj4sb/wiki/Accuracy%20test%20June%202024/).
+If you mind the increase/decrease by 1 frame (16.7 ms) regarding visual stimuli, presentation times should be specified in terms of frames not milliseconds. See [my recent observation (May 2026)](https://osf.io/pj4sb/wiki?wiki=mfk5r).
 
 You can specify the time in frames as follows:
 
@@ -134,22 +134,20 @@ jsPsych.run([trial])
 
 ```
 
-Since jsPsych V7, you need to specify type: jsPsychPsychophysics.
+- Since jsPsych V7, you need to specify `type: jsPsychPsychophysics`.
+- The `stimuli` array must include all the stimulus objects to be presented in the trial.
+- This trial object must be passed as an argument to the `jsPsych.run` function.
 
-The **stimuli** array must include all the stimulus objects to be presented in the trial.
-
-This trial object must be passed as an argument to the `jsPsych.run` function.
-
-If you use image and audio files in a trial, please preload them at the begging of the program using [the preload plugin](https://www.jspsych.org/7.1/plugins/preload/). See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
+If you use image and audio files in a trial, please preload them at the begging of the program using [the preload plugin](https://www.jspsych.org/latest/plugins/preload/). See, [demos/randomizedImages.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomizedImages.html) and [demos/twoSoundsWithSOA.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/twoSoundsWithSOA.html). 
 
 The other applications and the tabs in a web browser should be closed during the experiment. This should be informed as an instruction at the begging of the experiment.
 
 ## Using with jsPsych V8
 
-- Use the psychophysics plugin V4.X.
-- When using `getCurrentTrial().stim_array`, it needs to be rewritten like `getCurrentTrial().stimuli[n].instance`."
+- Use the psychophysics plugin Version 4 and later.
+- When using `getCurrentTrial().stim_array`, it needs to be rewritten like `getCurrentTrial().stimuli[n].instance`.
 - If you want to manually complete the plugin, see [touch_to_end.html](https://github.com/kurokida/jspsych-psychophysics/blob/master/psychophysics-demos/touch_to_end.html). 
-- When `obj_type` is set to `gabor`, the method is now only `ml-matrix` (`numeric` has been discontinued)."
+- When `obj_type` is set to `gabor`, the method is now only `ml-matrix` (`numeric` has been discontinued).
 
 For more details, please refer to [the release notes for V4.0.0](https://github.com/kurokida/jspsych-psychophysics/releases/tag/v4.0.0).
 
@@ -175,5 +173,5 @@ I would appreciate it if you could cite [Kuroki (2020)](https://rdcu.be/b5Nie) a
 
 ***
 
-Copyright (c) 2019 Daiichiro Kuroki  
+Copyright (c) 2019-2026 Daiichiro Kuroki  
 Released under [the MIT license](https://opensource.org/licenses/MIT)
