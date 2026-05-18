@@ -24,10 +24,26 @@
             './sound/880Hz_100ms.wav'
         ];
 
+        const all_sound_files = sounds.concat("./sound/tone500ms.wav")
+
         // Preloading files are needed to present the stimuli accurately.
         const preload = {
             type: jsPsychPreload,
-            audio: sounds,
+            audio: all_sound_files,
+        }
+
+        // When using audio stimuli, there is a possibility that the playback of the sound in the first trial will be delayed.
+        // To resolve this issue, it is recommended to play a sound beforehand, which likely allows the system to prepare for subsequent audio playback.
+        const preplay_sound = {
+            type: jsPsychPsychophysics,
+            stimuli: [
+                {
+                    obj_type: 'sound',
+                    file: "./sound/tone500ms.wav"
+                }
+            ],
+            trial_duration: 500,
+            background_color: 'black',
         }
 
         const sound1 = {
@@ -63,12 +79,18 @@
         // See also jspsych-audio-keyboard-response.html
         const pre_audio = {
             type: jsPsychHtmlButtonResponse,
-            stimulus: 'Recent versions of Chrome require the user to interact with a page before it can play audio. '+
-            'Clicking the button below counts as an interaction. Be aware of this when planning audio experiments if '+
-            'you want the first trial to include audio.',
+            stimulus: `<p>Recent versions of Chrome require the user to interact with a page before it can play audio. </p>
+                <p>Clicking the button below counts as an interaction. </p>
+                <p>Be aware of this when planning audio experiments if you want the first trial to include audio.</p>`,
             choices: ['Continue']
         }
 
-        jsPsych.run([preload, pre_audio, trial])
+        const instruction = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `<p>Are you ready?</p>`,
+            choices: ['START']
+        }
+
+        jsPsych.run([preload, pre_audio, preplay_sound, instruction, trial])
   </script>
 </html>
