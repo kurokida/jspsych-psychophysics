@@ -3,7 +3,7 @@ permalink: /demo_explanation/
 title: "Demonsrations of the jspsych-psychophysics plugin"
 ---
 
-You can view and edit the source code provided on CodePen.
+You can view and edit the source code available on [CodePen](https://codepen.io/kurokida). However, because the CodePen content is outdated, please refer to the latest sample code for actual experiments."
 
 - [tutorial.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/tutorial.html)-[CodePen](https://codepen.io/kurokida/pen/JjJoXWG) The detailed tutorial is written at [the top page](http://jspsychophysics.hes.kyushu-u.ac.jp/)
 
@@ -12,9 +12,9 @@ You can view and edit the source code provided on CodePen.
 Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 
 - [draw-gabor-patches.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw-gabor-patches.html)-[CodePen](https://codepen.io/kurokida/pen/NWgPVxX) This file demonstrates how to present gabor patches.
-- [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/drifting-gabor.html?pixi_flag=1)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch.
+- [drifting-gabor.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/drifting-gabor.html)-[CodePen](https://codepen.io/kurokida/pen/gORbJMW) This file demonstrates how to present a drifting gabor patch.
 - [gabor_tilt.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/gabor_tilt.html)-[CodePen](https://codepen.io/kurokida/pen/YzrvjvV) This file demonstrates how to change the tilt of the gabor by pressing keys.
-- [gabor_tilt_color_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/gabor_tilt_color_pixi.html)- This demo is almost the same as the gabor_tilt.html, but uses the pixi mode to change the stimulus color.
+- [gabor_tilt_color_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/gabor_tilt_color_pixi.html)- This demo is almost the same as the gabor_tilt.html, but uses the pixi mode to change the stimulus color.
 
 # Images
 
@@ -53,14 +53,16 @@ Please see [Presenting gabor patches in online/web experiments](gabor.md) first.
 # Using [PixiJS](https://pixijs.com/)
 Please see [the documentation](pixijs.md) regarding the pixi mode of the psychophysics plugin.
 
-- [pixi_container.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_container.html) This demo explains how to present [a pixi's container.](https://pixijs.io/guides/basics/containers.html)
-- [pixi_container_mask_filters.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_container_mask_filters.html) This demo explains how to present a pixi's container using a mask and fiters.
-- [pixi_image_mask_filters.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_image_mask_filters.html) This demo explains how to present a pixi's sprite (image) using a mask and fiters. This program doesn't use a container.
-- [pixi_scale_rotate.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_scale_rotate.html) This file demonstrates how to present a scaled and rotated image.
-- [draw_part_of_image_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/draw_part_of_image_pixi.html) This demo explains how to do the similar thing as draw_part_of_image.html in the pixi mode.
-- [elapsed_time_frame_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/elapsed_time_frame_pixi.html) This demo explains how to do the same thing as elapsed_time_frame.html in the pixi mode.
-- [move_in_a_circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/move_in_a_circle.html) This file demonstrates how to present the same stimulus of the raf_func.html in the pixi mode.
-- [pixi_mental_rotation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/pixi_mental_rotation.html) This file demonstrates how to rotate the stimulus charactor in the pixi mode. You can also rotate the image in a similar fashion.
+- [simple_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/simple_pixi.html) This file demonstrates how to present (fixation) cross with PixiJS.
+- [stim_test.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/stim_test.html) This program is a demo that displays various visual stimuli using PixiJS.
+- [pixi_container.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/pixi_container.html) This demo explains how to present [a pixi's container.](https://pixijs.io/guides/basics/containers.html)
+- [pixi_image_mask_filters.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/pixi_image_mask_filters.html) This demo explains how to present a pixi's sprite (image) using a mask and fiters. This program doesn't use a container.
+- [pixi_scale_rotate.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/pixi_scale_rotate.html) This file demonstrates how to present a scaled and rotated image.
+- [draw_part_of_image_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/draw_part_of_image_pixi.html) This demo explains how to do the similar thing as draw_part_of_image.html in the pixi mode.
+- [elapsed_time_frame_pixi.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/elapsed_time_frame_pixi.html) This demo explains how to do the same thing as elapsed_time_frame.html in the pixi mode.
+- [move_in_a_circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/move_in_a_circle.html) This file demonstrates how to present the same stimulus of the raf_func.html in the pixi mode.
+- [pixi_mental_rotation.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/pixi_mental_rotation.html) This file demonstrates how to rotate the stimulus charactor in the pixi mode. You can also rotate the image in a similar fashion.
+- [random_dots.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/PixiJS/random_dots.html) This file demonstrates how to present random dots with a circular mask with PixiJS.
 
 # Other stimuli
 
@@ -83,7 +85,6 @@ Please see [the documentation](pixijs.md) regarding the pixi mode of the psychop
 - [localize-circle.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/localize-circle.html) This file demonstrates how to respond using a mouse. This can be made by specifying the `response_type` and `response_start_time` property.
 - [origin_center.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/origin_center.html) This file demonstrates how to present objects using a coordinate with the center of the window as the origin. Set the origin_center property to true (The default is false).
 - [randomize_show_start_time.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/randomize_show_start_time.html). This file demonstrates how to randomize the show_start_time of a image stimulus. The stimulus image is presented from 500 to 3000ms after the fixation point.
-- [remain_canvas.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/remain_canvas.html) This file demonstrates how to remain the main canvas even after the trial finishes. This method will be useful when there is a flash between trials.
 - [resolution.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/resolution.html) If you are using a Mac which has a retina display, the resolution may not match the number of pixels of the canvas. Using this demo, you can know the number of pixels of the canvas.
 - [response_start_time_depends_on_onsets.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/response_start_time_depends_on_onsets.html) This demo explains how to specify different start time of presentation of an image for each trial, and how to get the reaction time based on the start time.
 - [retina_display.html](https://www.hes.kyushu-u.ac.jp/~kurokid/jspsychophysics/demos/retina_display.html) This demo confirms that the stimuli are presented properly on retina display. The canvas size is set to 600x600.

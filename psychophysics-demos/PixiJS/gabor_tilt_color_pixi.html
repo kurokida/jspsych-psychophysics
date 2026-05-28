@@ -54,7 +54,11 @@
             },
             key_down_func: function(event){
                 // See https://jspsychophysics.hes.kyushu-u.ac.jp/objectProperties/#obj_type-gabor for uniforms.
-                const uniforms = jsPsych.getCurrentTrial().stimuli[0].instance.pixi_obj.filters[0].resources.uUniforms.uniforms;
+
+                // You can access PixiJS components via the children property. 
+                // You may need to check the exact index of your target component by trial and error, 
+                // as it won't necessarily be at index 0.
+                const uniforms = app.stage.children[0].filters[0].resources.uUniforms.uniforms;
 
                 if (event.key === 'ArrowLeft'){
                     uniforms.angle_in_degrees += 2;

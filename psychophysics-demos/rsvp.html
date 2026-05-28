@@ -4,7 +4,6 @@
     <script src="../jspsych-dist/dist/jspsych.js"></script>
     <script src="../jspsych-dist/dist/plugin-html-button-response.js"></script>
     <script src="../jspsych-dist/dist/plugin-preload.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.5.8/browser/pixi.min.js"></script>
     <script src="../jspsych-psychophysics.js"></script>
     <link rel="stylesheet" href="../jspsych-dist/dist/jspsych.css"></link>
 </head>
@@ -20,13 +19,14 @@
     })
     console.log(`jsPsych Version ${jsPsych.version()}`)
 
-    const pixi_flag = jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
+    const viewing_time = 200 // ms
+    const isi = 50 // ms
 
     const first_instruction = {
         type: jsPsychHtmlButtonResponse,
         stimulus: 'Click on the Start button.',
         choices: ['Start'],
-        prompt: "This is a sample program for the jspsych-psychophysics plugin.",
+        prompt: `This is a sample program for an RSVP task (Stimulus duration: ${viewing_time} ms, ISI: ${isi} ms).`,
     }
 
     const images = [
@@ -55,8 +55,6 @@
         stimulus_object.push(temporal_object)
     }
 
-    const viewing_time = 200 // ms
-    const isi = 50 // ms
 
     const instruction = {
         obj_type: 'text',
@@ -69,7 +67,6 @@
 
     const rsvp_trial = {
         type: jsPsychPsychophysics,
-        pixi: pixi_flag,
         stimuli: stimulus_object, // Note that the last element of the stimulus_object is the instruction.
         response_start_time: (viewing_time + isi) * images.length - isi, // not to respond until all images are presented.
         on_start: function(trial){
