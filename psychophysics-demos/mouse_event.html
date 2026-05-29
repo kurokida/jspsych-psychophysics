@@ -49,17 +49,20 @@
           canvas_height: 500,
           button_choices: ['YES', 'NO'],
           prompt: '<p>Click and move the mouse.</p>',
-          stimuli: [circle_obj, line_obj], // These can be referenced using the jsPsych.currentTrial().stim_array array.
+          stimuli: function(){
+            return [circle_obj, line_obj]
+          },
           response_type: 'button',
           vert_button_margin: '50px',
           horiz_button_margin: '50px',
-          mouse_down_func: function(event){
+          mouse_down_func: function(event, current_trial){
             mouse_move_start = !mouse_move_start;
+            // console.log(current_trial)
           },                
           // mouse_up_func: function(event){ // This also works, but, please comment out the mouse_down_function.
           //   mouse_move_start = !mouse_move_start;
           // },
-          mouse_move_func: function(event){ // This function will be automatically added as the event listener of the canvas.
+          mouse_move_func: function(event, current_trial){ // This function will be automatically added as the event listener of the canvas.
             if (mouse_move_start === false) return;
 
             if (prev_mouseX === null){
@@ -69,7 +72,9 @@
 
             // stim_array[0] means a circle, and stim_array[1] means a line.
             // const line = pixi_flag ? jsPsych.getCurrentTrial().stimuli[1].instance.pixi_obj : jsPsych.getCurrentTrial().stimuli[1].instance;
-            const line = jsPsych.getCurrentTrial().stimuli[1].instance;
+            
+            // const line = jsPsych.getCurrentTrial().stimuli[1].instance; // Setting stimuli as a function causes an error.
+            const line = current_trial.stimuli[1].instance;
 
             if (event.offsetX > prev_mouseX){
               line.angle += 5; // The angle changes by 5 degrees.

@@ -2319,12 +2319,14 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
       refsToCleanup.push('centerY');
 
       // add event listeners defined by experimenters.
-      if (trial.mouse_down_func !== null) {
-        canvas.addEventListener("mousedown", trial.mouse_down_func);
+      const mouse_down_listener = (e: MouseEvent) => trial.mouse_down_func?.(e, trial);
+      if (trial.mouse_down_func) {
+          canvas.addEventListener("mousedown", mouse_down_listener);
       }
 
+      const mouse_move_listener = (e: MouseEvent) => trial.mouse_move_func?.(e, trial);
       if (trial.mouse_move_func !== null) {
-        canvas.addEventListener("mousemove", trial.mouse_move_func);
+        canvas.addEventListener("mousemove", mouse_move_listener);
       }
 
       if (trial.mouse_up_func !== null) {
@@ -2520,11 +2522,11 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
 
         // remove event listeners defined by experimenters.
         if (trial.mouse_down_func !== null) {
-          canvas.removeEventListener("mousedown", trial.mouse_down_func);
+          canvas.removeEventListener("mousedown", mouse_down_listener);
         }
 
         if (trial.mouse_move_func !== null) {
-          canvas.removeEventListener("mousemove", trial.mouse_move_func);
+          canvas.removeEventListener("mousemove", mouse_move_listener);
         }
 
         if (trial.mouse_up_func !== null) {

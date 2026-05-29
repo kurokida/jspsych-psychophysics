@@ -7701,11 +7701,13 @@ ${indent}columns: ${matrix.columns}
 	      trial.centerY = centerY;
 	      refsToCleanup.push("centerX");
 	      refsToCleanup.push("centerY");
-	      if (trial.mouse_down_func !== null) {
-	        canvas.addEventListener("mousedown", trial.mouse_down_func);
+	      const mouse_down_listener = (e) => trial.mouse_down_func?.(e, trial);
+	      if (trial.mouse_down_func) {
+	        canvas.addEventListener("mousedown", mouse_down_listener);
 	      }
+	      const mouse_move_listener = (e) => trial.mouse_move_func?.(e, trial);
 	      if (trial.mouse_move_func !== null) {
-	        canvas.addEventListener("mousemove", trial.mouse_move_func);
+	        canvas.addEventListener("mousemove", mouse_move_listener);
 	      }
 	      if (trial.mouse_up_func !== null) {
 	        canvas.addEventListener("mouseup", trial.mouse_up_func);
@@ -7851,10 +7853,10 @@ ${indent}columns: ${matrix.columns}
 	        window.cancelAnimationFrame(frameRequestID);
 	        canvas.removeEventListener("mousedown", mouseDownFunc);
 	        if (trial.mouse_down_func !== null) {
-	          canvas.removeEventListener("mousedown", trial.mouse_down_func);
+	          canvas.removeEventListener("mousedown", mouse_down_listener);
 	        }
 	        if (trial.mouse_move_func !== null) {
-	          canvas.removeEventListener("mousemove", trial.mouse_move_func);
+	          canvas.removeEventListener("mousemove", mouse_move_listener);
 	        }
 	        if (trial.mouse_up_func !== null) {
 	          canvas.removeEventListener("mouseup", trial.mouse_up_func);
