@@ -2329,33 +2329,47 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         canvas.addEventListener("mousemove", mouse_move_listener);
       }
 
-      if (trial.mouse_up_func !== null) {
-        canvas.addEventListener("mouseup", trial.mouse_up_func);
+      // mouseup
+      const mouse_up_listener = (e: MouseEvent) => trial.mouse_up_func?.(e, trial);
+      if (trial.mouse_up_func) {
+        canvas.addEventListener("mouseup", mouse_up_listener);
       }
 
-      if (trial.key_down_func !== null) {
-        document.addEventListener("keydown", trial.key_down_func); // It doesn't work if the canvas is specified instead of the document.
+      // keydown
+      const key_down_listener = (e: KeyboardEvent) => trial.key_down_func?.(e, trial);
+      if (trial.key_down_func) {
+        document.addEventListener("keydown", key_down_listener); // It doesn't work if the canvas is specified instead of the document.
       }
 
-      if (trial.key_up_func !== null) {
-        document.addEventListener("keyup", trial.key_up_func);
+      // keyup
+      const key_up_listener = (e: KeyboardEvent) => trial.key_up_func?.(e, trial);
+      if (trial.key_up_func) {
+        document.addEventListener("keyup", key_up_listener);
       }
 
       // Touch functions are assigned to the CANVAS but not to the document.
-      if (trial.touchstart_func !== null) {
-        canvas.addEventListener("touchstart", trial.touchstart_func);
+      // touchstart
+      const touchstart_listener = (e: TouchEvent) => trial.touchstart_func?.(e, trial);
+      if (trial.touchstart_func) {
+        canvas.addEventListener("touchstart", touchstart_listener);
       }
 
-      if (trial.touchend_func !== null) {
-        canvas.addEventListener("touchend", trial.touchend_func);
+      // touchend
+      const touchend_listener = (e: TouchEvent) => trial.touchend_func?.(e, trial);
+      if (trial.touchend_func) {
+        canvas.addEventListener("touchend", touchend_listener);
       }
 
-      if (trial.touchcancel_func !== null) {
-        canvas.addEventListener("touchcancel", trial.touchcancel_func);
+      // touchcancel
+      const touchcancel_listener = (e: TouchEvent) => trial.touchcancel_func?.(e, trial);
+      if (trial.touchcancel_func) {
+        canvas.addEventListener("touchcancel", touchcancel_listener);
       }
 
-      if (trial.touchmove_func !== null) {
-        canvas.addEventListener("touchmove", trial.touchmove_func);
+      // touchmove
+      const touchmove_listener = (e: TouchEvent) => trial.touchmove_func?.(e, trial);
+      if (trial.touchmove_func) {
+        canvas.addEventListener("touchmove", touchmove_listener);
       }
 
       if (typeof trial.stimuli === "undefined" && trial.raf_func === null) {
@@ -2530,31 +2544,31 @@ class PsychophysicsPlugin implements JsPsychPlugin<Info> {
         }
 
         if (trial.mouse_up_func !== null) {
-          canvas.removeEventListener("mouseup", trial.mouse_up_func);
+          canvas.removeEventListener("mouseup", mouse_up_listener);
         }
 
         if (trial.touchstart_func !== null){
-          canvas.removeEventListener("touchstart", trial.touchstart_func);
+          canvas.removeEventListener("touchstart", touchstart_listener);
         }
 
         if (trial.touchend_func !== null) {
-          canvas.removeEventListener("touchend", trial.touchend_func);
+          canvas.removeEventListener("touchend", touchend_listener);
         }
     
         if (trial.touchcancel_func !== null) {
-          canvas.removeEventListener("touchcancel", trial.touchcancel_func);
+          canvas.removeEventListener("touchcancel", touchcancel_listener);
         }
     
         if (trial.touchmove_func !== null) {
-          canvas.removeEventListener("touchmove", trial.touchmove_func);
+          canvas.removeEventListener("touchmove", touchmove_listener);
         }
 
         if (trial.key_down_func !== null) {
-          document.removeEventListener("keydown", trial.key_down_func);
+          document.removeEventListener("keydown", key_down_listener);
         }
 
         if (trial.key_up_func !== null) {
-          document.removeEventListener("keyup", trial.key_up_func);
+          document.removeEventListener("keyup", key_up_listener);
         }
 
         // stop the audio file if it is playing

@@ -43,7 +43,7 @@
           stimuli: [circle_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
           response_type: 'key',
           choices: [' '],
-          key_down_func: function(event){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
+          key_down_func: function(event, current_trial){ // The key_up_func is also available. In that case, the color of the circle changes when you release the key. 
             if (event.key === 'ArrowUp'){
               current_color += 10;
               if (current_color > 255) current_color = 255;
@@ -54,7 +54,7 @@
 
             // Note that when specify the space bar, you need to write event.key === ' ' not event.key === 'space'.
             
-            jsPsych.getCurrentTrial().stimuli[0].instance.fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
+            current_trial.stimuli[0].instance.fill_color = `rgb(${current_color}, ${current_color}, ${current_color})`;
           },
       }
 

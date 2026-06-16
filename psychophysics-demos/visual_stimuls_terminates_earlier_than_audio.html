@@ -62,7 +62,7 @@
           stimuli: [circle_obj, sound_obj], // These can be referenced using the jsPsych.currentTrial().stimuli array.
           response_type: 'key',
           choices: [' '], // This is a space key to finish this trial
-          key_down_func: function(event){
+          key_down_func: function(event, current_trial){
             // Note that the key_down_func can ignore the settings of choices and receive key input. In addition, the key_down_func doesn't terminate this trial.
             if (stim_onset === null) return;
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
@@ -71,7 +71,7 @@
               if (event.key === 'ArrowUp') resp_key = 'ArrowUp';
               if (event.key === 'ArrowDown') resp_key = 'ArrowDown';
 
-              const stim = jsPsych.getCurrentTrial().stimuli[0].instance;
+              const stim = current_trial.stimuli[0].instance;
               stim.show_end_time = 0; // This make the circle invisible.
             }
           },
